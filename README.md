@@ -54,7 +54,7 @@ If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
 
 ### Documentation for Julia.Base readdlm() 
-More information about Base funktionality and (keyword-) arguments - which are also 
+More information about Base functionality and (keyword-) arguments - which are also 
 supported by `readdlm2()` - is available in the 
 [stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
@@ -95,7 +95,7 @@ Date and DateTime data can be defined with format strings. Default are
 the ISO formats.
 
 ### Documentation for Julia.Base writedlm()
-More information about Base funktionality and (keyword-) arguments - which are also 
+More information about Base functionality and (keyword-) arguments - which are also 
 supported by `writedlm2()` - is available in the 
 [stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
 
