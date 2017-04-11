@@ -55,15 +55,15 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 ### Documentation for Julia.Base readdlm() 
 More information about Base funktionality and (keyword-) arguments - which are also 
-supported by `readdlm2()` - are available in the 
-[Stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
+supported by `readdlm2()` - is available in the 
+[stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Additional Keyword Arguments `readdlm2()`
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default for d.d -> d,d
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
-### Compare Default Functionality `readdlm()` - `readdlm2()`
+### Compare Default Functionality readdlm() with `readdlm2()`
 | Module        | Function With Arguments              | Delimiter| Dec.Mark | Date(Time)   |
 |:------------- |:------------------------------------ |:--------:|:--------:|:------------ |
 | Base.DataFmt  | readdlm()                            |`' '`     |`'.'`     | n.a.(String) |
@@ -96,15 +96,15 @@ the ISO formats.
 
 ### Documentation for Julia.Base writedlm()
 More information about Base funktionality and (keyword-) arguments - which are also 
-supported by `writedlm2()` - are available in the 
-[Stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
+supported by `writedlm2()` - is available in the 
+[stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: decimal mark character, default is a comma
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write Date, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write DateTime, default is ISO
 
-### Compare Default Functionality `writedlm()` - `writedlm2()`
+### Compare Default Functionality writedlm() with `writedlm2()`
 | Module        | Function With Arguments          | Delimiter| Dec.Mark | Date(Time) |
 |:------------- |:-------------------------------- |:--------:|:--------:|:---------- |
 | Base.DataFmt  | writedlm()                       |`'\t'`    |`'.'`     | ISO-Format |
