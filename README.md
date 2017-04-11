@@ -40,9 +40,9 @@ Methods added by module `ReadWriteDlm2`:
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-A preprocessing of input with regex substitution takes place, which by default 
-changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=(...)`
-another regular expression can be defined or regex substitution can be switched of
+By default a preprocessing of input with regex substitution takes place, which  
+changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
+an other regular expression Tupel can be defined or regex substitution can be switched of
 with `rs=()`.
 
 The columns are expected to be separated by `';'`, an other `delim`
@@ -87,7 +87,7 @@ Methods added by module `ReadWriteDlm2`:
 
 By default a preprocessing of floats takes place, which are parsed to strings
 with decimal mark changed from `'.'` to `','`. With an keyword argument 
-annother decimal mark can be selected, to switch off preprocessing set `decimal='.'`.
+an other decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
 
 The columns will be separated by `';'`, an other `delim` (Char or String)
 can be defined. In addition to Base writedlm() function the output format for 
