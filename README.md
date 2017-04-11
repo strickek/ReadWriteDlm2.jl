@@ -101,6 +101,7 @@ supported by `writedlm2()` - is available in the
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: decimal mark character, default is a comma
+* `write_short=true`: Bool - use print_shortest() to write data
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write Date, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write DateTime, default is ISO
 
