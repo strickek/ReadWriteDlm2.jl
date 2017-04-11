@@ -14,7 +14,7 @@ This package is unregistered and so must be installed using Pkg.clone
 ## Basic Example: How To Use ReadWriteDlm2
 
 ```
-julia> using ReadWriteDlm2              # make new methods of ReadWriteDlm2 available
+julia> using ReadWriteDlm2              # make new functions of ReadWriteDlm2 available
 
 julia> A = [1 1.2; "text" Date(2017)];  # create test array with: Int, Float64, String and Date type
 
@@ -55,9 +55,8 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 ### Documentation for Julia.Base readdlm() 
 More information about Base funktionality and (keyword-) arguments - which are also 
-supported by `readdlm2()` - are available in the Julia documentation: 
-
-* [Stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm) 
+supported by `readdlm2()` - are available in the 
+[Stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Additional Keyword Arguments `readdlm2()`
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default for d.d -> d,d
@@ -97,9 +96,8 @@ the ISO formats.
 
 ### Documentation for Julia.Base writedlm()
 More information about Base funktionality and (keyword-) arguments - which are also 
-supported by `writedlm2()` - are available in the Julia documentation: 
-
-* [Stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm)
+supported by `writedlm2()` - are available in the 
+[Stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: decimal mark character, default is a comma
