@@ -34,15 +34,15 @@ If all data is numeric, the result will be a numeric array. If some elements
 cannot be parsed as numbers, a heterogeneous array of numbers and strings
 is returned.
 
-In addition to Base dlmread(), strings are also parsed for ISO Date-
+In addition to Base readdlm(), strings are also parsed for ISO Date-
 and DateTime formats by default. To switch off Dates parsing set both
 formatstrings in options to: `dfs = \"\", dtfs = \"\"`.
 
 Additional special options with default value are:
 
-    rs = (r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel)
-    dfs = \"yyyy-mm-dd\" (format string for Date parsing)
-    dtfs = \"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
+    rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel)
+    dfs=\"yyyy-mm-dd\" (format string for Date parsing)
+    dtfs=\"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
 
 Code-Example for reading the Excel(lang=german) textfile `test_de.csv`:
 
@@ -132,15 +132,16 @@ place, which are parsed to strings with decimal mark changed from `'.'` to `','`
 
 The columns will be separated by `';'`, an other `delim` can be defined.
 
-In addition to Base dlmwrite() function the output format for Julia
+In addition to Base writedlm() function the output format for Julia
 Date- and DateTime-data can be defined with format strings. Default are
 the ISO Formats.
 
 Additional special options with default value are:
 
-    decimal = ',' (decimal mark character)
-    dfs = \"yyyy-mm-dd\" (format string for Date writing)
-    dtfs = \"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
+    decimal=',' (decimal mark character)
+    write_short=true (use print_shortest() to write)
+    dfs=\"yyyy-mm-dd\" (format string for Date writing)
+    dtfs=\"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
 
 Code-Example for writing the Julia `test` data
 to an text file `test_de.csv` readable by Excel(lang=german):
