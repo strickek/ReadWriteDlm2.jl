@@ -14,7 +14,7 @@ This package is unregistered and so must be installed using Pkg.clone
 ## Basic Example: How To Use ReadWriteDlm2
 
 ```
-julia> using ReadWriteDlm2              # make new functions of ReadWriteDlm2 available
+julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
 
 julia> A = [1 1.2; "text" Date(2017)];  # create test array with: Int, Float64, String and Date type
 
@@ -47,7 +47,7 @@ with `rs=()`.
 
 The columns are expected to be separated by `';'`, an other `delim`
 can be defined. End of line `eol` is `'\n'` by default. In addition 
-to standard dlmread(), strings are also parsed for ISO Date and DateTime formats 
+to Base readdlm(), strings are also parsed for ISO Date and DateTime formats 
 by default. To switch off Dates parsing set: `dfs="", dtfs=""`.
 
 If all data is numeric, the result will be a numeric array. In other cases
