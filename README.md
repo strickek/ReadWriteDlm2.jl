@@ -89,7 +89,7 @@ By default a pre-processing of floats takes place, which are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
 By default `3000.0` is written as `3e3` - same as Base readdlm() does -
-to write like normal print set keyword argument `write_short=false`.
+to write like normal print set: `write_short=false`.
 
 
 The columns will be separated by `';'`, another `delim` (Char or String)
