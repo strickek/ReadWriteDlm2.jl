@@ -20,12 +20,13 @@ The following special readdlm2() methods have been added by module `ReadWriteDlm
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-They are designed to support
-the decimal comma parts of the world and to allow parsing the input strings
-for Date- and DateTime-types.
+They are designed to support the decimal comma parts of the world and 
+to allow parsing the input strings for Date- and DateTime-types.
 
- a preprocessing of input with regex substitution
-takes place, which by default changes the decimal mark from `d,d` to `d.d`.
+By default a preprocessing of input with regex substitution takes place, which
+changes the decimal mark from d,d to d.d. With the keyword argument rs=( , ) 
+another regular expression Tupel can be defined or the regex substitution can 
+be switched of with rs=().
 
 The columns are expected to be separated by `';'`, an other `delim`
 can be defined. End of line `eol` is the standard `'\\n'` by default.
@@ -71,11 +72,12 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
 function readdlm2auto(input, dlm, T, eol, auto;
         rs::Tuple = (r"(\d),(\d)", s"\1.\2"),
         dtfs::AbstractString = "yyyy-mm-ddTHH:MM:SS",
-        dfs::AbstractString = "yyyy-mm-dd", opts...)
+        dfs::AbstractString = "yyyy-mm-dd", 
+        opts...)
     
     rs == (r"(\d),(\d)", s"\1.\2") && dlm == ',' && error(
         "Error in readdlm2():  
-        rs = (r\"(\d),(\d)\", s\"\1.\2\") and delim = ',' is not allowed.")
+        rs = (r\"(\d),(\d)\", s\"\1.\2\") and delim = ',' is not allowed - change rs or delim!")
 
     if rs != ()
         # read input string, do regex substitution
@@ -83,7 +85,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         # using Base.DataFmt internal functions to read dlm-string
         z = readdlm_string(s, dlm, T, eol, auto, val_opts(opts))
     else # read with standard readdlm(), no regex
-        if auto==true
+        if auto == true
             z = readdlm(input, dlm, eol; opts...)
         else
             z = readdlm(input, dlm, T, eol; opts...)
@@ -165,13 +167,16 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
 
 function floatdec(a, decimal, write_short) # print shortest and change decimal mark
     iob=IOBuffer()
-    write_short ? print_shortest(iob, a) : print(iob, a)
-    if decimal != '.'
-        ar = replace(String(take!(iob)), '.', decimal)
+    if write_short == true
+        print_shortest(iob, a) 
     else
-        ar = String(take!(iob))
+        print(iob, a)
     end
-    return ar
+    if decimal != '.'
+        return replace(String(take!(iob)), '.', decimal)
+    else
+        return String(take!(iob))
+    end
 end
 
 function writedlm2auto(f, a, dlm;
@@ -182,18 +187,14 @@ function writedlm2auto(f, a, dlm;
         opts...)
 
     string(dlm) == string(decimal) && error(
-        "Error in writedlm(): Special decimal mark = delimiter = ´$(dlm)´")
+        "Error in writedlm(): decimal = delim = ´$(dlm)´ - change decimal or delim!")
 
     if isa(a, Union{Number, Date, DateTime})
-         a1 = a # keep a in a1
-         a = [a]  # create 1 element Array a
-         restore = true
-     else
-         restore = false
+         a = [a]  # create 1 element Array 
      end
 
      if isa(a, AbstractArray)
-         #format dates only if formatstrings are not ISO and not ""
+         #format dates only if format strings are not ISO and not ""
          fdt = (dtfs != "yyyy-mm-ddTHH:MM:SS") && (dtfs != "") # Bool: format DateTime
          fd = (dfs != "yyyy-mm-dd") && (dfs != "")    # Bool: format Date
 
@@ -205,11 +206,8 @@ function writedlm2auto(f, a, dlm;
              isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtfs):
              isa(a[i], Date) && fd ? Dates.format(a[i], dfs): string(a[i])
          end
-         if restore
-             a = a1 # restore a
-         end
-     else
-         b = a # a is not a Number, Date, DateTime or Array -> no preprocessing
+     else  # a is not a Number, Date, DateTime or Array -> no preprocessing
+         b = a 
      end
 
      writedlm(f, b, dlm; opts...)
