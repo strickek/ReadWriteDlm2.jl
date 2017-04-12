@@ -88,6 +88,9 @@ Methods added by module `ReadWriteDlm2`:
 By default a preprocessing of floats takes place, which are parsed to strings
 with decimal mark changed from `'.'` to `','`. With an keyword argument
 an other decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
+By default `3000.0` is written as `3e3` - same as Base readdlm() does -
+to write like normal print set keyword argument `write_short=false`.
+
 
 The columns will be separated by `';'`, an other `delim` (Char or String)
 can be defined. In addition to Base writedlm() function the output format for
