@@ -15,7 +15,7 @@ This package is unregistered and so must be installed using Pkg.clone
 
     Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
     
-## Basic Example: How To Use ReadWriteDlm2
+### Basic Example: How To Use ReadWriteDlm2
 
 ```
 julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
