@@ -37,11 +37,14 @@ by default. To switch off Dates parsing set: `dfs="", dtfs=""`.
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
 
-Additional special options with default value are:
+Additional keyword arguments with default value are:
 
     rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel)
     dfs=\"yyyy-mm-dd\" (format string for Date parsing)
     dtfs=\"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
+
+Find more information about Base readdlm() functionality and (keyword) arguments -
+which are also supported by `readdlm2()` - in `help` for `readdlm`.
 
 Code-Example for reading the Excel(lang=german) textfile `test_de.csv`:
 
