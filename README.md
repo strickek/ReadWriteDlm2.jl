@@ -34,6 +34,8 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
 ```
 
 ## New Function `readdlm2()`:
+Read a matrix from the source where each line (separated by eol) gives one row, with
+elements separated by the given delim. The source can be a text file, stream or byte array. 
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
@@ -79,6 +81,9 @@ Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data
 
 
 ## New Function `writedlm2()`:
+Write A (a vector, matrix, or an iterable collection of iterable rows) as text to f 
+(either a filename string or an IO stream). The columns will be separated by `';'`,
+another `delim` (Char or String) can be defined.
 
     writedlm2(f::IO, A; options...)
     writedlm2(f::IO, A, delim; options...)
@@ -91,11 +96,8 @@ another decimal mark can be defined, to switch off preprocessing set this to `de
 Like in Base readdlm(), `writedlm2()` write `3000.0` by default short as `3e3`, to write 
 in the longer print() format set: `write_short=false`.
 
-
-The columns will be separated by `';'`, another `delim` (Char or String)
-can be defined. In addition to Base writedlm() function the output format for
-Date and DateTime data can be defined with format strings. Defaults are
-the ISO formats.
+In addition to Base writedlm() function the output format for Date and DateTime 
+data can be defined with format strings. Defaults are the ISO formats.
 
 ### Documentation For Base.writedlm()
 More information about Base functionality and (keyword-) arguments - which are also 
