@@ -3,7 +3,8 @@ Tested for release(Julia 0.5) and nightly(allow failures). Click the status imag
 
 Linux, Mac OS X: [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)    Windows 32, 64: [![Build status](https://ci.appveyor.com/api/projects/status/h0ikgidytp48w5kk/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl-drp7c/branch/master)    Code coverage: [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are similar to readdlm() and writedlm() of Julia.Base.  Differences are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. 
+The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are similar to readdlm() and writedlm() of Julia.Base.  Differences are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. The basic idea of 
+this package is to support the [decimal comma parts of the world](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#/media/File:DecimalSeparator.svg).
 
 ## Installation
 
