@@ -167,9 +167,9 @@ function floatdec(a, decimal, write_short) # print shortest and change decimal m
     iob=IOBuffer()
     write_short ? print_shortest(iob, a) : print(iob, a)
     if decimal != '.'
-        ar = replace(takebuf_string(iob), '.', decimal)
+        ar = replace(String(take!(iob)), '.', decimal)
     else
-        ar = takebuf_string(iob)
+        ar = String(take!(iob))
     end
     return ar
 end
