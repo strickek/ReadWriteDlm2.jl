@@ -40,14 +40,14 @@ Methods added by module `ReadWriteDlm2`:
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-By default a preprocessing of input with regex substitution takes place, which  
+By default a preprocessing of input with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
 an other regular expression Tupel can be defined or regex substitution can be switched of
 with `rs=()`.
 
 The columns are expected to be separated by `';'`, an other `delim`
-can be defined. End of line `eol` is `'\n'` by default. In addition 
-to Base readdlm(), strings are also parsed for ISO Date and DateTime formats 
+can be defined. End of line `eol` is `'\n'` by default. In addition
+to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
 by default. To switch off Dates parsing set: `dfs="", dtfs=""`.
 
 If all data is numeric, the result will be a numeric array. In other cases
@@ -86,11 +86,11 @@ Methods added by module `ReadWriteDlm2`:
     writedlm2(filename::AbstractString, A, delim; options...)
 
 By default a preprocessing of floats takes place, which are parsed to strings
-with decimal mark changed from `'.'` to `','`. With an keyword argument 
+with decimal mark changed from `'.'` to `','`. With an keyword argument
 an other decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
 
 The columns will be separated by `';'`, an other `delim` (Char or String)
-can be defined. In addition to Base writedlm() function the output format for 
+can be defined. In addition to Base writedlm() function the output format for
 Date and DateTime data can be defined with format strings. Default are
 the ISO formats.
 
