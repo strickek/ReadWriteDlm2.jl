@@ -65,11 +65,11 @@ supported by `readdlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
-### Compare Default Functionality readdlm() With `readdlm2()`
-| Module        | Function With Arguments              | Delimiter| Dec.Mark | Date(Time)   |
-|:------------- |:------------------------------------ |:--------:|:--------:|:------------ |
-| Base.DataFmt  | readdlm()                            |`' '`     |`'.'`     | n.a.(String) |
-| ReadWriteDlm2 | readdlm2()                           |`';'`     |`','`     | parse ISO    |
+### Compare Default Functionality readdlm() - readdlm2()
+| Module        | Function               | Delimiter| Dec.Mark | Date(Time)   |
+|:------------- |:---------------------- |:--------:|:--------:|:------------ |
+| Base.DataFmt  | readdlm()              |`' '`     |`'.'`     | n.a.(String) |
+| ReadWriteDlm2 | readdlm2()             |`';'`     |`','`     | parse ISO    |
 
 ### Example `readdlm2()`
 Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data`:
@@ -108,11 +108,11 @@ supported by `writedlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write Date, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write DateTime, default is ISO
 
-### Compare Default Functionality writedlm() With `writedlm2()`
-| Module        | Function With Arguments          | Delimiter| Dec.Mark | Date(Time) |
-|:------------- |:-------------------------------- |:--------:|:--------:|:---------- |
-| Base.DataFmt  | writedlm()                       |`'\t'`    |`'.'`     | ISO-Format |
-| ReadWriteDlm2 | writedlm2()                      |`';'`     |`','`     | ISO-Format |
+### Compare Default Functionality writedlm() - writedlm2()
+| Module        | Function           | Delimiter| Dec.Mark | Date(Time) |
+|:------------- |:------------------ |:--------:|:--------:|:---------- |
+| Base.DataFmt  | writedlm()         |`'\t'`    |`'.'`     | ISO-Format |
+| ReadWriteDlm2 | writedlm2()        |`';'`     |`','`     | ISO-Format |
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel(lang=german):
