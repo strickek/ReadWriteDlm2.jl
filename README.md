@@ -11,7 +11,7 @@ This package is unregistered and so must be installed using Pkg.clone
 
     Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
     
-## Basic Example: How To Use ReadWriteDlm2
+## Basic Example: How To Use `ReadWriteDlm2`
 
 ```
 julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
@@ -29,9 +29,7 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
   "text"   2017-01-01
 ```
 
-## `readdlm2()`
-
-Methods added by module `ReadWriteDlm2`:
+## New Function `readdlm2()`
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
@@ -42,10 +40,10 @@ Methods added by module `ReadWriteDlm2`:
 
 By default a preprocessing of input with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
-an other regular expression Tupel can be defined or regex substitution can be switched of
-with `rs=()`.
+another regular expression Tupel can be defined. Regex substitution preprocessing
+can be switched off with: `rs=()`.
 
-The columns are expected to be separated by `';'`, an other `delim`
+The columns are expected to be separated by `';'`, another `delim`
 can be defined. End of line `eol` is `'\n'` by default. In addition
 to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
 by default. To switch off Dates parsing set: `dfs="", dtfs=""`.
@@ -53,8 +51,8 @@ by default. To switch off Dates parsing set: `dfs="", dtfs=""`.
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
 
-### Documentation for Julia.Base readdlm() 
-More information about Base functionality and (keyword-) arguments - which are also 
+### Documentation For Base.readdlm() 
+More information about Base functionality and (keyword) arguments - which are also 
 supported by `readdlm2()` - is available in the 
 [stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
@@ -63,7 +61,7 @@ supported by `readdlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
-### Compare Default Functionality readdlm() with `readdlm2()`
+### Compare Default Functionality readdlm() With `readdlm2()`
 | Module        | Function With Arguments              | Delimiter| Dec.Mark | Date(Time)   |
 |:------------- |:------------------------------------ |:--------:|:--------:|:------------ |
 | Base.DataFmt  | readdlm()                            |`' '`     |`'.'`     | n.a.(String) |
@@ -76,9 +74,7 @@ Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data
 
 
 
-## `writedlm2()`
-
-Methods added by module `ReadWriteDlm2`:
+## New Function `writedlm2()`
 
     writedlm2(f::IO, A; options...)
     writedlm2(f::IO, A, delim; options...)
@@ -97,7 +93,7 @@ can be defined. In addition to Base writedlm() function the output format for
 Date and DateTime data can be defined with format strings. Default are
 the ISO formats.
 
-### Documentation for Julia.Base writedlm()
+### Documentation For Base.writedlm()
 More information about Base functionality and (keyword-) arguments - which are also 
 supported by `writedlm2()` - is available in the 
 [stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
@@ -108,7 +104,7 @@ supported by `writedlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write Date, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), defines how to write DateTime, default is ISO
 
-### Compare Default Functionality writedlm() with `writedlm2()`
+### Compare Default Functionality writedlm() With `writedlm2()`
 | Module        | Function With Arguments          | Delimiter| Dec.Mark | Date(Time) |
 |:------------- |:-------------------------------- |:--------:|:--------:|:---------- |
 | Base.DataFmt  | writedlm()                       |`'\t'`    |`'.'`     | ISO-Format |
