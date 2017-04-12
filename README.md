@@ -11,7 +11,7 @@ This package is unregistered and so must be installed using Pkg.clone
 
     Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
     
-## Basic Example: How To Use `ReadWriteDlm2`
+## Basic Example: How To Use ReadWriteDlm2
 
 ```
 julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
@@ -29,7 +29,7 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
   "text"   2017-01-01
 ```
 
-## New Function `readdlm2()`
+## New Function `readdlm2()`:
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
@@ -38,9 +38,9 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-By default a preprocessing of input with regex substitution takes place, which
+By default a pre-processing of input with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
-another regular expression Tupel can be defined. Regex substitution preprocessing
+another regular expression Tupel can be defined. Regex substitution pre-processing
 can be switched off with: `rs=()`.
 
 The columns are expected to be separated by `';'`, another `delim`
@@ -74,23 +74,23 @@ Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data
 
 
 
-## New Function `writedlm2()`
+## New Function `writedlm2()`:
 
     writedlm2(f::IO, A; options...)
     writedlm2(f::IO, A, delim; options...)
     writedlm2(filename::AbstractString, A; options...)
     writedlm2(filename::AbstractString, A, delim; options...)
 
-By default a preprocessing of floats takes place, which are parsed to strings
-with decimal mark changed from `'.'` to `','`. With an keyword argument
-an other decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
+By default a pre-processing of floats takes place, which are parsed to strings
+with decimal mark changed from `'.'` to `','`. With a keyword argument
+another decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
 By default `3000.0` is written as `3e3` - same as Base readdlm() does -
 to write like normal print set keyword argument `write_short=false`.
 
 
-The columns will be separated by `';'`, an other `delim` (Char or String)
+The columns will be separated by `';'`, another `delim` (Char or String)
 can be defined. In addition to Base writedlm() function the output format for
-Date and DateTime data can be defined with format strings. Default are
+Date and DateTime data can be defined with format strings. Defaults are
 the ISO formats.
 
 ### Documentation For Base.writedlm()
