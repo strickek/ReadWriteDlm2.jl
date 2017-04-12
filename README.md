@@ -92,7 +92,7 @@ another `delim` (Char or String) can be defined.
 
 By default a pre-processing of floats takes place, which are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
-another decimal mark can be defined, to switch off preprocessing set this to `decimal='.'`.
+another decimal mark can be defined, to switch off pre-processing set this: `decimal='.'`.
 Like in Base readdlm(), `writedlm2()` write `3000.0` by default short as `3e3`. To write 
 in the normal print() format set: `write_short=false`.
 
