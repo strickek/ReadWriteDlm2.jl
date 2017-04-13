@@ -6,7 +6,7 @@ using Base.Test
 
 # Run tests
 
-# 1st block modified standardtests using new methods of DataFmtExt
+# 1st block modified standardtests
 # Test readdlm2() and writedlm2() - License is MIT: http://julialang.org/license
 
 isequaldlm(m1, m2, t) = isequal(m1, m2) && (eltype(m1) == eltype(m2) == t)
