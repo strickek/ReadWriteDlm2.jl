@@ -153,11 +153,12 @@ let x = ["a" "b"; "d" ""], io = IOBuffer()
     @test readdlm2(io) == x
 end
 
+# change to take! in 0.6!!
 let x = ["\"hello\"", "world\""], io = IOBuffer()
     writedlm2(io, x, quotes=false)
-    @test String(take!(io)) == "\"hello\"\nworld\"\n"
+    @test takebuf_string(io) == "\"hello\"\nworld\"\n"
     writedlm2(io, x)
-    @test String(take!(io)) == "\"\"\"hello\"\"\"\n\"world\"\"\"\n"
+    @test takebuf_string(io) == "\"\"\"hello\"\"\"\n\"world\"\"\"\n"
 end
 
 # test comments
