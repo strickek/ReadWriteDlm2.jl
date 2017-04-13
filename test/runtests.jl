@@ -1,7 +1,7 @@
 #Tests for WriteReadDlm2 - License is MIT: http://julialang.org/license
 
 #Start Test Script
-using WriteReadDlm2
+using ReadWriteDlm2
 using Base.Test
 
 # Run tests
