@@ -25,9 +25,9 @@ elements separated by the given delim. The source can be a text file, stream or 
 to allow parsing the input strings for Date- and DateTime-types.
 
 By default a pre-processing of input with regex substitution takes place, which
-changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
-another regular expression Tupel can be defined. Regex substitution pre-processing
-can be switched off with: `rs=()`.
+changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=..`
+another regex/substitution Tupel or the used decimal mark Char can be defined. Regex
+substitution pre-processing can be switched off with: `rs=()` or `rs='.'`.
 
 The columns are expected to be separated by `';'`, another `delim`
 can be defined. End of line `eol` is `'\\n'` by default. In addition
@@ -39,7 +39,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 Additional keyword arguments with default value are:
 
-    rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel)
+    rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel, or short: rs=',')
     dfs=\"yyyy-mm-dd\" (format string for Date parsing)
     dtfs=\"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
 
@@ -71,20 +71,31 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
     readdlm2auto(input, dlm, T, eol, false; opts...)
 
 function readdlm2auto(input, dlm, T, eol, auto;
-        rs::Tuple = (r"(\d),(\d)", s"\1.\2"),
-        dtfs::AbstractString = "yyyy-mm-ddTHH:MM:SS",
-        dfs::AbstractString = "yyyy-mm-dd", 
+        rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
+        dfs::AbstractString="yyyy-mm-dd", 
         opts...)
     
-    rs == (r"(\d),(\d)", s"\1.\2") && dlm == ',' && error(
+   if rs != () && rs != '.'
+        # Create regex substitution Tupel if rs is a Char 
+        if isa(rs, Char) 
+            rs == dlm && error(
+            "Error in readdlm2():  
+            rs::Char = delim = `$(dlm)` is not allowed - change rs or delim!")
+            rs=(Regex("(\\d)$rs(\\d)"), s"\1.\2")
+        end
+        
+        # If rs Default-Tupel(d,d -> d.d.): dlm = ',' is not allowed
+        rs == (r"(\d),(\d)", s"\1.\2") && dlm == ',' && error(
         "Error in readdlm2():  
-        rs = (r\"(\d),(\d)\", s\"\1.\2\") and delim = ',' is not allowed - change rs or delim!")
+        rs = (r\"(\\d),(\\d)\", s\"\\1.\\2\") and delim = ',' is not allowed - change rs or delim!")
 
-    if rs != ()
         # read input string, do regex substitution
         s = replace(readstring(input), rs[1], rs[2])
+        
         # using Base.DataFmt internal functions to read dlm-string
         z = readdlm_string(s, dlm, T, eol, auto, val_opts(opts))
+        
     else # read with standard readdlm(), no regex
         if auto == true
             z = readdlm(input, dlm, eol; opts...)
