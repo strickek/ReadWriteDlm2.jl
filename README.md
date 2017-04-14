@@ -1,10 +1,9 @@
 # ReadWriteDlm2 - Read And Write Decimal Comma "CSV"
-Tested for release(Julia 0.5) and nightly(allow failures). Click the status images for detail:
+Tested for release(Julia 0.5) and nightly(allow failures). Click the status images for details:
 
 Linux, Mac OS X: [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)    Windows 32, 64: [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)    Code coverage: [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are similar to readdlm() and writedlm() of Julia.Base.  Differences are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. The basic idea of 
-this package is to support the green decimal comma countries:
+The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are similar to readdlm() and writedlm() of Julia.Base.  Differences are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. The basic idea of this package is to support the green decimal comma countries:
 
 <p><a href="https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#/media/File:DecimalSeparator.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/DecimalSeparator.svg" alt="DecimalSeparator.svg" height="325" width="640"></a><br>Map provided by <a href="//commons.wikimedia.org/wiki/User:NuclearVacuum" title="User:NuclearVacuum">NuclearVacuum</a> - <a href="//commons.wikimedia.org/wiki/File:BlankMap-World6.svg" title="File:BlankMap-World6.svg">File:BlankMap-World6.svg</a>
 , <a href="http://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=10843055">Link</a></p>
@@ -63,7 +62,7 @@ supported by `readdlm2()` - is available in the
 [stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Additional Keyword Arguments `readdlm2()`
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default for d,d -> d.d - short form: `rs=','`
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default (d,d -> d.d), short form: `rs=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
