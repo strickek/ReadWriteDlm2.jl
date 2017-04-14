@@ -45,9 +45,9 @@ elements separated by the given delim. The source can be a text file, stream or 
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
 By default a pre-processing of input with regex substitution takes place, which
-changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=( , )`
-another regular expression Tupel can be defined. Regex substitution pre-processing
-can be switched off with: `rs=()`.
+changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=..`
+another regex/substitution Tupel or a decimal mark Char can be defined. Regex
+substitution pre-processing can be switched off with: `rs=()` or `rs='.'`.
 
 The columns are expected to be separated by `';'`, another `delim`
 can be defined. End of line `eol` is `'\n'` by default. In addition
@@ -63,7 +63,7 @@ supported by `readdlm2()` - is available in the
 [stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Additional Keyword Arguments `readdlm2()`
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default for d.d -> d,d
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, default for d,d -> d.d - short form: `rs=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
