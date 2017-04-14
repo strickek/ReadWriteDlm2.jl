@@ -71,7 +71,7 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
     readdlm2auto(input, dlm, T, eol, false; opts...)
 
 function readdlm2auto(input, dlm, T, eol, auto;
-        rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
+        rs::Union{Tuple, Char}=(r"(\d),(\d)", s"\1.\2"),
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd", 
         opts...)
