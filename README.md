@@ -71,6 +71,7 @@ supported by `readdlm2()` - is available in the
 |:------------- |:---------------------- |:--------:|:--------:|:------------ |
 | Base.DataFmt  | readdlm()              |`' '`     |`'.'`     | n.a.(String) |
 | ReadWriteDlm2 | readdlm2()             |`';'`     |`','`     | parse ISO    |
+`writedlm2(f, ' ', rs='.', dfs="", dtfs="")` works like `readdlm(f)`
 
 ### Example `readdlm2()`
 Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data`:
