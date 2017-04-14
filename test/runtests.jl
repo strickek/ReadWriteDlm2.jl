@@ -410,3 +410,8 @@ writedlm2("test.csv", a, decimal='.')
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == 10.9
+
+a = [10.9 12.5; Date(2017) DateTime(2017)]
+writedlm2("test.csv", a, ',', decimal='€')
+b = readdlm2("test.csv", ',', rs='€')
+@test a == b
