@@ -25,9 +25,10 @@ elements separated by the given delim. The source can be a text file, stream or 
 to allow parsing the input strings for Date- and DateTime-types.
 
 By default a pre-processing of input with regex substitution takes place, which
-changes the decimal mark from `d,d` to `d.d`. With the keyword argument `rs=..`
-another regex/substitution Tupel or the used decimal mark Char can be defined. Regex
-substitution pre-processing can be switched off with: `rs=()` or `rs='.'`.
+changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
+the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(..)`
+a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
+Regex substitution pre-processing can be switched off with: `rs=()` or `rs='.'`.
 
 The columns are expected to be separated by `';'`, another `delim`
 can be defined. End of line `eol` is `'\\n'` by default. In addition
@@ -39,7 +40,8 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 Additional keyword arguments with default value are:
 
-    rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel, or short: rs=',')
+    decimal=',' (Char used by rs, no function if special rs-Tupel)
+    rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\") (regex (r,s)-Tupel)
     dfs=\"yyyy-mm-dd\" (format string for Date parsing)
     dtfs=\"yyyy-mm-ddTHH:MM:SS\" (format string for DateTime)
 
@@ -71,24 +73,24 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
     readdlm2auto(input, dlm, T, eol, false; opts...)
 
 function readdlm2auto(input, dlm, T, eol, auto;
-        rs::Union{Tuple, Char}=(r"(\d),(\d)", s"\1.\2"),
+        decimal::Char=',',
+        rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd", 
         opts...)
     
-   if rs != () && rs != '.'
-        # Create regex substitution Tupel if rs is a Char 
-        if isa(rs, Char) 
-            rs == dlm && error(
-            "Error in readdlm2():  
-            rs::Char = delim = `$(dlm)` is not allowed - change rs or delim!")
-            rs=(Regex("(\\d)$rs(\\d)"), s"\1.\2")
+   if rs != () && decimal != '.' # pre-processing of decimal mark should be done
+        
+        # Cange default regex substitution Tupel if decimal != ','
+        if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
+            rs=(Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
         
-        # If rs Default-Tupel(d,d -> d.d.): dlm = ',' is not allowed
-        rs == (r"(\d),(\d)", s"\1.\2") && dlm == ',' && error(
-        "Error in readdlm2():  
-        rs = (r\"(\\d),(\\d)\", s\"\\1.\\2\") and delim = ',' is not allowed - change rs or delim!")
+        # Error if decimal mark to replace is also the delim Char
+        "1"*string(dlm)*"1" != replace("1"*string(dlm)*"1", rs[1], rs[2]) && error(
+            "Error in readdlm2(): 
+            Pre-prozessing with decimal mark Regex substitution
+            for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!")
 
         # read input string, do regex substitution
         s = replace(readstring(input), rs[1], rs[2])
