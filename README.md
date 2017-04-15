@@ -97,7 +97,7 @@ By default a pre-processing of floats takes place, which are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined, to switch off pre-processing set this: `decimal='.'`.
 
-Like in Base readdlm(), `writedlm2()` write `3000.0` by default short as `3e3`. To write 
+Like in Base writedlm(), `writedlm2()` write `3000.0` by default short as `3e3`. To write 
 numbers in the normal print() format set keyword argument: `write_short=false`.
 
 In addition to Base writedlm() function the output format for Date and DateTime 
