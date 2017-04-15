@@ -413,5 +413,15 @@ rm("test.csv")
 
 a = [10.9 12.5; Date(2017) DateTime(2017)]
 writedlm2("test.csv", a, ',', decimal='€')
-b = readdlm2("test.csv", ',', rs='€')
+b = readdlm2("test.csv", ',', decimal='€')
+@test a == b
+
+a = [10.9 12.5; Date(2017) DateTime(2017)]
+writedlm2("test.csv", a, ',', decimal='.')
+b = readdlm2("test.csv", ',', decimal='.')
+@test a == b
+
+a = [10.9 12.5; Date(2017) DateTime(2017)]
+writedlm2("test.csv", a)
+b = readdlm2("test.csv")
 @test a == b
