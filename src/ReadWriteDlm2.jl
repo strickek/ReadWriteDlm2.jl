@@ -28,7 +28,7 @@ By default a pre-processing of input with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
 the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(..)`
 a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
-Regex substitution pre-processing can be switched off with: `rs=()` or `rs='.'`.
+Regex substitution pre-processing can be switched off with: `rs=()` or `decimal='.'`.
 
 The columns are expected to be separated by `';'`, another `delim`
 can be defined. End of line `eol` is `'\\n'` by default. In addition
