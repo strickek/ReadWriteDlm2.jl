@@ -120,7 +120,7 @@ supported by `writedlm2()` - is available in the
 | Base.DataFmt  | writedlm()         |`'\t'`    |`'.'`     | ISO-Format |
 | ReadWriteDlm2 | writedlm2()        |`';'`     |`','`     | ISO-Format |
 
-`writedlm2(f, A, '\t', decimal='.')` works like `writedlm(f)`.
+`writedlm2(f, A, '\t', decimal='.')` works like `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel(lang=german):
