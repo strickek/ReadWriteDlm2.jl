@@ -95,8 +95,9 @@ By default, a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
-Like in `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. To write 
-numbers in the normal print() format set keyword argument: `write_short=false`.
+Like `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. When
+reading a file with mixed data, `3e3` will be parsed as Integer. To avoid this, write like
+`print()` and set: `write_short=false`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
