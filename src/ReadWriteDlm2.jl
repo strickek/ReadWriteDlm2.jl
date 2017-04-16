@@ -152,7 +152,7 @@ Defaults are the ISO formats.
 #Additional Keyword Arguments
 
 * `decimal=','`: decimal mark character, default is a comma
-* `write_short=true`: Bool - use print_shortest() to write data, set false für print()
+* `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 
