@@ -19,18 +19,16 @@ export readdlm2, writedlm2
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
 Read a matrix from the source. The `source` can be a text file, stream or byte array.
-Each line (separated by `eol`) gives one row, with elements separated by the given `delim`.  
+Each line (separated by `eol`, this is `'\\n'` by default) gives one row. The columns are
+separated by `';'`, another `delim` can be defined.
 
-The columns are expected to be separated by `';'`, another `delim` can be defined.
-
-By default, a pre-processing of input with regex substitution takes place, which
+By default, a pre-processing of `source` with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
 the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(.., ..)`
 a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
 Regex substitution pre-processing can be switched off with: `rs=()`.
 
-End of line `eol` is `'\\n'` by default. In addition
-to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
+In addition to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
 by default. To switch off parsing Dates formats set: `dfs=\"\", dtfs=\"\"`.
 
 If all data is numeric, the result will be a numeric array. In other cases
@@ -39,9 +37,9 @@ a heterogeneous array of numbers, dates and strings is returned.
 # Additional Keyword Arguments
 
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
-* 'rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")': Regex (r,s)-Tupel), change `d,d` to `d.d` if `decimale=','`
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change `d,d` to `d.d` if `decimale=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
-* 'dtfs=\"yyyy-mm-ddTHH:MM:SS\"': format string for DateTime parsing, default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
 which are also supported by `readdlm2()` - in `help` for `readdlm()`.
@@ -138,15 +136,14 @@ function readdlm2auto(input, dlm, T, eol, auto;
     writedlm2(f::AbstractString, A, delim; opts...)
 
 Write `A` (a vector, matrix, or an iterable collection of iterable rows) as text to `f` 
-(either a filename string or an IO stream). 
-
-The columns will be separated by `';'`, another `delim` (Char or String) can be defined.
+(either a filename string or an IO stream). The columns will be separated by `';'`, 
+another `delim` (Char or String) can be defined.
 
 By default a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
-Like in `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. To write 
+Like in writedlm() of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. To write 
 in the normal print() format set: `write_short=false`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
@@ -156,7 +153,7 @@ Defaults are the ISO formats.
 
 * `decimal=','`: decimal mark character, default is a comma
 * `write_short=true`: Bool - use print_shortest() to write data
-* `dfs=\"yyyy-mm-dd\"': format string, Date write format, default is ISO
+* `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 
 # Code-Example 
