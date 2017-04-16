@@ -33,7 +33,7 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
 ```
 
 ## Function `readdlm2()`
-Read a matrix from the `source`. The `source` can be a text file, stream or byte array. Each line, separated
+Read a matrix from `source`. The `source` can be a text file, stream or byte array. Each line, separated
 by `eol` (default is `'\n'`), gives one row. The columns are separated by `';'`, another `delim` can be defined. 
 
     readdlm2(source; options...)
@@ -96,8 +96,8 @@ with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
 Like `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. When
-reading a file with mixed data, `3e3` will be parsed as Integer. To avoid this, write like
-`print()` and set: `write_short=false`.
+reading a file with mixed data, `3e3` will be parsed as Integer. To write long like print()
+set: `write_short=false`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
