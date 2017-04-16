@@ -33,9 +33,8 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
 ```
 
 ## Function `readdlm2()`
-Read a matrix from the `source`. The `source` can be a text file, stream or byte array. Each line
-(separated by `eol`, this is `'\n'` by default) gives one row. with elements separated by the given `delim`.  
-The columns are separated by `';'`, another `delim` can be defined. 
+Read a matrix from the `source`. The `source` can be a text file, stream or byte array. Each line, separated
+by `eol` (default is `'\n'`), gives one row. The columns are separated by `';'`, another `delim` can be defined. 
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
