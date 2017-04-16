@@ -1,4 +1,4 @@
-# strickek 2017 - V0.0.1 - License is MIT: http://julialang.org/license
+# strickek 2017 - License is MIT: http://julialang.org/license
 # ReadWriteDlm2
 # Handle different decimal marks (default comma) and allows dates parsing / formating
 
