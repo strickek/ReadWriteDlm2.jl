@@ -22,11 +22,10 @@ Read a matrix from the `source`. The `source` can be a text file, stream or byte
 Each line (separated by `eol`, this is `'\\n'` by default) gives one row. The columns are
 separated by `';'`, another `delim` can be defined.
 
-By default, a pre-processing of `source` with regex substitution takes place, which
-changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
-the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(.., ..)`
-a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
-Regex substitution pre-processing can be switched off with: `rs=()`.
+Pre-processing of `source` with regex substitution changes the decimal marks from `d,d` to `d.d`.
+For default `rs` the keyword argument `decimal=','` sets the decimal Char in the `r`-string of `rs`.
+When a special regex substitution Tupel `rs=(r.., s..)` is defined, the argument `decimal` is not used.
+Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
 by default. To switch off parsing Dates formats set: `dfs=\"\", dtfs=\"\"`.
@@ -37,7 +36,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 # Additional Keyword Arguments
 
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change `d,d` to `d.d` if `decimale=','`
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change `d,d` to `d.d` if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 
@@ -78,7 +77,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     
    if rs != () && decimal != '.' # pre-processing of decimal mark should be done
         
-        # Cange default regex substitution Tupel if decimal != ','
+        # change default regex substitution Tupel if decimal != ','
         if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
             rs=(Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
