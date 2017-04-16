@@ -14,19 +14,19 @@ This package is unregistered and therfore must be installed using Pkg.clone
 
     Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
     
-### Basic Example: How To Use ReadWriteDlm2
+### Basic Example: How To Use `ReadWriteDlm2`
 
 ```
-julia> using ReadWriteDlm2              # makes readdlm2() and writedlm2() available
+julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
 
-julia> A = [1 1.2; "text" Date(2017)];  # creates test array with: Int, Float64, String and Date type
+julia> A = [1 1.2; "text" Date(2017)];  # create test array with: Int, Float64, String and Date type
 
 julia> writedlm2("test.csv", A)         # syntax and arguments like Julia.Base writedlm()
 
-julia> readstring("test.csv")           # shows `CSV` file. Please note: decimal mark ',' - delimiter ';'
+julia> readstring("test.csv")           # show `CSV` file. Please note: decimal mark ',' - delimiter ';'
 "1;1,2\ntext;2017-01-01\n"
 
-julia> B = readdlm2("test.csv")         # reads `CSV` data: All four types are parsed correctly!
+julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
@@ -106,7 +106,7 @@ numbers in the normal print() format set keyword argument: `write_short=false`.
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
 
-### Documentation For Base.writedlm()
+### Documentation For Base `writedlm()`
 More information about Base functionality and (keyword-) arguments - which are also 
 supported by `writedlm2()` - is available in the 
 [stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
@@ -117,7 +117,7 @@ supported by `writedlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
 
-### Compare Default Functionality writedlm() - writedlm2()
+### Compare Default Functionality `writedlm()` - `writedlm2()`
 | Module        | Function           | Delimiter| Dec.Mark | Date(Time) |
 |:------------- |:------------------ |:--------:|:--------:|:---------- |
 | Base.DataFmt  | writedlm()         |`'\t'`    |`'.'`     | ISO-Format |
