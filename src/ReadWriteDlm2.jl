@@ -18,7 +18,7 @@ export readdlm2, writedlm2
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-Read a matrix from the `source`. The `source` can be a text file, stream or byte array.
+Read a matrix from `source`. The `source` can be a text file, stream or byte array.
 Each line (separated by `eol`, this is `'\\n'` by default) gives one row. The columns are
 separated by `';'`, another `delim` can be defined.
 
@@ -36,7 +36,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 # Additional Keyword Arguments
 
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change `d,d` to `d.d` if `decimal=','`
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change d,d to d.d if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 
@@ -143,13 +143,13 @@ with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
 Like `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. When
-reading a file with mixed data, `3e3` will be parsed as Integer. To avoid this, write like
-`print()` and set: `write_short=false`.
+reading a file with mixed data, `3e3` will be parsed as Integer. To write long like print()
+set: `write_short=false`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
 
-#Additional Keyword Arguments
+# Additional Keyword Arguments
 
 * `decimal=','`: decimal mark character, default is a comma
 * `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
