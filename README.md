@@ -9,7 +9,7 @@ The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are simila
 , <a href="http://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=10843055">Link</a></p>
 
 ## Installation
-This package is unregistered and therfore must be installed using Pkg.clone
+This package is unregistered and therefore must be installed using Pkg.clone
 ```
 Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
 ```
