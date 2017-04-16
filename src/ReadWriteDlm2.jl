@@ -18,7 +18,7 @@ export readdlm2, writedlm2
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-Read a matrix from the `source`, this can be a text file, stream or byte array.
+Read a matrix from the `source`. The `source` can be a text file, stream or byte array.
 Each line (separated by `eol`, this is `'\\n'` by default) gives one row. The columns are
 separated by `';'`, another `delim` can be defined.
 
