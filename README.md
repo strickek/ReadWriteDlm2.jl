@@ -43,10 +43,10 @@ by `eol` (default is `'\n'`), gives one row. The columns are separated by `';'`,
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-Pre-processing of `source` with regex substitution changes the decimal mark from `d,d` to `d.d`.
-With the keyword argument `decimal=','` the Char used by the default regex/substitution Tupel `rs`
-can be changed. A special regex/substitution Tupel can be defined With `rs=(.., ..)` (in this case
-`decimal` is not used). Pre-processing can be switched off with: `rs=()`.
+Pre-processing of `source` with regex substitution changes the decimal marks from `d,d` to `d.d`.
+For default `rs` the keyword argument `decimal=','` sets the decimal Char in the `r`-string of `rs`.
+When a special regex substitution Tupel `rs=(r.., s..)` is defined, the argument `decimal` is not used.
+Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
 by default. To switch off parsing Dates formats set: `dfs="", dtfs=""`.
