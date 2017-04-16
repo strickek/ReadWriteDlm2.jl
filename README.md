@@ -1,5 +1,5 @@
 # ReadWriteDlm2 - Read And Write Decimal Comma "CSV"
-Tested for Julia 0.5 and 0.6 and nightly. Click the status images for details:
+Tested for Julia 0.5 and 0.6 - click the status images for details:
 
 Linux, Mac OS X: [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)    Windows 32, 64: [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)    Code coverage: [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
@@ -9,11 +9,11 @@ The functions `readdlm2()` and `writedlm2()` of modul `ReadWriteDlm2` are simila
 , <a href="http://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=10843055">Link</a></p>
 
 ## Installation
-
 This package is unregistered and therfore must be installed using Pkg.clone
+```
+Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
+```
 
-    Pkg.clone("https://github.com/strickek/ReadWriteDlm2.jl")
-    
 ### Basic Example: How To Use `ReadWriteDlm2`
 
 ```
@@ -33,8 +33,9 @@ julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are pa
 ```
 
 ## Function `readdlm2()`
-Read a matrix from the source. The `source` can be a text file, stream or byte array.
-Each line (separated by `eol`) gives one row, with elements separated by the given `delim`.  
+Read a matrix from the `source`. The `source` can be a text file, stream or byte array. Each line
+(separated by `eol`, this is `'\n'` by default) gives one row. with elements separated by the given `delim`.  
+The columns are separated by `';'`, another `delim` can be defined. 
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
@@ -43,16 +44,13 @@ Each line (separated by `eol`) gives one row, with elements separated by the giv
     readdlm2(source, delim::Char, eol::Char; options...)
     readdlm2(source, delim::Char, T::Type, eol::Char; options...)
 
-The columns are expected to be separated by `';'`, another `delim` can be defined. 
-
-By default, a pre-processing of input with regex substitution takes place, which
+By default, a pre-processing of `source` with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
 the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(.., ..)`
 a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
 Regex substitution pre-processing can be switched off with: `rs=()`.
 
-End of line `eol` is `'\n'` by default. In addition
-to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
+In addition to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
 by default. To switch off parsing Dates formats set: `dfs="", dtfs=""`.
 
 If all data is numeric, the result will be a numeric array. In other cases
@@ -86,15 +84,14 @@ data = readdlm2("test_de.csv", dfs="dd.mm.yyyy", dtfs="dd.mm.yyyy HH:MM")
 
 
 ## Function `writedlm2()`
-Write A (a vector, matrix, or an iterable collection of iterable rows) as text to f 
-(either a filename string or an IO stream). 
+Write `A` (a vector, matrix, or an iterable collection of iterable rows) as text to `f` 
+(either a filename string or an IO stream). The columns will be separated by `';'`,
+another `delim` (Char or String) can be defined.
 
     writedlm2(f::IO, A; options...)
     writedlm2(f::IO, A, delim; options...)
     writedlm2(f::AbstractString, A; options...)
     writedlm2(f::AbstractString, A, delim; options...)
-    
-The columns will be separated by `';'`, another `delim` (Char or String) can be defined.
 
 By default, a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
