@@ -49,7 +49,7 @@ By default, a pre-processing of input with regex substitution takes place, which
 changes the decimal mark from `d,d` to `d.d`. With the keyword argument `decimal=','`
 the regex Char used by the default regex/substitution Tupel can be changed. With `rs=(.., ..)`
 a special regex/substitution Tupel can be defined (in this case `decimal` is not used).
-Regex substitution pre-processing can be switched off with: `rs=()` or `decimal='.'`.
+Regex substitution pre-processing can be switched off with: `rs=()`.
 
 End of line `eol` is `'\n'` by default. In addition
 to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
