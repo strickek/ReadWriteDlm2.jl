@@ -1,7 +1,5 @@
 # ReadWriteDlm2 - Read And Write Decimal Comma "CSV"
-[![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2)
-
-Status Linux, Mac OS X: [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   Status Windows 32, 64: [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  Code coverage: [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
+[![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
 The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. The basic idea of this package is to support the "decimal comma countries" - highlighted in green in the following map:
 
@@ -45,7 +43,7 @@ by `eol` (default is `'\n'`), gives one row. The columns are separated by `';'`,
 
 Pre-processing of `source` with regex substitution changes the decimal marks from `d,d` to `d.d`.
 For default `rs` the keyword argument `decimal=','` sets the decimal Char in the `r`-string of `rs`.
-When a special regex substitution Tupel `rs=(r.., s..)` is defined, the argument `decimal` is not used.
+When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
@@ -61,7 +59,7 @@ supported by `readdlm2()` - is available in the
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-Tupel, change d,d to d.d if `decimal=','`
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 
