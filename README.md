@@ -72,7 +72,7 @@ supported by `readdlm2()` - is available in the
 `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
 
 ### Example `readdlm2()`
-Read the Excel(lang=german) text-file `test_de.csv` and store the array in `data`:
+Read the Excel (lang=german) text-file `test_de.csv` and store the array in `data`:
 ```
 data = readdlm2("test_de.csv", dfs="dd.mm.yyyy", dtfs="dd.mm.yyyy HH:MM")
 ```
@@ -120,7 +120,7 @@ supported by `writedlm2()` - is available in the
 `writedlm2(f, A, '\t', decimal='.')`  gives the same result as  `writedlm(f, A)`.
 
 ### Example `writedlm2()`
-Write Julia `data` to text-file `test_de.csv`, readable by Excel(lang=german):
+Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
 ```
 writedlm2("test_de.csv", data, dtfs="dd.mm.yyyy HH:MM", dfs="dd.mm.yyyy")
 ```
