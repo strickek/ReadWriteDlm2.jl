@@ -36,7 +36,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 # Additional Keyword Arguments
 
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple), change d,d to d.d if `decimal=','`
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 
@@ -44,7 +44,7 @@ Find more information about Base `readdlm()` functionality and (keyword) argumen
 which are also supported by `readdlm2()` - in `help` for `readdlm()`.
 
 # Code Example 
-for reading the Excel(lang=german) textfile `test_de.csv`:
+for reading the Excel (lang=german) textfile `test_de.csv`:
 ```
 test = readdlm2(\"test_de.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
 ```
@@ -159,7 +159,7 @@ Defaults are the ISO formats.
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 
 # Code Example 
-for writing the Julia `test` data to an text file `test_de.csv` readable by Excel(lang=german):
+for writing the Julia `test` data to an text file `test_de.csv` readable by Excel (lang=german):
 ```
 writedlm2(\"test_de.csv\", test, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
 ```
