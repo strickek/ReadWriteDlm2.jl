@@ -58,7 +58,7 @@ supported by `readdlm2()` - is available in the
 [stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Additional Keyword Arguments `readdlm2()`
-* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
+* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
