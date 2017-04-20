@@ -24,7 +24,7 @@ separated by `';'`, another `delim` can be defined.
 
 Pre-processing of `source` with regex substitution changes the decimal marks from `d,d` to `d.d`.
 For default `rs` the keyword argument `decimal=','` sets the decimal Char in the `r`-string of `rs`.
-When a special regex substitution Tupel `rs=(r.., s..)` is defined, the argument `decimal` is not used.
+When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
@@ -35,15 +35,15 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 # Additional Keyword Arguments
 
-* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-Tupel is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-Tupel), change d,d to d.d if `decimal=','`
+* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple), change d,d to d.d if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
 which are also supported by `readdlm2()` - in `help` for `readdlm()`.
 
-# Code-Example 
+# Code Example 
 for reading the Excel(lang=german) textfile `test_de.csv`:
 ```
 test = readdlm2(\"test_de.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
@@ -84,9 +84,11 @@ function readdlm2auto(input, dlm, T, eol, auto;
         
         # Error if decimal mark to replace is also the delim Char
         "1"*string(dlm)*"1" != replace("1"*string(dlm)*"1", rs[1], rs[2]) && error(
-            "Error in readdlm2(): 
-            Pre-prozessing with decimal mark Regex substitution
-            for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!")
+            """
+            Error in readdlm2(): 
+            Pre-processing with decimal mark Regex substitution
+            for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!
+            """)
 
         # read input string, do regex substitution
         s = replace(readstring(input), rs[1], rs[2])
@@ -156,7 +158,7 @@ Defaults are the ISO formats.
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 
-# Code-Example 
+# Code Example 
 for writing the Julia `test` data to an text file `test_de.csv` readable by Excel(lang=german):
 ```
 writedlm2(\"test_de.csv\", test, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
@@ -209,7 +211,7 @@ function writedlm2auto(f, a, dlm;
          fdt = (dtfs != "yyyy-mm-ddTHH:MM:SS") && (dtfs != "") # Bool: format DateTime
          fd = (dfs != "yyyy-mm-dd") && (dfs != "")    # Bool: format Date
 
-         # creat b for manipulation/write - keep a unchanged
+         # create b for manipulation/write - keep a unchanged
          b = similar(a, Any)
          for i in eachindex(a)
              b[i] =
@@ -225,4 +227,4 @@ function writedlm2auto(f, a, dlm;
 
     end # end function writedlm2auto()
 
-end # end modul ReadWriteDlm2
+end # end module ReadWriteDlm2
