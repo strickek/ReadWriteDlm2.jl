@@ -9,6 +9,61 @@ using Base.Dates,
 
 export readdlm2, writedlm2
 
+
+"""
+
+    dfregex(df::AbstractString)
+
+Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
+
+Usage with `ìsmatch()`. Also possible to extract parts of a date string with `match()` because
+groups are named with a code like in `format`string `df`.
+
+"""
+
+function dfregex(df::AbstractString)
+    codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
+    Ule = (3, 9) 
+    Ele = (6, 9) 
+    r = "^"
+    repeat_count = 1
+    ldf = length(df)
+    for i = 1:ldf
+        repeat_next = (i < ldf && df[(i + 1)] == df[i])? true : false
+        repeat_count = (((i > 2 && df[(i - 2)] != '\\' && df[(i - 1)]==df[i])) || 
+                        (i == 2 && df[1] == df[2]))? (repeat_count + 1) : 1
+        r = r * (
+        (i>1 && df[(i-1)]=='\\')? string(df[i]):
+        (df[i]=='y' && !repeat_next)? "(?<y>\\d{$repeat_count})":
+        (df[i]=='Y' && repeat_count < 5 && !repeat_next)? "(?<y>\\d{4})":
+        (df[i]=='Y' && repeat_count > 4 && !repeat_next)? "(?<y>\\d{$repeat_count})":
+        (df[i]=='m' && repeat_count == 1 && !repeat_next)? "(?<m>0?\\d|1[012])":
+        (df[i]=='m' && repeat_count == 2 && !repeat_next)? "(?<m>0\\d|1[012])": 
+        (df[i]=='m' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0\\d|1[012])": 
+        (df[i]=='u' && repeat_count == 1)? "(?<u>\\w{3})": 
+        (df[i]=='U' && repeat_count == 1)? "(?<U>\\w{$(Ule[1]),$(Ule[2])})": 
+        (df[i]=='e' && repeat_count == 1)? "(?<e>\\w{3})": 
+        (df[i]=='E' && repeat_count == 1)? "(?<E>\\w{$(Ele[1]),$(Ele[2])})": 
+        (df[i]=='d' && repeat_count == 1 && !repeat_next)? "(?<d>0?\\d|[12]\\d|3[01])":
+        (df[i]=='d' && repeat_count == 2 && !repeat_next)? "(?<d>[012]\\d|3[01])": 
+        (df[i]=='d' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>[012]\\d|3[01])": 
+        (df[i]=='H' && repeat_count == 1 && !repeat_next)? "(?<H>0?\\d|1\\d|2[0-3])":
+        (df[i]=='H' && repeat_count == 2 && !repeat_next)? "(?<H>0\\d|1\\d|2[0-3])": 
+        (df[i]=='H' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])": 
+        (df[i]=='M' && repeat_count == 1 && !repeat_next)? "(?<M>\\d|[0-5]\\d)":
+        (df[i]=='M' && repeat_count == 2 && !repeat_next)? "(?<M>[0-5]\\d)": 
+        (df[i]=='M' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<M>[0-5]\\d)": 
+        (df[i]=='S' && repeat_count == 1 && !repeat_next)? "(?<S>\\d|[0-5]\\d)":
+        (df[i]=='S' && repeat_count == 2 && !repeat_next)? "(?<S>[0-5]\\d)": 
+        (df[i]=='S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)": 
+        (df[i]=='s' && repeat_count < 4 && !repeat_next)? "(?<s>\\d{3})":
+        (df[i]=='s' && repeat_count > 3 && !repeat_next)? "(?<s>\\d{3})0{$(repeat_count-3)}":
+        in(df[i], codechars)? "": string(df[i]) 
+        )
+    end
+    return Regex(r * string('$'))
+end 
+
 """
 
     readdlm2(source; options...)
@@ -111,15 +166,15 @@ function readdlm2auto(input, dlm, T, eol, auto;
     ldfs == 0 && ldtfs == 0 && return z # empty formats -> no d/dt-parsing
 
     fdfs = DateFormat(dfs); fdtfs = DateFormat(dtfs)
+    rd = dfregex(dfs); rdt = dfregex(dtfs)
 
     for i in eachindex(y)
         if isa(y[i], AbstractString)
-            lyi = length(y[i])
             dtfvalid = false
-            if lyi == ldtfs
+            if ismatch(rdt, y[i])
                 try y[i] = DateTime(y[i], fdtfs); dtfvalid = true catch; end
             end
-            if !dtfvalid && lyi == ldfs
+            if !dtfvalid && ismatch(rd, y[i])
                 try y[i] = Date(y[i], fdfs) catch; end
             end
         end
