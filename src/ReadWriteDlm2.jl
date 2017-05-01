@@ -12,12 +12,13 @@ export readdlm2, writedlm2
 
 """
 
+
     dfregex(df::AbstractString)
 
 Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
 
-Usage with `ìsmatch()`. Also possible to extract parts of a date string with `match()` because
-groups are named with a code like in `format`string `df`.
+Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
+a date string: This regex groups are named according to the `format`string codes.
 
 """
 
