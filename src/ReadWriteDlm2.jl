@@ -236,11 +236,8 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
 
 function floatdec(a, decimal, write_short) # print shortest and change decimal mark
     iob=IOBuffer()
-    if write_short == true
-        print_shortest(iob, a) 
-    else
-        print(iob, a)
-    end
+    write_short == true ? print_shortest(iob, a) : print(iob, a)
+  
     if decimal != '.'
         return replace(takebuf_string(iob), '.', decimal)
     else
