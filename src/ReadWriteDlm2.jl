@@ -38,16 +38,16 @@ function dfregex(df::AbstractString)
         (df[i]=='y' && !repeat_next)? "(?<y>\\d{$repeat_count})":
         (df[i]=='Y' && repeat_count < 5 && !repeat_next)? "(?<y>\\d{4})":
         (df[i]=='Y' && repeat_count > 4 && !repeat_next)? "(?<y>\\d{$repeat_count})":
-        (df[i]=='m' && repeat_count == 1 && !repeat_next)? "(?<m>0?\\d|1[012])":
-        (df[i]=='m' && repeat_count == 2 && !repeat_next)? "(?<m>0\\d|1[012])": 
-        (df[i]=='m' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0\\d|1[012])": 
+        (df[i]=='m' && repeat_count == 1 && !repeat_next)? "(?<m>0?[1-9]|1[012])":
+        (df[i]=='m' && repeat_count == 2 && !repeat_next)? "(?<m>0[1-9]|1[012])": 
+        (df[i]=='m' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])": 
         (df[i]=='u' && repeat_count == 1)? "(?<u>\\w{3})": 
         (df[i]=='U' && repeat_count == 1)? "(?<U>\\w{$(Ule[1]),$(Ule[2])})": 
         (df[i]=='e' && repeat_count == 1)? "(?<e>\\w{3})": 
         (df[i]=='E' && repeat_count == 1)? "(?<E>\\w{$(Ele[1]),$(Ele[2])})": 
-        (df[i]=='d' && repeat_count == 1 && !repeat_next)? "(?<d>0?\\d|[12]\\d|3[01])":
-        (df[i]=='d' && repeat_count == 2 && !repeat_next)? "(?<d>[012]\\d|3[01])": 
-        (df[i]=='d' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>[012]\\d|3[01])": 
+        (df[i]=='d' && repeat_count == 1 && !repeat_next)? "(?<d>0?[1-9]|[12]\\d|3[01])":
+        (df[i]=='d' && repeat_count == 2 && !repeat_next)? "(?<d>0[1-9]|[12]\\d|3[01])": 
+        (df[i]=='d' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])": 
         (df[i]=='H' && repeat_count == 1 && !repeat_next)? "(?<H>0?\\d|1\\d|2[0-3])":
         (df[i]=='H' && repeat_count == 2 && !repeat_next)? "(?<H>0\\d|1\\d|2[0-3])": 
         (df[i]=='H' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])": 
