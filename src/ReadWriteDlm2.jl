@@ -31,34 +31,34 @@ function dfregex(df::AbstractString)
     ldf = length(df)
     for i = 1:ldf
         repeat_next = (i < ldf && df[(i + 1)] == df[i])? true : false
-        repeat_count = (((i > 2 && df[(i - 2)] != '\\' && df[(i - 1)]==df[i])) || 
+        repeat_count = (((i > 2 && df[(i - 2)] != '\\' && df[(i - 1)] == df[i])) || 
                         (i == 2 && df[1] == df[2]))? (repeat_count + 1) : 1
         r = r * (
-        (i>1 && df[(i-1)]=='\\')? string(df[i]):
-        (df[i]=='y' && !repeat_next)? "(?<y>\\d{$repeat_count})":
-        (df[i]=='Y' && repeat_count < 5 && !repeat_next)? "(?<y>\\d{4})":
-        (df[i]=='Y' && repeat_count > 4 && !repeat_next)? "(?<y>\\d{$repeat_count})":
-        (df[i]=='m' && repeat_count == 1 && !repeat_next)? "(?<m>0?[1-9]|1[012])":
-        (df[i]=='m' && repeat_count == 2 && !repeat_next)? "(?<m>0[1-9]|1[012])": 
-        (df[i]=='m' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])": 
-        (df[i]=='u' && repeat_count == 1)? "(?<u>\\w{3})": 
-        (df[i]=='U' && repeat_count == 1)? "(?<U>\\w{$(Ule[1]),$(Ule[2])})": 
-        (df[i]=='e' && repeat_count == 1)? "(?<e>\\w{3})": 
-        (df[i]=='E' && repeat_count == 1)? "(?<E>\\w{$(Ele[1]),$(Ele[2])})": 
-        (df[i]=='d' && repeat_count == 1 && !repeat_next)? "(?<d>0?[1-9]|[12]\\d|3[01])":
-        (df[i]=='d' && repeat_count == 2 && !repeat_next)? "(?<d>0[1-9]|[12]\\d|3[01])": 
-        (df[i]=='d' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])": 
-        (df[i]=='H' && repeat_count == 1 && !repeat_next)? "(?<H>0?\\d|1\\d|2[0-3])":
-        (df[i]=='H' && repeat_count == 2 && !repeat_next)? "(?<H>0\\d|1\\d|2[0-3])": 
-        (df[i]=='H' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])": 
-        (df[i]=='M' && repeat_count == 1 && !repeat_next)? "(?<M>\\d|[0-5]\\d)":
-        (df[i]=='M' && repeat_count == 2 && !repeat_next)? "(?<M>[0-5]\\d)": 
-        (df[i]=='M' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<M>[0-5]\\d)": 
-        (df[i]=='S' && repeat_count == 1 && !repeat_next)? "(?<S>\\d|[0-5]\\d)":
-        (df[i]=='S' && repeat_count == 2 && !repeat_next)? "(?<S>[0-5]\\d)": 
-        (df[i]=='S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)": 
-        (df[i]=='s' && repeat_count < 4 && !repeat_next)? "(?<s>\\d{3})":
-        (df[i]=='s' && repeat_count > 3 && !repeat_next)? "(?<s>\\d{3})0{$(repeat_count-3)}":
+        (i > 1 && df[(i - 1)] == '\\')? string(df[i]):
+        (df[i] == 'y' && !repeat_next)? "(?<y>\\d{$repeat_count})":
+        (df[i] == 'Y' && repeat_count < 5 && !repeat_next)? "(?<y>\\d{4})":
+        (df[i] == 'Y' && repeat_count > 4 && !repeat_next)? "(?<y>\\d{$repeat_count})":
+        (df[i] == 'm' && repeat_count == 1 && !repeat_next)? "(?<m>0?[1-9]|1[012])":
+        (df[i] == 'm' && repeat_count == 2 && !repeat_next)? "(?<m>0[1-9]|1[012])": 
+        (df[i] == 'm' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])": 
+        (df[i] == 'u' && repeat_count == 1)? "(?<u>\\w{3})": 
+        (df[i] == 'U' && repeat_count == 1)? "(?<U>\\w{$(Ule[1]),$(Ule[2])})": 
+        (df[i] == 'e' && repeat_count == 1)? "(?<e>\\w{3})": 
+        (df[i] == 'E' && repeat_count == 1)? "(?<E>\\w{$(Ele[1]),$(Ele[2])})": 
+        (df[i] == 'd' && repeat_count == 1 && !repeat_next)? "(?<d>0?[1-9]|[12]\\d|3[01])":
+        (df[i] == 'd' && repeat_count == 2 && !repeat_next)? "(?<d>0[1-9]|[12]\\d|3[01])": 
+        (df[i] == 'd' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])": 
+        (df[i] == 'H' && repeat_count == 1 && !repeat_next)? "(?<H>0?\\d|1\\d|2[0-3])":
+        (df[i] == 'H' && repeat_count == 2 && !repeat_next)? "(?<H>0\\d|1\\d|2[0-3])": 
+        (df[i] == 'H' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])": 
+        (df[i] == 'M' && repeat_count == 1 && !repeat_next)? "(?<M>\\d|[0-5]\\d)":
+        (df[i] == 'M' && repeat_count == 2 && !repeat_next)? "(?<M>[0-5]\\d)": 
+        (df[i] == 'M' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<M>[0-5]\\d)": 
+        (df[i] == 'S' && repeat_count == 1 && !repeat_next)? "(?<S>\\d|[0-5]\\d)":
+        (df[i] == 'S' && repeat_count == 2 && !repeat_next)? "(?<S>[0-5]\\d)": 
+        (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)": 
+        (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>\\d{3})":
+        (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>\\d{3})0{$(repeat_count-3)}":
         in(df[i], codechars)? "": string(df[i]) 
         )
     end
@@ -135,7 +135,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         
         # change default regex substitution Tupel if decimal != ','
         if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
-            rs=(Regex("(\\d)$decimal(\\d)"), s"\1.\2")
+            rs = (Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
         
         # Error if decimal mark to replace is also the delim Char
@@ -235,7 +235,7 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
     writedlm2auto(f, a, dlm; opts...)
 
 function floatdec(a, decimal, write_short) # print shortest and change decimal mark
-    iob=IOBuffer()
+    iob = IOBuffer()
     write_short == true ? print_shortest(iob, a) : print(iob, a)
   
     if decimal != '.'
