@@ -62,6 +62,7 @@ supported by `readdlm2()` - is available in the
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
+* `locale="english"`: language for parsing dates names, default is english
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()`
 | Module        | Function               | Delimiter| Dec.Mark | Date(Time)   |
@@ -110,6 +111,7 @@ supported by `writedlm2()` - is available in the
 * `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
+* `locale="english"`: language for writeing dates names, default is english
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()`
 | Module        | Function           | Delimiter| Dec.Mark | Date(Time) |
