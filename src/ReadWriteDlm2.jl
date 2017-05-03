@@ -13,7 +13,7 @@ export readdlm2, writedlm2
 """
 
 
-    dfregex(df::AbstractString)
+    dfregex(df::AbstractString, locale::AbstractString=\"english\")
 
 Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
 
@@ -22,7 +22,24 @@ a date string: This regex groups are named according to the `format`string codes
 
 """
 
-function dfregex(df::AbstractString)
+function dfregex(df::AbstractString, locale::AbstractString="english")
+    # start: calculate min and max lengths of months and day_of_weeks
+    mon = []; dow = []
+    if VERSION < v"0.6-"
+        for i = 1:12 
+            push!(mon, Dates.VALUETOMONTH[locale][i])
+        end
+        for i = 1:7 
+            push!(dow, Dates.VALUETODAYOFWEEK[locale][i])
+        end   
+    else
+        mon = (Dates.LOCALES[locale].months)
+        dow = (Dates.LOCALES[locale].days_of_week)
+    end
+    Ule = extrema(length.(mon))
+    Ele = extrema(length.(dow))
+    # end: calculate min and max lengths of months and day_of_weeks
+    
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
     Ule = (3, 9) 
     Ele = (6, 9) 
@@ -95,6 +112,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 * `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
+* `locale=\"english\"`: language for parsing dates names, default is english
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
 which are also supported by `readdlm2()` - in `help` for `readdlm()`.
@@ -129,6 +147,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd", 
+        locale::AbstractString="english",
         opts...)
     
    if rs != () && decimal != '.' # pre-processing of decimal mark should be done
@@ -166,17 +185,15 @@ function readdlm2auto(input, dlm, T, eol, auto;
     ldfs = length(dfs); ldtfs = length(dtfs)
     ldfs == 0 && ldtfs == 0 && return z # empty formats -> no d/dt-parsing
 
-    fdfs = DateFormat(dfs); fdtfs = DateFormat(dtfs)
-    rd = dfregex(dfs); rdt = dfregex(dtfs)
+    ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
+    rd = dfregex(dfs, locale); rdt = dfregex(dtfs, locale)
 
     for i in eachindex(y)
         if isa(y[i], AbstractString)
-            dtfvalid = false
             if ismatch(rdt, y[i])
-                try y[i] = DateTime(y[i], fdtfs); dtfvalid = true catch; end
-            end
-            if !dtfvalid && ismatch(rd, y[i])
-                try y[i] = Date(y[i], fdfs) catch; end
+                try y[i] = DateTime(y[i], dtdf) catch; end
+            elsif ismatch(rd, y[i])
+                try y[i] = Date(y[i], ddf) catch; end
             end
         end
     end
@@ -213,6 +230,7 @@ Defaults are the ISO formats.
 * `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
+* `locale=\"english\"`: language for DateTime writing, default is english
 
 # Code Example 
 for writing the Julia `test` data to an text file `test_de.csv` readable by Excel (lang=german):
@@ -237,7 +255,6 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
 function floatdec(a, decimal, write_short) # print shortest and change decimal mark
     iob = IOBuffer()
     write_short == true ? print_shortest(iob, a) : print(iob, a)
-  
     if decimal != '.'
         return replace(takebuf_string(iob), '.', decimal)
     else
@@ -250,6 +267,7 @@ function writedlm2auto(f, a, dlm;
         write_short::Bool=true,
         dfs::AbstractString="yyyy-mm-dd",
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS", 
+        locale::AbstractString="english",
         opts...)
 
     string(dlm) == string(decimal) && error(
@@ -263,14 +281,15 @@ function writedlm2auto(f, a, dlm;
          #format dates only if format strings are not ISO and not ""
          fdt = (dtfs != "yyyy-mm-ddTHH:MM:SS") && (dtfs != "") # Bool: format DateTime
          fd = (dfs != "yyyy-mm-dd") && (dfs != "")    # Bool: format Date
+         ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
 
          # create b for manipulation/write - keep a unchanged
          b = similar(a, Any)
          for i in eachindex(a)
              b[i] =
              isa(a[i], AbstractFloat) ? floatdec(a[i], decimal, write_short):
-             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtfs):
-             isa(a[i], Date) && fd ? Dates.format(a[i], dfs): string(a[i])
+             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf):
+             isa(a[i], Date) && fd ? Dates.format(a[i], ddf): string(a[i])
          end
      else  # a is not a Number, Date, DateTime or Array -> no preprocessing
          b = a 
