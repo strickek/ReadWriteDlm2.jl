@@ -23,29 +23,14 @@ a date string: This regex groups are named according to the `format`string codes
 """
 
 function dfregex(df::AbstractString, locale::AbstractString="english")
-    # start: calculate min and max lengths of months and day_of_weeks
-    mon = []; dow = []
-    if VERSION < v"0.6-"
-        for i = 1:12 
-            push!(mon, Dates.VALUETOMONTH[locale][i])
-        end
-        for i = 1:7 
-            push!(dow, Dates.VALUETODAYOFWEEK[locale][i])
-        end   
-    else
-        mon = (Dates.LOCALES[locale].months)
-        dow = (Dates.LOCALES[locale].days_of_week)
-    end
-    Ule = extrema(length.(mon))
-    Ele = extrema(length.(dow))
-    # end: calculate min and max lengths of months and day_of_weeks
+    # calculate min and max string lengths of months and day_of_weeks names
+    Ule = try extrema([length(Dates.monthname(i;locale=locale)) for i in 1:12])catch; (3, 9) end
+    ule = try extrema([length(Dates.monthabbr(i;locale=locale)) for i in 1:12])catch; (3, 3) end
+    Ele = try extrema([length(Dates.dayname(i;locale=locale)) for i in 1:7])catch; (6, 9) end
+    ele = try extrema([length(Dates.dayabbr(i;locale=locale)) for i in 1:7])catch; (3, 3) end
     
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
-    Ule = (3, 9) 
-    Ele = (6, 9) 
-    r = "^"
-    repeat_count = 1
-    ldf = length(df)
+    r = "^"; repeat_count = 1; ldf = length(df)
     for i = 1:ldf
         repeat_next = (i < ldf && df[(i + 1)] == df[i])? true : false
         repeat_count = (((i > 2 && df[(i - 2)] != '\\' && df[(i - 1)] == df[i])) || 
@@ -58,10 +43,10 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'm' && repeat_count == 1 && !repeat_next)? "(?<m>0?[1-9]|1[012])":
         (df[i] == 'm' && repeat_count == 2 && !repeat_next)? "(?<m>0[1-9]|1[012])": 
         (df[i] == 'm' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])": 
-        (df[i] == 'u' && repeat_count == 1)? "(?<u>\\w{3})": 
-        (df[i] == 'U' && repeat_count == 1)? "(?<U>\\w{$(Ule[1]),$(Ule[2])})": 
-        (df[i] == 'e' && repeat_count == 1)? "(?<e>\\w{3})": 
-        (df[i] == 'E' && repeat_count == 1)? "(?<E>\\w{$(Ele[1]),$(Ele[2])})": 
+        (df[i] == 'u' && repeat_count == 1)? "(?<u>[A-Za-z\u00C0-\u017F]{$(ule[1]),$(ule[2])})": 
+        (df[i] == 'U' && repeat_count == 1)? "(?<U>[A-Za-z\u00C0-\u017F]{$(Ule[1]),$(Ule[2])})": 
+        (df[i] == 'e' && repeat_count == 1)? "(?<e>[A-Za-z\u00C0-\u017F]{$(ele[1]),$(ele[2])})": 
+        (df[i] == 'E' && repeat_count == 1)? "(?<E>[A-Za-z\u00C0-\u017F]{$(Ele[1]),$(Ele[2])})": 
         (df[i] == 'd' && repeat_count == 1 && !repeat_next)? "(?<d>0?[1-9]|[12]\\d|3[01])":
         (df[i] == 'd' && repeat_count == 2 && !repeat_next)? "(?<d>0[1-9]|[12]\\d|3[01])": 
         (df[i] == 'd' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])": 
@@ -182,8 +167,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     isa(z, Tuple) ? (y, h) = z : y = z #Tupel(data, header) or only data? y = data.
 
     # parse data for Date/DateTime-Format -> Julia Dates-Types
-    ldfs = length(dfs); ldtfs = length(dtfs)
-    ldfs == 0 && ldtfs == 0 && return z # empty formats -> no d/dt-parsing
+    length(dfs) == 0 && length(dtfs) == 0 && return z # empty formats -> no d/dt-parsing
 
     ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
     rd = dfregex(dfs, locale); rdt = dfregex(dtfs, locale)
