@@ -176,7 +176,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         if isa(y[i], AbstractString)
             if ismatch(rdt, y[i])
                 try y[i] = DateTime(y[i], dtdf) catch; end
-                elseif ismatch(rd, y[i])
+            elseif ismatch(rd, y[i])
                 try y[i] = Date(y[i], ddf) catch; end
             end
         end
