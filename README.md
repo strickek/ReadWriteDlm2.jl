@@ -100,7 +100,8 @@ Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type informatio
 the same behavior as in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
-Defaults are the ISO formats. In `locale` language day (`E`, `e`) and month (`U`, `u`) names are written.
+Defaults are the ISO formats. In the `locale` language day (`E`, `e`) and month (`U`, `u`) names
+are written.
 
 ### Documentation For Base `writedlm()`
 More information about Base functionality and (keyword-) arguments - which are also 
