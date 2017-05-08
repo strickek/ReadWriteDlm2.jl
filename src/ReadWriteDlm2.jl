@@ -59,7 +59,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'S' && repeat_count == 1 && !repeat_next)? "(?<S>\\d|[0-5]\\d)":
         (df[i] == 'S' && repeat_count == 2 && !repeat_next)? "(?<S>[0-5]\\d)": 
         (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)":
-        (i < ldf && df[i] == '.' && df[(i + 1)] == 's')? "":    
+        (df[i] == '.' && i < ldf && df[(i + 1)] == 's')? "":    
         (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>.\\d{1,3}0{0,6})?":
         (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>.\\d{1,$(repeat_count)})?":
         in(df[i], codechars)? "": string(df[i]) 
@@ -215,9 +215,9 @@ By default a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
-Like `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. When
-reading a file with mixed data, `3e3` will be parsed as Integer. To write long like print()
-set: `write_short=false`.
+Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information `writedlm2()`
+writes long like print() by default. Set `write_short=true` to have the same behavior as
+in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
