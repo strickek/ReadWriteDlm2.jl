@@ -67,7 +67,7 @@ supported by `readdlm2()` - is available in the
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()`
 | Module        | Function               | Delimiter | Dec.Mark | Date(Time)   |
-|:------------- |:---------------------- |:---------:|:--------:|:------------ |
+|:------------- |:---------------------- |:-------- :|:------- :|:------------ |
 | Base.DataFmt  | readdlm()              | `' '`     | `'.'`    | n.a.(String) |
 | ReadWriteDlm2 | readdlm2()             | `';'`     | `','`    | parse ISO    |
 
