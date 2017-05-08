@@ -47,7 +47,8 @@ When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument
 Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
-by default. To switch off parsing Dates formats set: `dfs="", dtfs=""`.
+by default. To switch off parsing Dates formats set: `dfs="", dtfs=""`. The `locale` defines
+the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
@@ -99,7 +100,7 @@ Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type informatio
 the same behavior as in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
-Defaults are the ISO formats.
+Defaults are the ISO formats. In `locale` language day (`E`, `e`) and month (`U`, `u`) names are written.
 
 ### Documentation For Base `writedlm()`
 More information about Base functionality and (keyword-) arguments - which are also 
