@@ -434,8 +434,3 @@ b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S")
 rm("test.csv")
 @test a == b[1]
 
-a = DateTime(2017,5,1,5,59,1,898)
-writedlm2("test.csv", a, dtfs="E, d. u yyyy H:M:S,s")
-@test readstring("test.csv") == "Monday, 1. May 2017 5:59:1,898\n"
-b = readdlm2("test.csv", dtfs="E, d. u yyyy H:M:S.s")
-@test a == b[1]
