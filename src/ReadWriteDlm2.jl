@@ -139,17 +139,17 @@ function readdlm2auto(input, dlm, T, eol, auto;
    if rs != () && decimal != '.' # pre-processing of decimal mark should be done
         
         # Error if decimal mark to replace is also "decimal" in a date format string
-        if rs == (r"(\d),(\d)", s"\1.\2") &&
-            ismatch(Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"), dtfs*" "*dfs) && error(
+        rs == (r"(\d),(\d)", s"\1.\2") &&
+        ismatch(Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"), dtfs*" "*dfs) && 
+        error(
             """
             Error: Regex substitution from Decimal=`$decimal` to '.' and using `$decimal` in a 
             Dates format string directly between two digit elements (codes: YymdHMSs) doesn't work.
             Therefore, use e.g. `S.s` instead of `S$(decimal)s` in the DateTime format
             string of `readdlm2()`. But, because of the blank before the second digit element, 
-            do not(!) change `Y$(decimal) m`.
+            for example do not(!) change `Y$(decimal) m`.
             """
-            )
-        end        
+            )    
         
         # change default regex substitution Tupel if decimal != ','
         if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
