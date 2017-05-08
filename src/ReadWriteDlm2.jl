@@ -58,9 +58,10 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'M' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<M>[0-5]\\d)": 
         (df[i] == 'S' && repeat_count == 1 && !repeat_next)? "(?<S>\\d|[0-5]\\d)":
         (df[i] == 'S' && repeat_count == 2 && !repeat_next)? "(?<S>[0-5]\\d)": 
-        (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)": 
-        (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>\\d{3})":
-        (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>\\d{3})0{$(repeat_count-3)}":
+        (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)":
+        (i < ldf && df[i] == '.' && df[(i + 1)] == 's')? "":    
+        (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>.\\d{1,3}0{0,6})?":
+        (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>.\\d{1,$(repeat_count)})?":
         in(df[i], codechars)? "": string(df[i]) 
         )
     end
@@ -224,7 +225,7 @@ Defaults are the ISO formats.
 # Additional Keyword Arguments
 
 * `decimal=','`: decimal mark character, default is a comma
-* `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
+* `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 * `locale=\"english\"`: language for DateTime writing, default is english
@@ -261,7 +262,7 @@ end
 
 function writedlm2auto(f, a, dlm;
         decimal::Char=',',
-        write_short::Bool=true,
+        write_short::Bool=false,
         dfs::AbstractString="yyyy-mm-dd",
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS", 
         locale::AbstractString="english",
