@@ -68,8 +68,8 @@ supported by `readdlm2()` - is available in the
 ### Compare Default Functionality `readdlm()` - `readdlm2()`
 | Module        | Function               | Delimiter | Dec.Mark | Date(Time)   |
 |:------------- |:---------------------- |:---------:|:--------:|:------------ |
-| Base.DataFmt  | readdlm()              |`' '`      |`'.'`     | n.a.(String) |
-| ReadWriteDlm2 | readdlm2()             |`';'`      |`','`     | parse ISO    |
+| Base.DataFmt  | readdlm()              | `' '`     | `'.'`    | n.a.(String) |
+| ReadWriteDlm2 | readdlm2()             | `';'`     | `','`    | parse ISO    |
 
 `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
 
@@ -118,8 +118,8 @@ supported by `writedlm2()` - is available in the
 ### Compare Default Functionality `writedlm()` - `writedlm2()`
 | Module        | Function           | Delimiter | Dec.Mark | Date(Time) | Write Numbers    |
 |:------------- |:------------------ |:---------:|:--------:|:---------- |:-----------------| 
-| Base.DataFmt  | writedlm()         |`'\t'`     |`'.'`     | ISO-Format | print_shortest() |
-| ReadWriteDlm2 | writedlm2()        |`';'`      |`','`     | ISO-Format | like print()     |
+| Base.DataFmt  | writedlm()         | `'\t'`    | `'.'`    | ISO-Format | print_shortest() |
+| ReadWriteDlm2 | writedlm2()        | `';'`     | `','`    | ISO-Format | like print()     |
 
 `writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
 
