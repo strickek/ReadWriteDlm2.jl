@@ -94,9 +94,9 @@ By default, a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
-Like `writedlm()` of Base, `writedlm2()` writes `3000.0` by default short as `3e3`. When
-reading a file with mixed data, `3e3` will be parsed as Integer. To write long like print()
-set: `write_short=false`.
+Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information
+`writedlm2()` writes long like print() by default. Set `write_short=true` to have 
+the same behavior as in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats.
@@ -108,18 +108,18 @@ supported by `writedlm2()` - is available in the
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: decimal mark character, default is a comma
-* `write_short=true`: Bool - use print_shortest() to write data, set `false` for print()
+* `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
 * `locale="english"`: language for writeing dates names, default is english
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()`
-| Module        | Function           | Delimiter| Dec.Mark | Date(Time) |
-|:------------- |:------------------ |:--------:|:--------:|:---------- |
-| Base.DataFmt  | writedlm()         |`'\t'`    |`'.'`     | ISO-Format |
-| ReadWriteDlm2 | writedlm2()        |`';'`     |`','`     | ISO-Format |
+| Module        | Function           | Delimiter| Dec.Mark | Date(Time) | Write Numbers    |
+|:------------- |:------------------ |:--------:|:--------:|:---------- |:-----------------| 
+| Base.DataFmt  | writedlm()         |`'\t'`    |`'.'`     | ISO-Format | print_shortest() |
+| ReadWriteDlm2 | writedlm2()        |`';'`     |`','`     | ISO-Format | like print()     |
 
-`writedlm2(f, A, '\t', decimal='.')`  gives the same result as  `writedlm(f, A)`.
+`writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
