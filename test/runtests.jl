@@ -327,19 +327,19 @@ let data = "2015-01-01;5,1;Text1\n10;19e6;4\n"
 end
 
 a = [Date(2015) 5.1 "Text1";10 190.0e5 4.0]
-writedlm2("test.csv", a)
+writedlm2("test.csv", a, write_short=true)
 @test readstring("test.csv") == "2015-01-01;5,1;Text1\n10;19e6;4\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == Date(2015)
-writedlm2("test.csv", a, decimal='€', write_short=false)
+writedlm2("test.csv", a, decimal='€')
 @test readstring("test.csv") == "2015-01-01;5€1;Text1\n10€0;1€9e7;4€0\n"
 b = readdlm2("test.csv", rs=(r"(\d)€(\d)", s"\1.\2"))
 rm("test.csv")
 @test b[1] == Date(2015)
 
 a = [DateTime(2015) 5.1 "Text1";10 190.0e5 4.0]
-writedlm2("test.csv", a)
+writedlm2("test.csv", a, write_short=true)
 @test readstring("test.csv") == "2015-01-01T00:00:00;5,1;Text1\n10;19e6;4\n"
 b = readdlm2("test.csv")
 rm("test.csv")
