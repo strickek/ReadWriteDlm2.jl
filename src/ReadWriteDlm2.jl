@@ -12,13 +12,13 @@ export readdlm2, writedlm2
 
 """
 
-
     dfregex(df::AbstractString, locale::AbstractString=\"english\")
 
 Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
 
 Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
-a date string: This regex groups are named according to the `format`string codes.
+a date string. The regex groups are named according to the `format`string codes. The locale
+is used to calculate min and max length of month and day names (codes: UuEe).
 
 """
 
@@ -87,7 +87,8 @@ When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument
 Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
-by default. To switch off parsing Dates formats set: `dfs=\"\", dtfs=\"\"`.
+by default. To switch off parsing Dates formats set: `dfs=\"\", dtfs=\"\"`. `locale` defines
+the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
@@ -136,7 +137,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         locale::AbstractString="english",
         opts...)
     
-   if rs != () && decimal != '.' # pre-processing of decimal mark should be done
+   if !isempty(rs) && decimal != '.' # pre-processing of decimal mark should be done
         
         # Error if decimal mark to replace is also "decimal" in a date format string
         rs == (r"(\d),(\d)", s"\1.\2") &&
@@ -171,7 +172,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         z = readdlm_string(s, dlm, T, eol, auto, val_opts(opts))
         
     else # read with standard readdlm(), no regex
-        if auto == true
+        if auto
             z = readdlm(input, dlm, eol; opts...)
         else
             z = readdlm(input, dlm, T, eol; opts...)
@@ -181,7 +182,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     isa(z, Tuple) ? (y, h) = z : y = z #Tupel(data, header) or only data? y = data.
 
     # parse data for Date/DateTime-Format -> Julia Dates-Types
-    length(dfs) == 0 && length(dtfs) == 0 && return z # empty formats -> no d/dt-parsing
+    isempty(dfs) && isempty(dtfs) && return z # empty formats -> no d/dt-parsing
 
     ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
     rd = dfregex(dfs, locale); rdt = dfregex(dtfs, locale)
@@ -220,7 +221,8 @@ writes long like print() by default. Set `write_short=true` to have the same beh
 in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
-Defaults are the ISO formats.
+Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in `locale`
+language.
 
 # Additional Keyword Arguments
 
@@ -277,8 +279,8 @@ function writedlm2auto(f, a, dlm;
 
      if isa(a, AbstractArray)
          #format dates only if format strings are not ISO and not ""
-         fdt = (dtfs != "yyyy-mm-ddTHH:MM:SS") && (dtfs != "") # Bool: format DateTime
-         fd = (dfs != "yyyy-mm-dd") && (dfs != "")    # Bool: format Date
+         fdt = !isempty(dtfs)  # Bool: format DateTime
+         fd = !isempty(dfs)    # Bool: format Date
          ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
 
          # create b for manipulation/write - keep a unchanged
