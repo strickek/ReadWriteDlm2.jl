@@ -365,7 +365,7 @@ writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 writedlm2("test.csv", a, dfs="", dtfs="")
 @test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
+@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
 writedlm2("test.csv", a, decimal='.', dfs="yyyy", dtfs="yyyy")
 @test readstring("test.csv") == "2017;2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
