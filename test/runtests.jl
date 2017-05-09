@@ -363,9 +363,9 @@ a = Any[Date(2017, 1, 1) DateTime(2017, 2, 15, 23, 0, 0)]
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 @test readstring("test.csv") == "01/2017;15.02.2017/23.h\n"
 writedlm2("test.csv", a, dfs="", dtfs="")
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
+@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
+@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.', dfs="yyyy", dtfs="yyyy")
 @test readstring("test.csv") == "2017;2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
