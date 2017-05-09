@@ -62,7 +62,7 @@ supported by `readdlm2()` - is available in the
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
 * `locale="english"`: language for parsing dates names, default is english
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()`
@@ -112,7 +112,7 @@ supported by `writedlm2()` - is available in the
 * `decimal=','`: decimal mark character, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
 * `locale="english"`: language for writeing dates names, default is english
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()`
