@@ -340,21 +340,21 @@ rm("test.csv")
 
 a = [DateTime(2015) 5.1 "Text1";10 190.0e5 4.0]
 writedlm2("test.csv", a, write_short=true)
-@test readstring("test.csv") == "2015-01-01T00:00:00.0;5,1;Text1\n10;19e6;4\n"
+@test readstring("test.csv") == "2015-01-01T00:00:00;5,1;Text1\n10;19e6;4\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == DateTime(2015)
 
 a = DateTime(2017)
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01T00:00:00.0\n"
+@test readstring("test.csv") == "2017-01-01T00:00:00\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == DateTime(2017)
 
 a = Any[Date(2017,1,14) DateTime(2017,2,15,23,40,59)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-14;2017-02-15T23:40:59.0\n"
+@test readstring("test.csv") == "2017-01-14;2017-02-15T23:40:59\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test isequaldlm(a, b, Any)
@@ -365,7 +365,7 @@ writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 writedlm2("test.csv", a, dfs="", dtfs="")
 @test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
+@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.', dfs="yyyy", dtfs="yyyy")
 @test readstring("test.csv") == "2017;2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
