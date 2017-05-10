@@ -98,7 +98,7 @@ a heterogeneous array of numbers, dates and strings is returned.
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, change d,d to d.d if `decimal=','`
 * `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: format string for DateTime parsing, default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
 * `locale=\"english\"`: language for parsing dates names, default is english
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
@@ -132,7 +132,7 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
 function readdlm2auto(input, dlm, T, eol, auto;
         decimal::Char=',',
         rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
-        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS.s",
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd", 
         locale::AbstractString="english",
         opts...)
@@ -229,7 +229,7 @@ language.
 * `decimal=','`: decimal mark character, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: format string, DateTime write format, default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 * `locale=\"english\"`: language for DateTime writing, default is english
 
 # Code Example 
@@ -266,7 +266,7 @@ function writedlm2auto(f, a, dlm;
         decimal::Char=',',
         write_short::Bool=false,
         dfs::AbstractString="yyyy-mm-dd",
-        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS.s", 
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS", 
         locale::AbstractString="english",
         opts...)
 
