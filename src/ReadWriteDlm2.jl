@@ -61,8 +61,8 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)":
         (df[i] == '.' && i < ldf && df[(i + 1)] == 's')? "":
         (df[i] == '.')? "\\.":
-        (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>\\.\\d{1,3}0{0,6})?":
-        (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>\\.\\d{1,$(repeat_count)})?":
+        (df[i] == 's' && repeat_count < 4 && !repeat_next)? "(?<s>\\.?\\d{1,3}0{0,6})?":
+        (df[i] == 's' && repeat_count > 3 && !repeat_next)? "(?<s>\\.?\\d{1,$(repeat_count)})?":
         in(df[i], codechars)? "": string(df[i]) 
         )
     end
