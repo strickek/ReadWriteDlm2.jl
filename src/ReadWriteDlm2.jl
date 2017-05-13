@@ -30,7 +30,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
     ele = try extrema([length(Dates.dayabbr(i;locale=locale)) for i in 1:7])catch; (3, 3) end
     
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
-    r = "^"; repeat_count = 1; ldf = length(df)
+    r = "^"; repeat_count = 1; ldf = length(df); dotsec = false
     for i = 1:ldf
         repeat_next = (i < ldf && df[(i + 1)] == df[i])? true : false
         (df[i] == '.' && i < ldf && df[(i + 1)] == 's') && (dotsec = true) 
