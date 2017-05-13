@@ -414,19 +414,22 @@ rm("test.csv")
 a = [10.9 12.5; Date(2017) DateTime(2017)]
 writedlm2("test.csv", a, ',', decimal='€')
 b = readdlm2("test.csv", ',', decimal='€')
+rm("test.csv")
 @test a == b
 
 a = [10.9 12.5; Date(2017) DateTime(2017)]
 writedlm2("test.csv", a, ',', decimal='.')
 b = readdlm2("test.csv", ',', decimal='.')
+rm("test.csv")
 @test a == b
 
 a = [10.9 12.5; Date(2017) DateTime(2017)]
 writedlm2("test.csv", a)
 b = readdlm2("test.csv")
+rm("test.csv")
 @test a == b
 
-# test date format strings with variable length (new v0.1.2)
+# test date format strings with variable length
 a = DateTime(2017,5,1,5,59,1)
 writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S")
 @test readstring("test.csv") == "Monday, 01.05.2017 5:59:1\n"
@@ -440,3 +443,11 @@ writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s")
 b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s")
 rm("test.csv")
 @test a == b[1]
+
+# test date format strings with fix length
+a = [DateTime(2017,5,1,5,59,1,898) 1.0 1.1 1.222e7 1 true]
+writedlm2("test.csv", a, dtfs="yyyyymmmdddTHHHMMMSSSsss")
+@test readstring("test.csv") == "02017005001T005059001898;1,0;1,1;1,222e7;1;true\n"
+b = readdlm2("test.csv", dtfs="yyyyymmmdddTHHHMMMSSSsss")
+rm("test.csv") #new
+@test b == a
