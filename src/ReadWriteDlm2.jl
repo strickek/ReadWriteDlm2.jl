@@ -18,7 +18,7 @@ Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`s
 
 Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
 a date string. The regex groups are named according to the `format`string codes. The locale
-is used to calculate min and max length of month and day names (codes: UuEe).
+is used to calculate min and max length of month and day names (for codes: UuEe).
 
 """
 
@@ -62,10 +62,10 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'S' && repeat_count > 2 && !repeat_next)? "0{$(repeat_count-2)}(?<S>[0-5]\\d)":
         (df[i] == '.' && i < ldf && df[(i + 1)] == 's')? "":
         (df[i] == '.')? "\\.":
-        (df[i] == 's' && dotsec == true && repeat_count < 4 && !repeat_next)? "(?<s>\\.\\d{1,3}0{0,6})?":
-        (df[i] == 's' && dotsec == true && repeat_count > 3 && !repeat_next)? "(?<s>\\.\\d{1,$(repeat_count)})?":
-        (df[i] == 's' && dotsec == false && repeat_count < 4 && !repeat_next)? "(?<s>\\d{1,3}0{0,6})?":
-        (df[i] == 's' && dotsec == false && repeat_count > 3 && !repeat_next)? "(?<s>\\d{1,$(repeat_count)})?":
+        (df[i] == 's' && dotsec == true && repeat_count < 4 && !repeat_next)? "(\\.(?<s>\\d{0,3}0{0,6}))?":
+        (df[i] == 's' && dotsec == true && repeat_count > 3 && !repeat_next)? "(\\.(?<s>\\d{$(repeat_count)}))?":
+        (df[i] == 's' && dotsec == false && repeat_count < 4 && !repeat_next)? "(?<s>\\d{3})?":
+        (df[i] == 's' && dotsec == false && repeat_count > 3 && !repeat_next)? "(?<s>\\d{$(repeat_count)})?":
         in(df[i], codechars)? "": string(df[i]) 
         )
     end
@@ -101,8 +101,8 @@ a heterogeneous array of numbers, dates and strings is returned.
 
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, change d,d to d.d if `decimal=','`
-* `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
+* `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
 * `locale=\"english\"`: language for parsing dates names, default is english
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
@@ -140,6 +140,14 @@ function readdlm2auto(input, dlm, T, eol, auto;
         dfs::AbstractString="yyyy-mm-dd", 
         locale::AbstractString="english",
         opts...)
+    
+    ((!isempty(dtfs) && !ismatch(Regex("[^YymdHMSs]"), dtfs)) ||
+    (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
+        """
+        Format string for DateTime(`$dtfs`) or Date(`$dfs`) 
+        contains numeric code elements only. `readdlm2()` needs at least 
+        one non-numeric code element or character for parsing dates.
+        """)     
     
    if !isempty(rs) && decimal != '.' # pre-processing of decimal mark should be done
         
@@ -188,8 +196,10 @@ function readdlm2auto(input, dlm, T, eol, auto;
     # parse data for Date/DateTime-Format -> Julia Dates-Types
     isempty(dfs) && isempty(dtfs) && return z # empty formats -> no d/dt-parsing
 
-    ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
-    rd = dfregex(dfs, locale); rdt = dfregex(dtfs, locale)
+    dtdf = DateFormat(dtfs, locale)
+    ddf = DateFormat(dfs, locale) 
+    rdt = dfregex(dtfs, locale)
+    rd = dfregex(dfs, locale)
 
     for i in eachindex(y)
         if isa(y[i], AbstractString)
@@ -232,8 +242,8 @@ language.
 
 * `decimal=','`: decimal mark character, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
+* `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `locale=\"english\"`: language for DateTime writing, default is english
 
 # Code Example 
@@ -269,10 +279,18 @@ end
 function writedlm2auto(f, a, dlm;
         decimal::Char=',',
         write_short::Bool=false,
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd",
-        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS", 
         locale::AbstractString="english",
         opts...)
+    
+    ((!isempty(dtfs) && !ismatch(Regex("[^YymdHMSs]"), dtfs)) ||
+    (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
+        """
+        Format string for DateTime(`$dtfs`) or Date(`$dfs`) 
+        contains numeric code elements only. `readdlm2()` needs at least 
+        one non-numeric code element or character for parsing dates.
+        """)     
 
     string(dlm) == string(decimal) && error(
         "Error in writedlm(): decimal = delim = ´$(dlm)´ - change decimal or delim!")
@@ -285,7 +303,8 @@ function writedlm2auto(f, a, dlm;
          #format dates only if format strings are not ISO and not ""
          fdt = !isempty(dtfs)  # Bool: format DateTime
          fd = !isempty(dfs)    # Bool: format Date
-         ddf = DateFormat(dfs, locale); dtdf = DateFormat(dtfs, locale)
+         dtdf = DateFormat(dtfs, locale)
+         ddf = DateFormat(dfs, locale)
 
          # create b for manipulation/write - keep a unchanged
          b = similar(a, Any)
