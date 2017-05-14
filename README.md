@@ -109,7 +109,7 @@ supported by `writedlm2()` - is available in the
 [stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
 
 ### Additional Keyword Arguments `writedlm2()`
-* `decimal=','`: decimal mark character, default is a comma
+* `decimal=','`: Character for writeing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
