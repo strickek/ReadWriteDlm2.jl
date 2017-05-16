@@ -1,7 +1,7 @@
 # ReadWriteDlm2 - Read And Write Decimal Comma "CSV"
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/DateTime types. The basic idea of this package is to support the "decimal comma countries" - highlighted in green in the following map:
+The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark and the support of Date/Time types. The basic idea of this package is to support the "decimal comma countries" - highlighted in green in the following map:
 
 <p><a href="https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#/media/File:DecimalSeparator.svg"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a8/DecimalSeparator.svg" alt="DecimalSeparator.svg" height="325" width="640"></a><br>Map provided by <a href="//commons.wikimedia.org/wiki/User:NuclearVacuum" title="User:NuclearVacuum">NuclearVacuum</a> - <a href="//commons.wikimedia.org/wiki/File:BlankMap-World6.svg" title="File:BlankMap-World6.svg">File:BlankMap-World6.svg</a>
 , <a href="http://creativecommons.org/licenses/by-sa/3.0" title="Creative Commons Attribution-Share Alike 3.0">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/w/index.php?curid=10843055">Link</a></p>
@@ -46,9 +46,9 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base `readdlm()`, strings are also parsed for ISO Date and DateTime formats
-by default. To switch off parsing Dates formats set: `dfs="", dtfs=""`. The `locale` defines
-the language of day (`E`, `e`) and month (`U`, `u`) names.
+In addition to Base `readdlm()`, strings are also parsed for Dates formats (ISO) and the fix
+Time format `HH:MM[:SS[.s{1,9}]]` by default. To switch off parsing Dates/Time set:
+`dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
