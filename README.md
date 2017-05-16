@@ -46,8 +46,8 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base `readdlm()`, strings are also parsed for Dates formats (ISO) and the fix
-Time format `HH:MM[:SS[.s{1,9}]]` by default. To switch off parsing Dates/Time set:
+In addition to Base `readdlm()`, strings are also parsed for Dates formats (defaults are ISO) and
+the fix Time format `HH:MM[:SS[.s{1,9}]]`. To switch off parsing Dates/Time set:
 `dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
