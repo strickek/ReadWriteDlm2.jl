@@ -156,9 +156,9 @@ end
 # change to take! in 0.6!!
 let x = ["\"hello\"", "world\""], io = IOBuffer()
     writedlm2(io, x, quotes=false)
-    @test takebuf_string(io) == "\"hello\"\nworld\"\n"
+    @test String(take!(io)) == "\"hello\"\nworld\"\n"
     writedlm2(io, x)
-    @test takebuf_string(io) == "\"\"\"hello\"\"\"\n\"world\"\"\"\n"
+    @test String(take!(io)) == "\"\"\"hello\"\"\"\n\"world\"\"\"\n"
 end
 
 # test comments
@@ -366,8 +366,8 @@ writedlm2("test.csv", a, dfs="", dtfs="")
 @test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
 @test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
-writedlm2("test.csv", a, decimal='.', dfs="yyyy", dtfs="yyyy")
-@test readstring("test.csv") == "2017;2017\n"
+writedlm2("test.csv", a, decimal='.', dfs="\\Y\\ear: yyyy", dtfs="\\Y\\ear: yyyy")
+@test readstring("test.csv") == "Year: 2017;Year: 2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 @test readstring("test.csv") == "01/2017;15.02.2017/23.h\n"
 b = readdlm2("test.csv", dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
@@ -451,3 +451,21 @@ writedlm2("test.csv", a, dtfs="yyyyymmmdddTHHHMMMSSSsss")
 b = readdlm2("test.csv", dtfs="yyyyymmmdddTHHHMMMSSSsss")
 rm("test.csv") #new
 @test b == a
+
+#Time parsing
+a = [Dates.Time(23,55,56,123,456,789) Dates.Time(12,45) Dates.Time(11,23,11)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "23:55:56.123456789;12:45:00;11:23:11\n"
+b = readdlm2("test.csv")
+@test b == a
+write("test.csv", "23:55:56.123456789;12:45;11:23:11\n")
+b = readdlm2("test.csv")
+rm("test.csv") 
+@test b == a
+
+a = [Dates.Time(23,55,56,123,456,789) Dates.Time(12,45) Dates.Time(11,23,11)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "23:55:56.123456789;12:45:00;11:23:11\n"
+@test readdlm2("test.csv", dtfs="", dfs="") == ["23:55:56.123456789" "12:45:00" "11:23:11"]
+@test readdlm2("test.csv") == a
+
