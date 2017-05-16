@@ -453,19 +453,65 @@ rm("test.csv") #new
 @test b == a
 
 #Time parsing
-a = [Dates.Time(23,55,56,123,456,789) Dates.Time(12,45) Dates.Time(11,23,11)]
+a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "23:55:56.123456789;12:45:00;11:23:11\n"
+@test readstring("test.csv") == "23:55:56.123456;12:45:00;11:23:11\n"
 b = readdlm2("test.csv")
 @test b == a
-write("test.csv", "23:55:56.123456789;12:45;11:23:11\n")
+write("test.csv", "23:55:56.123456;12:45;11:23:11\n")
 b = readdlm2("test.csv")
 rm("test.csv") 
 @test b == a
 
-a = [Dates.Time(23,55,56,123,456,789) Dates.Time(12,45) Dates.Time(11,23,11)]
+a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "23:55:56.123456789;12:45:00;11:23:11\n"
-@test readdlm2("test.csv", dtfs="", dfs="") == ["23:55:56.123456789" "12:45:00" "11:23:11"]
+@test readstring("test.csv") == "23:55:56.123456;12:45:00;11:23:11\n"
+@test readdlm2("test.csv", dtfs="", dfs="") == ["23:55:56.123456" "12:45:00" "11:23:11"]
 @test readdlm2("test.csv") == a
 
+# Test locale for french and german
+Dates.LOCALES["french"] = Dates.DateLocale(
+    ["janvier", "février", "mars", "avril", "mai", "juin",
+     "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+    ["janv", "févr", "mars", "avril", "mai", "juin",
+     "juil", "août", "sept", "oct", "nov", "déc"],
+    ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+["lu", "ma", "me", "je", "ve", "sa", "di"],
+)
+
+Dates.LOCALES["german"] = Dates.DateLocale(
+["Januar", "Februar", "März", "April", "Mai", "Juni",
+    "Juli", "August", "September", "Oktober", "November", "Dezember"],
+["Jan", "Feb", "Mar", "Apr", "Mai", "Jun",
+    "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+)
+
+a = DateTime(2017,5,1,5,59,1)
+writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="french")
+@test readstring("test.csv") == "lundi, 01.05.2017 5:59:1\n"
+b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S", locale="french")
+rm("test.csv")
+@test b[1] == a
+
+a = DateTime(2017,1,1,5,59,1,898)
+writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s", locale="french")
+@test readstring("test.csv") == "dimanche, 1.janv 2017 5:59:1,898\n"
+b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s", locale="french")
+rm("test.csv") 
+@test b[1] == a
+
+a = DateTime(2017,8,1,5,59,1)
+writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="german")
+@test readstring("test.csv") == "Dienstag, 01.08.2017 5:59:1\n"
+b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S", locale="german")
+rm("test.csv")
+@test b[1] == a
+
+a = DateTime(2017,11,1,5,59,1,898)
+writedlm2("test.csv", a, dtfs="E, d. U yyyy H:M:S,s", locale="german")
+@test readstring("test.csv") == "Mittwoch, 1. November 2017 5:59:1,898\n"
+b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S.s", locale="german")
+rm("test.csv") 
+@test b[1] == a
