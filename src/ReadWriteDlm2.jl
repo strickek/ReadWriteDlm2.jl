@@ -74,6 +74,21 @@ end
 
 """
 
+    parsetime(str::AbstractString)
+
+Parse a `valid(!!!)` time string \"HH:MM[:SS[.s{1,9}]]\" and return the `Dates.Time` result.
+"""
+
+function parsetime(str::AbstractString)
+    h = parse(Int, SubString(str, 1, 2))
+    mi = parse(Int, SubString(str, 4, 5))
+    s = (length(str) > 5)? parse(Float64, SubString(str, 7)): 0.0
+    ns = Integer(1000000000s) + 60000000000mi + 3600000000000h
+    return Dates.Time(Dates.Nanosecond(ns))
+end
+
+"""
+
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
     readdlm2(source, delim::Char; options...)
@@ -90,9 +105,9 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base readdlm(), strings are also parsed for ISO Date and DateTime formats
-by default. To switch off parsing Dates formats set: `dfs=\"\", dtfs=\"\"`. `locale` defines
-the language of day (`E`, `e`) and month (`U`, `u`) names.
+In addition to Base readdlm(), strings are also parsed for Dates formats (ISO) and the fix
+Time format `\"HH:MM[:SS[.s{1,9}]]\"` by default. To switch off parsing Dates/Time set:
+`dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned.
@@ -193,7 +208,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     isa(z, Tuple) ? (y, h) = z : y = z #Tupel(data, header) or only data? y = data.
 
-    # parse data for Date/DateTime-Format -> Julia Dates-Types
+    # parse data for Date/DateTime and Time Format -> Julia Dates-Types
     isempty(dfs) && isempty(dtfs) && return z # empty formats -> no d/dt-parsing
 
     dtdf = DateFormat(dtfs, locale)
@@ -207,6 +222,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 try y[i] = DateTime(y[i], dtdf) catch; end
             elseif ismatch(rd, y[i])
                 try y[i] = Date(y[i], ddf) catch; end
+            elseif ismatch(r"^(0\d|1\d|2[0-3]):[0-5]\d((:[0-5]\d)(\.\d{1,9})?)?$", y[i])
+                try y[i] = parsetime(y[i]) catch; end                
             end
         end
     end
@@ -270,9 +287,9 @@ function floatdec(a, decimal, write_short) # print shortest and change decimal m
     iob = IOBuffer()
     write_short == true ? print_shortest(iob, a) : print(iob, a)
     if decimal != '.'
-        return replace(takebuf_string(iob), '.', decimal)
+        return replace(String(take!(iob)), '.', decimal)
     else
-        return String(takebuf_string(iob))
+        return String(take!(iob))
     end
 end
 
@@ -300,7 +317,7 @@ function writedlm2auto(f, a, dlm;
      end
 
      if isa(a, AbstractArray)
-         #format dates only if format strings are not ISO and not ""
+         #format dates only if format strings are not not ""
          fdt = !isempty(dtfs)  # Bool: format DateTime
          fd = !isempty(dfs)    # Bool: format Date
          dtdf = DateFormat(dtfs, locale)
