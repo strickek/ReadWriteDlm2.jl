@@ -82,8 +82,9 @@ Parse a `valid(!!!)` time string \"HH:MM[:SS[.s{1,9}]]\" and return the `Dates.T
 function parsetime(str::AbstractString)
     h = parse(Int, SubString(str, 1, 2))
     mi = parse(Int, SubString(str, 4, 5))
-    s = (length(str) > 5)? parse(Float64, SubString(str, 7)): 0.0
-    ns = Integer(1000000000s) + 60000000000mi + 3600000000000h
+    s = (6 < length(str))? parse(Int, SubString(str, 7, 8)): 0
+    ns = (9 < length(str))? parse(Int, rpad(SubString(str, 10), 9, 0)): 0
+    ns = ns + 1000000000s + 60000000000mi + 3600000000000h
     return Dates.Time(Dates.Nanosecond(ns))
 end
 
