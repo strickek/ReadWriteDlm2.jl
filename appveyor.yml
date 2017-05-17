@@ -17,8 +17,10 @@ notifications:
     on_build_status_changed: false
 
 install:
++  - ps: "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12"
 # Download most recent Julia Windows binary
   - ps: (new-object net.webclient).DownloadFile(
+        $env:JULIA_URL
         $("http://s3.amazonaws.com/"+$env:JULIAVERSION),
         "C:\projects\julia-binary.exe")
 # Run installer silently, output to C:\projects\julia
