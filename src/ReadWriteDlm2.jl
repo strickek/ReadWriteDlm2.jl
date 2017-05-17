@@ -81,13 +81,9 @@ Parse a `valid(!!!)` time string \"HH:MM[:SS[.s{1,9}]]\" and return the `Dates.T
 
 function parsetime(str::AbstractString)
     ls = length(str)
-    if 4 < ls 
     h = parse(Int, SubString(str, 1, 2))
     mi = parse(Int, SubString(str, 4, 5))
-    else
-        return Dates.Time(0)
-    end
-    s = (6 < ls)? parse(Int, lpad(SubString(str, 7,8), 2, 0)): 0
+    s = (6 < ls)? parse(Int, lpad(SubString(str, 7, 8), 2, 0)): 0
     ms = (9 < ls)? parse(Int, rpad(SubString(str, 10, 12), 3, 0)): 0
     mys = (12 < ls)? parse(Int, rpad(SubString(str, 13, 15), 3, 0)): 0
     ns = (15 < ls)? parse(Int, rpad(SubString(str, 16, 18), 3, 0)): 0
