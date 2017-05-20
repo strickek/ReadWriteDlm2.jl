@@ -453,12 +453,12 @@ rm("test.csv") #new
 @test b == a
 
 #Time parsing
-a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
+a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23,55,56,123) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "23:55:56.123456;12:45:00;11:23:11\n"
+@test readstring("test.csv") == "23:55:56.123456789;23:55:56.123456;23:55:56.123;12:45:00;11:23:11\n"
 b = readdlm2("test.csv")
 @test b == a
-write("test.csv", "23:55:56.123456;12:45;11:23:11\n")
+write("test.csv", "23:55:56.123456789;23:55:56.123456;23:55:56.123;12:45;11:23:11\n")
 b = readdlm2("test.csv")
 rm("test.csv") 
 @test b == a
