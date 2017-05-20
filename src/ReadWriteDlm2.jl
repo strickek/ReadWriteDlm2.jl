@@ -76,18 +76,34 @@ end
 
     parsetime(str::AbstractString)
 
-Parse a `valid(!!!)` time string \"HH:MM[:SS[.s{1,9}]]\" and return the `Dates.Time` result.
+Parse the given string for time format \"HH:MM[:SS[.s{1,9}]]\" and return the time as `Dates.Time` type.
 """
 
 function parsetime(str::AbstractString)
     ls = length(str)
     h = parse(Int, SubString(str, 1, 2))
-    mi = parse(Int, SubString(str, 4, 5))
-    s = (6 < ls)? parse(Int, lpad(SubString(str, 7, 8), 2, 0)): 0
-    ms = (9 < ls)? parse(Int, rpad(SubString(str, 10, 12), 3, 0)): 0
-    mys = (12 < ls)? parse(Int, rpad(SubString(str, 13, 15), 3, 0)): 0
-    ns = (15 < ls)? parse(Int, rpad(SubString(str, 16, 18), 3, 0)): 0
-    return Dates.Time(h, mi, s, ms, mys, ns)
+    m = parse(Int, SubString(str, 4, 5))
+    if ls < 7
+        return Dates.Time(h, m)
+    elseif ls < 10
+        s = parse(Int, SubString(str, 7, 8))
+        return Dates.Time(h, m, s)
+    elseif ls < 13
+        s = parse(Int, SubString(str, 7, 8))
+        ms = parse(Int, rpad(SubString(str, 10, 12), 3, 0))
+        return Dates.Time(h, m, s, ms)
+    elseif ls < 16
+        s = parse(Int, SubString(str, 7, 8))
+        ms = parse(Int, SubString(str, 10, 12))
+        ys = parse(Int, rpad(SubString(str, 13, 15), 3, 0))
+        return Dates.Time(h, m, s, ms, ys)
+    else
+        s = parse(Int, SubString(str, 7, 8))
+        ms = parse(Int, SubString(str, 10, 12))
+        ys = parse(Int, SubString(str, 13, 15))
+        ns = parse(Int, rpad(SubString(str, 16, 18), 3, 0))
+        return Dates.Time(h, m, s, ms, ys, ns)
+    end
 end
 
 """
