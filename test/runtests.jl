@@ -3,6 +3,7 @@
 #Start Test Script
 using ReadWriteDlm2
 using Base.Test
+using Base.Dates
 
 # Run tests
 
