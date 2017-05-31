@@ -449,25 +449,26 @@ a = [DateTime(2017,5,1,5,59,1,898) 1.0 1.1 1.222e7 1 true]
 writedlm2("test.csv", a, dtfs="yyyyymmmdddTHHHMMMSSSsss")
 @test readstring("test.csv") == "02017005001T005059001898;1,0;1,1;1,222e7;1;true\n"
 b = readdlm2("test.csv", dtfs="yyyyymmmdddTHHHMMMSSSsss")
-rm("test.csv") #new
+rm("test.csv")
 @test b == a
 
 #Time parsing
 a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23,55,56,123) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "23:55:56.123456789;23:55:56.123456;23:55:56.123;12:45:00;11:23:11\n"
+@test readstring("test.csv") == "23:55:56,123456789;23:55:56,123456;23:55:56,123;12:45:00;11:23:11\n"
 b = readdlm2("test.csv")
 @test b == a
-write("test.csv", "23:55:56.123456789;23:55:56.123456;23:55:56.123;12:45;11:23:11\n")
+write("test.csv", "23:55:56.123456789;23:55:56,123456;23:55:56,123;12:45;11:23:11\n")
 b = readdlm2("test.csv")
 rm("test.csv") 
 @test b == a
 
 a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
-writedlm2("test.csv", a)
+writedlm2("test.csv", a, decimal='.')
 @test readstring("test.csv") == "23:55:56.123456;12:45:00;11:23:11\n"
 @test readdlm2("test.csv", dtfs="", dfs="") == ["23:55:56.123456" "12:45:00" "11:23:11"]
 @test readdlm2("test.csv") == a
+rm("test.csv")
 
 # Test locale for french and german
 Dates.LOCALES["french"] = Dates.DateLocale(
@@ -515,3 +516,127 @@ writedlm2("test.csv", a, dtfs="E, d. U yyyy H:M:S,s", locale="german")
 b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S.s", locale="german")
 rm("test.csv") 
 @test b[1] == a
+
+# Test Complex and Rational parsing
+a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "-1 - 2im;1,2 - 2,0im;1,0e9 + 3,0e19im;1//3;-1//5;1//2;1//0;0//1\n"
+b = readdlm2("test.csv", Any)
+rm("test.csv")
+@test isequaldlm(a, b, Any)
+# Complex and Rational - tolerance with blancs, i/j and different signes
+write("test.csv", "    -1-2j; 1,2 - 2,0i ;1.0E9+3.0E19im;   -1//-3;1//-5;  1//2 ;1//-0;-0//1 \n")
+b = readdlm2("test.csv", Any)
+rm("test.csv") 
+@test b == a
+
+# Test Complex and Rational parsing - decimal = '.', delimiter = \t
+a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
+writedlm2("test.csv", a, '\t', decimal='.')
+@test readstring("test.csv") == "-1 - 2im\t1.2 - 2.0im\t1.0e9 + 3.0e19im\t1//3\t-1//5\t1//2\t1//0\t0//1\n"
+b = readdlm2("test.csv",'\t', Any, decimal='.')
+rm("test.csv")
+@test isequaldlm(a, b, Any)
+
+#  Test different types with header and Any Array - decimal comma
+a = Any["Nr" "Wert";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == 
+"""
+Nr;Wert
+1;2017-01-01
+2;2018-01-01T00:00:00
+3;23:54:45,123456078
+4;1,5e10 + 5,0im
+5;300//1
+6;1,5e10
+"""
+b = readdlm2("test.csv", Any, header=true)
+rm("test.csv")
+@test a[2:end,:] == b[1]
+@test a[1:1,:] == b[2]
+
+#  Test different types with header and Any Array - english decimal 
+a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
+writedlm2("test.csv", a, '\t', decimal='.')
+@test readstring("test.csv") == 
+"""
+Nr\tValue
+1\t2017-01-01
+2\t2018-01-01T00:00:00
+3\t23:54:45.123456078
+4\t1.5e10 + 5.0im
+5\t300//1
+6\t1.5e10
+"""
+b = readdlm2("test.csv", '\t', Any, decimal='.', header=true)
+rm("test.csv")
+@test a[2:end,:] == b[1]
+@test a[1:1,:] == b[2]
+
+# Test Complex Array read and write
+a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
+b = readdlm2("test.csv", Complex)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Complex,2}
+
+a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
+writedlm2("test.csv", a, imsuffix="i")
+@test readstring("test.csv") == "-1 - 2i;1,2 - 2,0i;-1,0e9 + 3,0e-19i\n"
+b = readdlm2("test.csv", Complex)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Complex,2}
+
+a = Any["test" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+b = readdlm2("test.csv", Any)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Any,2}
+
+a = Any["test1" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test1;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+b, h = readdlm2("test.csv", Complex, header=true)
+rm("test.csv")
+@test b == Complex[complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
+@test h == AbstractString["test1" "test2"]
+
+# Test Time read and write
+a = Time[Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
+b = readdlm2("test.csv", Time)
+rm("test.csv")
+@test b == a
+@test typeof(b) == Array{Time,2}
+
+a = Any["test1" "test2";Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test1;test2\n12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
+b, h = readdlm2("test.csv", Time, header=true)
+rm("test.csv")
+@test b == Time[Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
+@test h == AbstractString["test1" "test2"]
+
+# Test Rational read and write
+a = Rational[456//123 123//45;456//23 1203//45]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "152//41;41//15\n456//23;401//15\n"
+b = readdlm2("test.csv", Rational)
+rm("test.csv")
+@test b == a
+@test typeof(b) == Array{Rational,2}
+
+a = Any["test1" "test2";456//123 123//45;456//23 1203//45]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test1;test2\n152//41;41//15\n456//23;401//15\n"
+b, h = readdlm2("test.csv", Rational, header=true)
+rm("test.csv")
+@test b == Rational[456//123 123//45;456//23 1203//45]
+@test h == AbstractString["test1" "test2"]
