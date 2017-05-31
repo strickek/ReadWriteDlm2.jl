@@ -30,7 +30,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
     ele = try extrema([length(Dates.dayabbr(i;locale=locale)) for i in 1:7])catch; (3, 3) end
     
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
-    r = "^"; repeat_count = 1; ldf = length(df); dotsec = false
+    r = "^ *"; repeat_count = 1; ldf = length(df); dotsec = false
     for i = 1:ldf
         repeat_next = (i < ldf && df[(i + 1)] == df[i])? true : false
         (df[i] == '.' && i < ldf && df[(i + 1)] == 's') && (dotsec = true) 
@@ -69,42 +69,8 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         in(df[i], codechars)? "": string(df[i]) 
         )
     end
-    return Regex(r * string('$'))
+    return Regex(r * " *" * string('$'))
 end 
-
-"""
-
-    parsetime(str::AbstractString)
-
-Parse the given string for time format \"HH:MM[:SS[.s{1,9}]]\" and return the value as `Dates.Time` type.
-"""
-
-function parsetime(str::AbstractString)
-    ls = length(str)
-    h = parse(Int, SubString(str, 1, 2))
-    mi = parse(Int, SubString(str, 4, 5))
-    if ls < 7
-        return Dates.Time(h, mi)
-    elseif ls < 10
-        s = parse(Int, SubString(str, 7, 8))
-        return Dates.Time(h, mi, s)
-    elseif ls < 13
-        s = parse(Int, SubString(str, 7, 8))
-        ms = parse(Int, rpad(SubString(str, 10, 12), 3, 0))
-        return Dates.Time(h, mi, s, ms)
-    elseif ls < 16
-        s = parse(Int, SubString(str, 7, 8))
-        ms = parse(Int, SubString(str, 10, 12))
-        us = parse(Int, rpad(SubString(str, 13, 15), 3, 0))
-        return Dates.Time(h, mi, s, ms, us)
-    else
-        s = parse(Int, SubString(str, 7, 8))
-        ms = parse(Int, SubString(str, 10, 12))
-        us = parse(Int, SubString(str, 13, 15))
-        ns = parse(Int, rpad(SubString(str, 16, 18), 3, 0))
-        return Dates.Time(h, mi, s, ms, us, ns)
-    end
-end
 
 """
 
@@ -124,12 +90,14 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base readdlm(), strings are also parsed for Dates formats (ISO) and the fix
-Time format `\"HH:MM[:SS[.s{1,9}]]\"` by default. To switch off parsing Dates/Time set:
+In addition to Base readdlm(), strings are also parsed for Dates formats (ISO) and the
+Time format `\"HH:MM[:SS[.s{1,9}]]\"`. To switch off parsing Dates and Time set:
 `dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array. In other cases
-a heterogeneous array of numbers, dates and strings is returned.
+a heterogeneous array of numbers, dates and strings is returned. To include parsing for Complex and 
+Rational numbers, use `Any` as Type argument. Homogeneous arrays are possible for the Types Int, 
+Float64, Bool, Complex, Rational, DateTime, Date and Time.
 
 # Additional Keyword Arguments
 
@@ -181,7 +149,47 @@ function readdlm2auto(input, dlm, T, eol, auto;
         Format string for DateTime(`$dtfs`) or Date(`$dfs`) 
         contains numeric code elements only. `readdlm2()` needs at least 
         one non-numeric code element or character for parsing dates.
-        """)     
+        """)    
+    
+    # parsing "matrix" für different T::Types
+    doparsedatetime = false
+    doparsedate = false
+    doparsetime = false
+    doparsecomplex = false
+    doparserational = false
+    convertarray = false
+    T2 = Any
+    if T == DateTime
+        isempty(dtfs) && error("Error: Parsing for DateTime - format string `dtfs` is empty.")
+        doparsedatetime = true
+        convertarray = true
+    elseif T == Date
+        isempty(dtfs) && error("Error: Parsing for Date - format string `dfs` is empty.")
+        doparsedate = true
+        convertarray = true
+    elseif T == Time
+        doparsetime = true
+        convertarray = true
+    elseif T == Complex
+        doparsecomplex = true
+        convertarray = true
+    elseif T == Rational
+        doparserational = true
+        convertarray = true
+    elseif T == Any
+        doparsedatetime = !isempty(dtfs)
+        doparsedate = !isempty(dfs)
+        doparsetime = true
+        doparsecomplex = true
+        doparserational = true
+    elseif T == Float64 && auto == true
+        T2 = T
+        doparsedatetime = !isempty(dtfs)
+        doparsedate = !isempty(dfs)
+        doparsetime = doparsedatetime && doparsedate
+    else
+        T2 = T
+    end 
     
    if !isempty(rs) && decimal != '.' # pre-processing of decimal mark should be done
         
@@ -215,38 +223,79 @@ function readdlm2auto(input, dlm, T, eol, auto;
         s = replace(readstring(input), rs[1], rs[2])
         
         # using Base.DataFmt internal functions to read dlm-string
-        z = readdlm_string(s, dlm, T, eol, auto, val_opts(opts))
+        z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
         
     else # read with standard readdlm(), no regex
         if auto
             z = readdlm(input, dlm, eol; opts...)
         else
-            z = readdlm(input, dlm, T, eol; opts...)
+            z = readdlm(input, dlm, T2, eol; opts...)
         end
     end
 
     isa(z, Tuple) ? (y, h) = z : y = z #Tupel(data, header) or only data? y = data.
 
     # parse data for Date/DateTime and Time Format -> Julia Dates-Types
-    isempty(dfs) && isempty(dtfs) && return z # empty formats -> no d/dt-parsing
-
+   
     dtdf = DateFormat(dtfs, locale)
     ddf = DateFormat(dfs, locale) 
     rdt = dfregex(dtfs, locale)
     rd = dfregex(dfs, locale)
 
     for i in eachindex(y)
-        if isa(y[i], AbstractString)
-            if ismatch(rdt, y[i])
+        if isa(y[i], AbstractString) 
+            if doparsedatetime && ismatch(rdt, y[i]) # parse DateTime
                 try y[i] = DateTime(y[i], dtdf) catch; end
-            elseif ismatch(rd, y[i])
+                
+            elseif doparsedate && ismatch(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
-            elseif ismatch(r"^(0\d|1\d|2[0-3]):[0-5]\d((:[0-5]\d)(\.\d{1,9})?)?$", y[i])
-                try y[i] = parsetime(y[i]) catch; end                
+                
+            else
+                notmatched = true
+                
+                if doparsetime # parse Time
+                    mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,9}))?)? *$", y[i]);
+                    if mt != nothing 
+                        G = 1000000000
+                        ns = 3600 * G * parse(Int, mt[1]) + 60 * G * parse(Int, mt[2])
+                        ns =(mt[4] == nothing)? ns :
+                            (mt[6] == nothing)? (ns + G * parse(Int, lpad(mt[4], 2, 0))):
+                            (ns + G * parse(Int, mt[4]) + parse(Int, rpad(mt[6], 9, 0)))
+                        try y[i] = Dates.Time(Dates.Nanosecond(ns)); notmatched = false catch; end
+                    end
+                end
+                
+                if notmatched && doparsecomplex # parse Complex
+                    mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?)(im|i|j) *$", y[i])
+                    if mc != nothing 
+                        isfloat = mc[2] != nothing || mc[3] != nothing || mc[6] != nothing || mc[7] != nothing
+                        if isfloat
+                            try y[i] = complex(parse(Float64, mc[1]), parse(Float64, mc[4]*mc[5]));
+                                notmatched = false catch; end
+                        else
+                            try y[i] = complex(parse(Int, mc[1]), parse(Int, mc[4]*mc[5])); 
+                                notmatched = false catch; end
+                        end
+                    end
+                end
+                
+                if notmatched && doparserational # parse Rational
+                    mr = match(r"^ *(-?\d+)//(-?\d+) *$", y[i])
+                    if mr != nothing
+                        nu = parse(Int, mr[1])
+                        de = parse(Int, mr[2])
+                        try y[i] = //(nu, de) catch; end
+                    end
+                end
+                
             end
         end
     end
-
+    # begin new
+    if convertarray  
+        isa(z, Tuple) ? z = (convert(Array{T}, y), h): z = convert(Array{T}, z) 
+    end
+    # end new
     return z
 
     end # end function readdlm2auto()
@@ -272,7 +321,8 @@ in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in `locale`
-language.
+language. For writeing Complex numbers the imaginary component suffix can be changed with the
+`imsuffix=` keyword argument.
 
 # Additional Keyword Arguments
 
@@ -281,6 +331,7 @@ language.
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
 * `locale=\"english\"`: language for DateTime writing, default is english
+* `imsuffix=\"im\"`: Complex - imaginary component suffix `\"i\"`, `\"j\"` or `\"im\"`(=default)
 
 # Code Example 
 for writing the Julia `test` data to an text file `test_de.csv` readable by Excel (lang=german):
@@ -302,7 +353,13 @@ writedlm2(f::AbstractString, a; opts...) =
 writedlm2(f::AbstractString, a, dlm; opts...) =
     writedlm2auto(f, a, dlm; opts...)
 
-function floatdec(a, decimal, write_short) # print shortest and change decimal mark
+"""
+
+    floatformat(a, decimal::Char, write_short::Bool) 
+
+Convert Int or Float64 numbers to string, optional with print shortest and change of decimal mark.
+"""
+function floatformat(a, decimal, write_short) # print shortest and change decimal mark
     iob = IOBuffer()
     write_short == true ? print_shortest(iob, a) : print(iob, a)
     if decimal != '.'
@@ -312,12 +369,39 @@ function floatdec(a, decimal, write_short) # print shortest and change decimal m
     end
 end
 
+"""
+
+    timeformat(a, decimal::Char) 
+
+Convert Time to string, optional with change of decimal mark for secounds.
+"""
+function timeformat(a, decimal) # change decimal mark for Time
+    a = string(a)
+    decimal != '.' && (a = replace(a, '.', decimal))
+    return a
+end
+
+"""
+
+    Complexformat(a, decimal::Char, imsuffix::AbstractString) 
+
+Convert Complex number to string, optional with change of decimal and/or imsuffix.
+"""
+function complexformat(a, decimal, imsuffix) # change decimal mark and imsuffix for Complex
+    a = string(a)
+    #imsuffix != "im" && (a = split(a, "im");a = string(a[1], imsuffix))
+    imsuffix != "im" && (a = string(split(a, "im")[1], imsuffix))
+    decimal != '.' && (a = replace(a, '.', decimal))
+    return a
+end
+
 function writedlm2auto(f, a, dlm;
         decimal::Char=',',
         write_short::Bool=false,
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
         dfs::AbstractString="yyyy-mm-dd",
         locale::AbstractString="english",
+        imsuffix::AbstractString="im", 
         opts...)
     
     ((!isempty(dtfs) && !ismatch(Regex("[^YymdHMSs]"), dtfs)) ||
@@ -331,24 +415,31 @@ function writedlm2auto(f, a, dlm;
     string(dlm) == string(decimal) && error(
         "Error in writedlm(): decimal = delim = ´$(dlm)´ - change decimal or delim!")
 
+    imsuffix != "im" && imsuffix != "i" && imsuffix != "j" && error(
+    "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
+    
     if isa(a, Union{Number, Date, DateTime})
          a = [a]  # create 1 element Array 
      end
 
      if isa(a, AbstractArray)
-         #format dates only if format strings are not not ""
-         fdt = !isempty(dtfs)  # Bool: format DateTime
-         fd = !isempty(dfs)    # Bool: format Date
-         dtdf = DateFormat(dtfs, locale)
-         ddf = DateFormat(dfs, locale)
+        #format dates only if format strings are not not ""
+        fdt = !isempty(dtfs)  # Bool: format DateTime
+        dtdf = DateFormat(dtfs, locale)
+        fd = !isempty(dfs)    # Bool: format Date
+        ddf = DateFormat(dfs, locale)
+        ft = decimal != '.'       # Bool: format Time (change decimal)
+        fc = (imsuffix != "im" || decimal != '.') # Bool: format Complex
 
          # create b for manipulation/write - keep a unchanged
          b = similar(a, Any)
          for i in eachindex(a)
              b[i] =
-             isa(a[i], AbstractFloat) ? floatdec(a[i], decimal, write_short):
-             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf):
-             isa(a[i], Date) && fd ? Dates.format(a[i], ddf): string(a[i])
+            isa(a[i], AbstractFloat) ? floatformat(a[i], decimal, write_short):
+            isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf):
+            isa(a[i], Date) && fd ? Dates.format(a[i], ddf):
+            isa(a[i], Time) && ft ? timeformat(a[i], decimal):
+            isa(a[i], Complex) && fc ? complexformat(a[i], decimal, imsuffix): string(a[i])
          end
      else  # a is not a Number, Date, DateTime or Array -> no preprocessing
          b = a 
