@@ -641,3 +641,37 @@ b, h = readdlm2("test.csv", Rational, header=true)
 rm("test.csv")
 @test b == Rational[456//123 123//45;456//23 1203//45]
 @test h == AbstractString["test1" "test2"]
+
+# Test DateTime read and write
+a = DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "2017-01-01T00:00:00;2016-01-01T00:00:00\n2015-01-01T00:00:00;2014-01-01T00:00:00\n"
+b = readdlm2("test.csv", DateTime)
+rm("test.csv")
+@test b == a
+@test typeof(b) == Array{DateTime,2}
+
+a = Any["test1" "test2";DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test1;test2\n2017-01-01T00:00:00;2016-01-01T00:00:00\n2015-01-01T00:00:00;2014-01-01T00:00:00\n"
+b, h = readdlm2("test.csv", DateTime, header=true)
+rm("test.csv")
+@test b == DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
+@test h == AbstractString["test1" "test2"]
+
+# Test Date read and write
+a = Date[Date(2017) Date(2016);Date(2015) Date(2014)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
+b = readdlm2("test.csv", Date)
+rm("test.csv")
+@test b == a
+@test typeof(b) == Array{Date,2}
+
+a = Any["test1" "test2";Date(2017) Date(2016);Date(2015) Date(2014)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "test1;test2\n2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
+b, h = readdlm2("test.csv", Date, header=true)
+rm("test.csv")
+@test b == Date[Date(2017) Date(2016);Date(2015) Date(2014)]
+@test h == AbstractString["test1" "test2"]
