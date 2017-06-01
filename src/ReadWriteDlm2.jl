@@ -254,14 +254,16 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 notmatched = true
                 
                 if doparsetime # parse Time
-                    mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,9}))?)? *$", y[i]);
+    mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,3})(\d{1,3})?(\d{1,3})?)?)? *$", y[i])
                     if mt != nothing 
-                        G = 1000000000
-                        ns = 3600 * G * parse(Int, mt[1]) + 60 * G * parse(Int, mt[2])
-                        ns =(mt[4] == nothing)? ns :
-                            (mt[6] == nothing)? (ns + G * parse(Int, lpad(mt[4], 2, 0))):
-                            (ns + G * parse(Int, mt[4]) + parse(Int, rpad(mt[6], 9, 0)))
-                        try y[i] = Dates.Time(Dates.Nanosecond(ns)); notmatched = false catch; end
+                        hour = parse(Int, mt[1])
+                        mi = parse(Int, mt[2])
+                        (mt[4] == nothing)? s = ms = us = ns = 0:
+                        s  = parse(Int, lpad(mt[4], 2, 0)); (mt[6] == nothing)? ms = us = ns = 0:
+                        ms = parse(Int, rpad(mt[6], 3, 0)); (mt[7] == nothing)? us = ns = 0:
+                        us = parse(Int, rpad(mt[7], 3, 0)); (mt[8] == nothing)? ns = 0:
+                        ns = parse(Int, rpad(mt[8], 3, 0))
+                        try y[i] = Dates.Time(hour, mi, s, ms, us, ns); notmatched = false catch; end
                     end
                 end
                 
