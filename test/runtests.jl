@@ -675,3 +675,11 @@ b, h = readdlm2("test.csv", Date, header=true)
 rm("test.csv")
 @test b == Date[Date(2017) Date(2016);Date(2015) Date(2014)]
 @test h == AbstractString["test1" "test2"]
+
+# Test alternative rs Tuple - is decimal ignored?
+a = Float64[1.1 1.2;2.1 2.2]
+writedlm2("test.csv", a, decimal='€')
+@test readstring("test.csv") == "1€1;1€2\n2€1;2€2\n"
+b = readdlm2("test.csv", Any, rs=(r"(\d)€(\d)", s"\1.\2"), decimal='n')
+rm("test.csv")
+@test a == b
