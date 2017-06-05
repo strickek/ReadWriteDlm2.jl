@@ -359,15 +359,20 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
 
     floatformat(a, decimal::Char, write_short::Bool) 
 
-Convert Int or Float64 numbers to string, optional with print shortest and change of decimal mark.
+Convert Int or Float64 numbers to string, optional with print_shortest and change of decimal mark.
 """
-function floatformat(a, decimal, write_short) # print shortest and change decimal mark
-    iob = IOBuffer()
-    write_short == true ? print_shortest(iob, a) : print(iob, a)
-    if decimal != '.'
-        return replace(String(take!(iob)), '.', decimal)
+function floatformat(a, decimal, write_short) 
+    if write_short == false
+        a = string(a)
     else
-        return String(take!(iob))
+        iob = IOBuffer()
+        print_shortest(iob, a) 
+        a = String(take!(iob)) 
+    end
+    if decimal != '.'
+        return replace(a, '.', decimal)
+    else
+        return a
     end
 end
 
