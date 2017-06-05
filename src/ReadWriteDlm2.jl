@@ -328,7 +328,7 @@ language. For writing Complex numbers the imaginary component suffix can be chan
 
 # Additional Keyword Arguments
 
-* `decimal=','`: decimal mark character, default is a comma
+* `decimal=','`: Charater for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
