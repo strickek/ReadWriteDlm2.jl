@@ -74,6 +74,53 @@ end
 
 """
 
+    parseothers(y::AbstractString, doparsetime::Bool, doparsecomplex::Bool, doparserational::Bool)
+
+Parse string `y` for Time, Complex and Rational and return the result or `y`.
+"""
+function parseothers(y, doparsetime, doparsecomplex, doparserational)
+                
+    if doparsetime # parse Time
+        mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,3})(\d{1,3})?(\d{1,3})?)?)? *$", y)
+        if mt != nothing
+            hour = parse(Int, mt[1])
+            mi = parse(Int, mt[2])
+            (mt[4] == nothing)? s = ms = us = ns = 0:
+            s  = parse(Int, lpad(mt[4], 2, 0)); (mt[6] == nothing)? ms = us = ns = 0:
+            ms = parse(Int, rpad(mt[6], 3, 0)); (mt[7] == nothing)? us = ns = 0:
+            us = parse(Int, rpad(mt[7], 3, 0)); (mt[8] == nothing)? ns = 0:
+            ns = parse(Int, rpad(mt[8], 3, 0))
+            return Dates.Time(hour, mi, s, ms, us, ns)
+        end
+    end
+
+    if doparsecomplex # parse Complex
+        mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?)(im|i|j) *$", y)
+        if mc != nothing 
+            isfloat = mc[2] != nothing || mc[3] != nothing || mc[6] != nothing || mc[7] != nothing
+            if isfloat
+                return complex(parse(Float64, mc[1]), parse(Float64, mc[4]*mc[5]))
+            else
+                return complex(parse(Int, mc[1]), parse(Int, mc[4]*mc[5]))
+            end
+        end
+    end
+
+    if doparserational # parse Rational
+        mr = match(r"^ *(-?\d+)//(-?\d+) *$", y)
+        if mr != nothing
+            nu = parse(Int, mr[1])
+            de = parse(Int, mr[2])
+            return //(nu, de)
+        end
+    end
+    
+    return y
+end
+
+
+"""
+
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
     readdlm2(source, delim::Char; options...)
@@ -245,51 +292,11 @@ function readdlm2auto(input, dlm, T, eol, auto;
     for i in eachindex(y)
         if isa(y[i], AbstractString) 
             if doparsedatetime && ismatch(rdt, y[i]) # parse DateTime
-                try y[i] = DateTime(y[i], dtdf) catch; end
-                
+                try y[i] = DateTime(y[i], dtdf) catch; end 
             elseif doparsedate && ismatch(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
-                
             else
-                notmatched = true
-                
-                if doparsetime # parse Time
-    mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,3})(\d{1,3})?(\d{1,3})?)?)? *$", y[i])
-                    if mt != nothing 
-                        hour = parse(Int, mt[1])
-                        mi = parse(Int, mt[2])
-                        (mt[4] == nothing)? s = ms = us = ns = 0:
-                        s  = parse(Int, lpad(mt[4], 2, 0)); (mt[6] == nothing)? ms = us = ns = 0:
-                        ms = parse(Int, rpad(mt[6], 3, 0)); (mt[7] == nothing)? us = ns = 0:
-                        us = parse(Int, rpad(mt[7], 3, 0)); (mt[8] == nothing)? ns = 0:
-                        ns = parse(Int, rpad(mt[8], 3, 0))
-                        try y[i] = Dates.Time(hour, mi, s, ms, us, ns); notmatched = false catch; end
-                    end
-                end
-                
-                if notmatched && doparsecomplex # parse Complex
-                    mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?)(im|i|j) *$", y[i])
-                    if mc != nothing 
-                        isfloat = mc[2] != nothing || mc[3] != nothing || mc[6] != nothing || mc[7] != nothing
-                        if isfloat
-                            try y[i] = complex(parse(Float64, mc[1]), parse(Float64, mc[4]*mc[5]));
-                                notmatched = false catch; end
-                        else
-                            try y[i] = complex(parse(Int, mc[1]), parse(Int, mc[4]*mc[5])); 
-                                notmatched = false catch; end
-                        end
-                    end
-                end
-                
-                if notmatched && doparserational # parse Rational
-                    mr = match(r"^ *(-?\d+)//(-?\d+) *$", y[i])
-                    if mr != nothing
-                        nu = parse(Int, mr[1])
-                        de = parse(Int, mr[2])
-                        try y[i] = //(nu, de) catch; end
-                    end
-                end
-                
+                try y[i] = parseothers(y[i], doparsetime, doparsecomplex, doparserational) catch; end
             end
         end
     end
