@@ -151,7 +151,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         one non-numeric code element or character for parsing dates.
         """)    
     
-    # parsing "matrix" für different T::Types
+    # parsing "matrix" for different T::Types
     doparsedatetime = false
     doparsedate = false
     doparsetime = false
@@ -323,7 +323,7 @@ in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in `locale`
-language. For writeing Complex numbers the imaginary component suffix can be changed with the
+language. For writing Complex numbers the imaginary component suffix can be changed with the
 `imsuffix=` keyword argument.
 
 # Additional Keyword Arguments
