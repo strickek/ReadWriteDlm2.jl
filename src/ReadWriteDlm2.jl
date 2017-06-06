@@ -1,6 +1,8 @@
 # strickek 2017 - License is MIT: http://julialang.org/license
-# ReadWriteDlm2
-# Handle different decimal marks (default comma) and allows dates parsing / formating
+# ReadWriteDlm2 - readdlm2() and writedlm2()
+#   - main function like Base readdlm() and writedlm()
+#   - supports different decimal marks (default comma) and
+#   - DateTime, Date, Time, Complex und Rational types
 
 module ReadWriteDlm2
 
