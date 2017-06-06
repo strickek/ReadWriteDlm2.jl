@@ -71,7 +71,7 @@ supported by `readdlm2()` - is available in the
 | Base.DataFmt  | readdlm()              | `' '`      | `'.'`     | n.a.(String) |
 | ReadWriteDlm2 | readdlm2()             | `';'`      | `','`     | parse ISO    |
 
-For decimal point: `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
+-> `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
 
 ### Example `readdlm2()`
 Read the Excel (lang=german) text-file `test_de.csv` and store the array in `data`:
@@ -123,7 +123,7 @@ supported by `writedlm2()` - is available in the
 | Base.DataFmt  | writedlm()         | `'\t'`    | `'.'`    | ISO-Format | print_shortest() |
 | ReadWriteDlm2 | writedlm2()        | `';'`     | `','`    | ISO-Format | like print()     |
 
-For decimal point: `writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
+-> `writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
