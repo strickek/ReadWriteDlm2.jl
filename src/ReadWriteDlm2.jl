@@ -9,6 +9,8 @@ using Base.Dates,
 
 export readdlm2, writedlm2
 
+# Readdlm2
+# ========
 
 """
 
@@ -19,9 +21,7 @@ Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`s
 Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
 a date string. The regex groups are named according to the `format`string codes. The locale
 is used to calculate min and max length of month and day names (for codes: UuEe).
-
 """
-
 function dfregex(df::AbstractString, locale::AbstractString="english")
     # calculate min and max string lengths of months and day_of_weeks names
     Ule = try extrema([length(Dates.monthname(i;locale=locale)) for i in 1:12])catch; (3, 9) end
@@ -83,14 +83,14 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
     if doparsetime # parse Time
         mt = match(r"^ *(0?\d|1\d|2[0-3])[:Hh]([0-5]?\d)(:([0-5]?\d)([\.,](\d{1,3})(\d{1,3})?(\d{1,3})?)?)? *$", y)
         if mt != nothing
-            hour = parse(Int, mt[1])
+            h = parse(Int, mt[1])
             mi = parse(Int, mt[2])
             (mt[4] == nothing)? s = ms = us = ns = 0:
             s  = parse(Int, lpad(mt[4], 2, 0)); (mt[6] == nothing)? ms = us = ns = 0:
             ms = parse(Int, rpad(mt[6], 3, 0)); (mt[7] == nothing)? us = ns = 0:
             us = parse(Int, rpad(mt[7], 3, 0)); (mt[8] == nothing)? ns = 0:
             ns = parse(Int, rpad(mt[8], 3, 0))
-            return Dates.Time(hour, mi, s, ms, us, ns)
+            return Dates.Time(h, mi, s, ms, us, ns)
         end
     end
 
@@ -117,7 +117,6 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
     
     return y
 end
-
 
 """
 
@@ -198,7 +197,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         one non-numeric code element or character for parsing dates.
         """)    
     
-    # parsing "matrix" for different T::Types
+    # "parsing-matrix" for different T::Types
     doparsedatetime = false
     doparsedate = false
     doparsetime = false
@@ -253,7 +252,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
             """
             )    
         
-        # change default regex substitution Tupel if decimal != ','
+        # change default regex substitution Tuple if decimal != ','
         if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
             rs = (Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
@@ -280,10 +279,9 @@ function readdlm2auto(input, dlm, T, eol, auto;
         end
     end
 
-    isa(z, Tuple) ? (y, h) = z : y = z #Tupel(data, header) or only data? y = data.
+    isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data? y = data.
 
-    # parse data for Date/DateTime and Time Format -> Julia Dates-Types
-   
+    # Formats, Regex for Date/DateTime parsing
     dtdf = DateFormat(dtfs, locale)
     ddf = DateFormat(dfs, locale) 
     rdt = dfregex(dtfs, locale)
@@ -295,19 +293,69 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 try y[i] = DateTime(y[i], dtdf) catch; end 
             elseif doparsedate && ismatch(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
-            else
+            else # parse Time, Complex and Rational
                 try y[i] = parseothers(y[i], doparsetime, doparsecomplex, doparserational) catch; end
             end
         end
     end
-    # begin new
+
     if convertarray  
         isa(z, Tuple) ? z = (convert(Array{T}, y), h): z = convert(Array{T}, z) 
     end
-    # end new
+
     return z
 
-    end # end function readdlm2auto()
+end # end function readdlm2auto()
+
+
+# writedlm2
+# =========
+
+"""
+
+    floatformat(a, decimal::Char, write_short::Bool) 
+
+Convert Int or Float64 numbers to string, optional with print_shortest and change of decimal mark.
+"""
+function floatformat(a, decimal, write_short) 
+    if write_short == false
+        a = string(a)
+    else
+        iob = IOBuffer()
+        print_shortest(iob, a) 
+        a = String(take!(iob)) 
+    end
+    if decimal != '.'
+        return replace(a, '.', decimal)
+    else
+        return a
+    end
+end
+
+"""
+
+    timeformat(a, decimal::Char) 
+
+Convert Time to string, optional with change of decimal mark for secounds.
+"""
+function timeformat(a, decimal) # change decimal mark in string(Time)
+    a = string(a)
+    decimal != '.' && (a = replace(a, '.', decimal))
+    return a
+end
+
+"""
+
+    Complexformat(a, decimal::Char, imsuffix::AbstractString) 
+
+Convert Complex number to string, optional with change of decimal and/or imsuffix.
+"""
+function complexformat(a, decimal, imsuffix) # change decimal mark and imsuffix for Complex
+    a = string(a)
+    imsuffix != "im" && (a = string(split(a, "im")[1], imsuffix))
+    decimal != '.' && (a = replace(a, '.', decimal))
+    return a
+end
 
 """
 
@@ -349,7 +397,6 @@ writedlm2(\"test_de.csv\", test, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
 ```
 """
 
-
 writedlm2(io::IO, a; opts...) =
     writedlm2auto(io, a, ';'; opts...)
 
@@ -361,53 +408,6 @@ writedlm2(f::AbstractString, a; opts...) =
 
 writedlm2(f::AbstractString, a, dlm; opts...) =
     writedlm2auto(f, a, dlm; opts...)
-
-"""
-
-    floatformat(a, decimal::Char, write_short::Bool) 
-
-Convert Int or Float64 numbers to string, optional with print_shortest and change of decimal mark.
-"""
-function floatformat(a, decimal, write_short) 
-    if write_short == false
-        a = string(a)
-    else
-        iob = IOBuffer()
-        print_shortest(iob, a) 
-        a = String(take!(iob)) 
-    end
-    if decimal != '.'
-        return replace(a, '.', decimal)
-    else
-        return a
-    end
-end
-
-"""
-
-    timeformat(a, decimal::Char) 
-
-Convert Time to string, optional with change of decimal mark for secounds.
-"""
-function timeformat(a, decimal) # change decimal mark for Time
-    a = string(a)
-    decimal != '.' && (a = replace(a, '.', decimal))
-    return a
-end
-
-"""
-
-    Complexformat(a, decimal::Char, imsuffix::AbstractString) 
-
-Convert Complex number to string, optional with change of decimal and/or imsuffix.
-"""
-function complexformat(a, decimal, imsuffix) # change decimal mark and imsuffix for Complex
-    a = string(a)
-    #imsuffix != "im" && (a = split(a, "im");a = string(a[1], imsuffix))
-    imsuffix != "im" && (a = string(split(a, "im")[1], imsuffix))
-    decimal != '.' && (a = replace(a, '.', decimal))
-    return a
-end
 
 function writedlm2auto(f, a, dlm;
         decimal::Char=',',
@@ -434,32 +434,31 @@ function writedlm2auto(f, a, dlm;
     
     if isa(a, Union{Number, Date, DateTime})
          a = [a]  # create 1 element Array 
-     end
+    end
 
-     if isa(a, AbstractArray)
-        #format dates only if format strings are not not ""
+    if isa(a, AbstractArray)
         fdt = !isempty(dtfs)  # Bool: format DateTime
         dtdf = DateFormat(dtfs, locale)
         fd = !isempty(dfs)    # Bool: format Date
         ddf = DateFormat(dfs, locale)
-        ft = decimal != '.'       # Bool: format Time (change decimal)
+        ft = decimal != '.'   # Bool: format Time (change decimal)
         fc = (imsuffix != "im" || decimal != '.') # Bool: format Complex
 
-         # create b for manipulation/write - keep a unchanged
-         b = similar(a, Any)
-         for i in eachindex(a)
-             b[i] =
+        # create b for manipulation/write - keep a unchanged
+        b = similar(a, Any)
+        for i in eachindex(a)
+            b[i] =
             isa(a[i], AbstractFloat) ? floatformat(a[i], decimal, write_short):
             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf):
             isa(a[i], Date) && fd ? Dates.format(a[i], ddf):
             isa(a[i], Time) && ft ? timeformat(a[i], decimal):
             isa(a[i], Complex) && fc ? complexformat(a[i], decimal, imsuffix): string(a[i])
-         end
-     else  # a is not a Number, Date, DateTime or Array -> no preprocessing
-         b = a 
-     end
+        end
+    else  # a is not a Number, Date, DateTime or Array -> no preprocessing
+        b = a 
+    end
 
-     writedlm(f, b, dlm; opts...)
+    writedlm(f, b, dlm; opts...)
 
     end # end function writedlm2auto()
 
