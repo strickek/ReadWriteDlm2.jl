@@ -327,11 +327,8 @@ function floatformat(a, decimal, write_short)
         print_shortest(iob, a) 
         a = String(take!(iob)) 
     end
-    if decimal != '.'
-        return replace(a, '.', decimal)
-    else
-        return a
-    end
+    decimal != '.' && (a = replace(a, '.', decimal))
+    return a
 end
 
 """
