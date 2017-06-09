@@ -2,7 +2,9 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark. The basic idea of this package is to support the "decimal comma countries". But, because of the additional capabilities for Date, DateTime and, starting with 0.4.2 for Julia 0.6, Time, Complex and Rational types, the functions are also useful for others (with the respective delimiter argument and `decimal='.'`).
+The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark. The basic idea of this package is to support the "decimal comma countries". But, because of the additional capabilities for Date, DateTime, Time, Complex and Rational types, the functions are also useful for others (with the respective delimiter argument and `decimal='.'`).
+
+Support of Time, Complex and Rational types starts with Version 0.4.2 for Julia 0.6.
 
 ### Installation
 This package is registered and can be installed with:
