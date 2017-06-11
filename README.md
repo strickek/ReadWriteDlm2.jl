@@ -4,7 +4,7 @@
 
 The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter and `','` as default decimal mark. The basic idea of this functions is to support the "decimal comma countries". 
 
-Because of additional capabilities for Date, DateTime, Time, Complex and Rational types, `ReadWriteDlm2` is also useful for "decimal dot" users. They can use readdlm2/writdlm2 with the respective delimiter argument (`' '`, `'\t'` or `','`) and `decimal='.'`. More convinient are `readcsv2` and `writecsv2` because they have already the right defaults (`','` as delimiter, `Any` as Type and  `','` as decimal mark).
+Because of additional capabilities for Date, DateTime, Time, Complex and Rational types, `ReadWriteDlm2` is also useful for "decimal dot" users. They can use readdlm2/writdlm2 with the respective delimiter argument (`' '`, `'\t'` or `','`) and `decimal='.'`. More convenient are `readcsv2` and `writecsv2` because they have already the right defaults (delimiter `','`, Type `Any` and  `decimal=','`).
 
 Support for Time, Complex and Rational types and the functions readcsv2/writecsv2 start with Version for Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
@@ -16,17 +16,10 @@ Pkg.add("ReadWriteDlm2")
 ```
 
 ### Basic Example: How To Use `ReadWriteDlm2`
-
 ```
 julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
-
 julia> A = [1 1.2; "text" Date(2017)];  # create test array with: Int, Float64, String and Date type
-
-julia> writedlm2("test.csv", A)         # syntax and arguments like Julia.Base writedlm()
-
-julia> readstring("test.csv")           # show `CSV` file. Please note: decimal mark ',' - delimiter ';'
-"1;1,2\ntext;2017-01-01\n"
-
+julia> writedlm2("test.csv", A)         # test.csv: "1;1,2\ntext;2017-01-01\n"
 julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
@@ -55,8 +48,8 @@ Time format `HH:MM[:SS[.s{1,9}]]`. To switch off parsing Dates/Time set: `dfs=\"
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned. To include parsing for Complex and 
-Rational numbers, use `Any` as Type argument. Homogeneous arrays are possible for the types Int, 
-Float64, Bool, Complex, Rational, DateTime, Date and Time.
+Rational numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type-Arguments:
+`Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Documentation For Base `readdlm()`
 More information about Base functionality and (keyword) arguments - which are also 
@@ -70,11 +63,19 @@ supported by `readdlm2()` - is available in the
 * `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
 * `locale="english"`: language for parsing dates names, default is english
 
-### Compare Default Functionality `readdlm()` - `readdlm2()`
-| Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   |
-|:------------- |:-----------------------|:----------:|:---------:|:-------------|
-| Base.DataFmt  | readdlm()              | `' '`      | `'.'`     | n.a.(String) |
-| ReadWriteDlm2 | readdlm2()             | `';'`      | `','`     | parse ISO    |
+### Function `readcsv2()`
+
+    readcsv2(source, T::Type=Any; opts...)
+
+Equivalent to `readdlm2` with fix delimiter `','` and `decimal='.'`. Default type `Any` includes also parsing
+of `DateTime`, `Date`, `Time`, `Complex` and `Rational`.
+
+### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
+| Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   | Complex, Rational |
+|:------------- |:-----------------------|:----------:|:---------:|:-------------|:------------------|
+| Base.DataFmt  | readdlm()              | `' '`      | `'.'`     | n.a.(String) | n.a.(String)      |
+| ReadWriteDlm2 | readdlm2()             | `';'`      | `','`     | parse ISO    | Optional (Type)   |
+| ReadWriteDlm2 | readcsv2()             | `','`      | `'.'`     | parse ISO    | Default (Type=Any)|
 
 -> `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
 
@@ -102,7 +103,7 @@ another decimal mark can be defined. To switch off this pre-processing set: `dec
 
 Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information
 `writedlm2()` writes long like print() by default. Set `write_short=true` to have 
-the same behavior as in Base `writedlm()`.
+the same behaviour as in Base `writedlm()`.
 
 In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
 Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in
@@ -122,11 +123,18 @@ supported by `writedlm2()` - is available in the
 * `locale="english"`: language for writing dates names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"i"`, `"j"` or `"im"`(=default)
 
-### Compare Default Functionality `writedlm()` - `writedlm2()`
+### Function `writecsv2()`
+
+    writecsv2(filename, A; opts...)
+    
+Equivalent to `writedlm2` with fix delimiter `','` and `decimal='.'`. 
+
+### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
 | Module        | Function           | Delimiter | Dec.Mark | Date(Time) | Write Numbers    |
-|:------------- |:------------------ |:---------:|:--------:|:---------- |:-----------------| 
+|:------------- |:------------------ |:---------:|:--------:|:---------- |:-----------------|
 | Base.DataFmt  | writedlm()         | `'\t'`    | `'.'`    | ISO-Format | print_shortest() |
 | ReadWriteDlm2 | writedlm2()        | `';'`     | `','`    | ISO-Format | like print()     |
+| ReadWriteDlm2 | writecsv2()        | `','`     | `'.'`    | ISO-Format | like print()     |
 
 -> `writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
 
