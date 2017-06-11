@@ -4,7 +4,7 @@
 
 The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter and `','` as default decimal mark. The basic idea of this functions is to support the "decimal comma countries". 
 
-Because of additional capabilities for Date, DateTime, Time, Complex and Rational types, `ReadWriteDlm2` is also useful for "decimal dot" users. They can use readdlm2/writdlm2 with the respective delimiter argument (`' '`, `'\t'` or `','`) and `decimal='.'`. More convenient are `readcsv2` and `writecsv2` because they have already the right defaults (delimiter `','`, Type `Any` and  `decimal=','`).
+Because of additional capabilities for Date, DateTime, Time, Complex and Rational types, `ReadWriteDlm2` is also useful for "decimal dot" users. They can use readdlm2/writdlm2 with the respective delimiter argument (`' '`, `'\t'` or `','`) and `decimal='.'`. In most cases `readcsv2` and `writecsv2` will be more convenient, because they have already the right defaults: Delimiter `','`, Type `Any` and  `decimal='.'`.
 
 Support for Time, Complex and Rational types and the functions readcsv2/writecsv2 start with Version for Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
@@ -15,15 +15,23 @@ This package is registered and can be installed with:
 Pkg.add("ReadWriteDlm2")
 ```
 
-### Basic Example: How To Use `ReadWriteDlm2`
+### Basic Examples: How To Use `ReadWriteDlm2`
 ```
-julia> using ReadWriteDlm2              # make readdlm2() and writedlm2() available
-julia> A = [1 1.2; "text" Date(2017)];  # create test array with: Int, Float64, String and Date type
-julia> writedlm2("test.csv", A)         # test.csv: "1;1,2\ntext;2017-01-01\n"
-julia> B = readdlm2("test.csv")         # read `CSV` data: All four types are parsed correctly!
+julia> using ReadWriteDlm2                      # make readdlm2() and writedlm2() available
+
+julia> A = Any[1 1.2; "text" Date(2017)];          # create test array with: Int, Float64, String and Date type
+julia> writedlm2("test1.csv", A)                # test1.csv: "1;1,2\ntext;2017-01-01\n"
+julia> readdlm2("test1.csv")                    # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
+  
+julia> B=Any[1 complex(1.5,2.7);1.0 (//(1,3))]; # create test array with: Int, Complex, Float64 and Rational type
+julia> writecsv2("test2.csv", B)                # test2.csv: "1,1.5 + 2.7im\n1.0,1//3\n"
+julia> readcsv2("test2.csv")                    # read `CSV` data: All four types are parsed correctly!
+2×2 Array{Any,2}:
+ 1    1.5+2.7im
+ 1.0    1//3 
 ```
 
 ## Function `readdlm2()`
@@ -67,8 +75,8 @@ supported by `readdlm2()` - is available in the
 
     readcsv2(source, T::Type=Any; opts...)
 
-Equivalent to `readdlm2` with fix delimiter `','` and `decimal='.'`. Default type `Any` includes also parsing
-of `DateTime`, `Date`, `Time`, `Complex` and `Rational`.
+Equivalent to `readdlm2` with fix delimiter `','` and `decimal='.'`. Default Type `Any` includes parsing
+of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
 | Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   | Complex, Rational |
