@@ -19,7 +19,7 @@ Pkg.add("ReadWriteDlm2")
 ```
 julia> using ReadWriteDlm2                      # make readdlm2() and writedlm2() available
 
-julia> A = Any[1 1.2; "text" Date(2017)];          # create test array with: Int, Float64, String and Date type
+julia> A = Any[1 1.2; "text" Date(2017)];       # create test array with: Int, Float64, String and Date type
 julia> writedlm2("test1.csv", A)                # test1.csv: "1;1,2\ntext;2017-01-01\n"
 julia> readdlm2("test1.csv")                    # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
