@@ -683,3 +683,58 @@ writedlm2("test.csv", a, decimal='€')
 b = readdlm2("test.csv", Any, rs=(r"(\d)€(\d)", s"\1.\2"), decimal='n')
 rm("test.csv")
 @test a == b
+
+# Tests for readcsv2 and writecsv2
+# ================================
+
+# test comments with readcsv2
+@test isequaldlm(readcsv2(IOBuffer("#this is comment\n1,2,3\n#one more comment\n4,5,6")), Any[1 2 3;4 5 6], Any)
+@test isequaldlm(readcsv2(IOBuffer("#this is \n#comment\n1,2,3\n#one more \n#comment\n4,5,6")), Any[1 2 3;4 5 6], Any)
+
+# test readcsv2 and writecsv2 with alternative decimal
+a = Float64[1.1 1.2;2.1 2.2]
+writecsv2("test.csv", a, decimal='€')
+@test readstring("test.csv") == "1€1,1€2\n2€1,2€2\n"
+b = readcsv2("test.csv", Any, rs=(r"(\d)€(\d)", s"\1.\2"), decimal='n')
+rm("test.csv")
+@test a == b
+
+#  Test different types with header for readcsv2 and writecsv2
+a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
+writecsv2("test.csv", a)
+@test readstring("test.csv") == 
+"""
+Nr,Value
+1,2017-01-01
+2,2018-01-01T00:00:00
+3,23:54:45.123456078
+4,1.5e10 + 5.0im
+5,300//1
+6,1.5e10
+"""
+b = readcsv2("test.csv", header=true)
+rm("test.csv")
+@test a[2:end,:] == b[1]
+@test a[1:1,:] == b[2]
+
+# Test size for readcsv2
+@test size(readcsv2(IOBuffer("1,2,3,4"))) == (1,4)
+@test size(readcsv2(IOBuffer("1,2,3,"))) == (1,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\n"))) == (1,4)
+@test size(readcsv2(IOBuffer("1,2,3,\n"))) == (1,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\n1,2,3,4"))) == (2,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\n1,2,3,"))) == (2,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\n1,2,3"))) == (2,4)
+
+@test size(readcsv2(IOBuffer("1,2,3,4\r\n"))) == (1,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\r\n1,2,3\r\n"))) == (2,4)
+@test size(readcsv2(IOBuffer("1,2,3,4\r\n1,2,3,4\r\n"))) == (2,4)
+@test size(readcsv2(IOBuffer("1,2,3,\"4\"\r\n1,2,3,4\r\n"))) == (2,4)
+
+#Time types for readcsv2 and writecsv2
+a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23,55,56,123) Dates.Time(12,45) Dates.Time(11,23,11)]
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "23:55:56.123456789,23:55:56.123456,23:55:56.123,12:45:00,11:23:11\n"
+b = readcsv2("test.csv")
+@test b == a
+
