@@ -26,7 +26,7 @@ julia> readdlm2("test1.csv")                      # read `CSV` data: All four ty
  1        1.2
   "text"   2017-01-01
   
-julia> B = Any[1 complex(1.5,2.7);1.0 (//(1,3))]; # test array with: Int, Complex, Float64 and Rational type
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];      # test array with: Int, Complex, Float64 and Rational type
 julia> writecsv2("test2.csv", B)                  # test2.csv: "1,1.5 + 2.7im\n1.0,1//3\n"
 julia> readcsv2("test2.csv")                      # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
