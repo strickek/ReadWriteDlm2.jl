@@ -1,18 +1,19 @@
 # strickek 2017 - License is MIT: http://julialang.org/license
-# ReadWriteDlm2 - readdlm2() and writedlm2()
-#   - main function like Base readdlm() and writedlm()
-#   - supports different decimal marks (default comma) and
-#   - DateTime, Date, Time, Complex und Rational types
+# ReadWriteDlm2 
+#   - main function like Base.DataFmt
+#   - additional support for DateTime, Date, Time, Complex und Rational types
+#   - readdlm2 and writedlm2 defaults are for decimal comma users primary
+#   - readcsv2 and writecsv2 are for decimal dot users with need of extended type parsing
 
 module ReadWriteDlm2
 
 using Base.Dates,
     Base.DataFmt.readdlm_string, Base.DataFmt.val_opts
 
-export readdlm2, writedlm2
+export readdlm2, writedlm2, readcsv2, writecsv2
 
-# Readdlm2
-# ========
+# readdlm2 and readcsv2
+# =====================
 
 """
 
@@ -78,7 +79,8 @@ end
 
     parseothers(y::AbstractString, doparsetime::Bool, doparsecomplex::Bool, doparserational::Bool)
 
-Parse string `y` for Time, Complex and Rational and return the result or `y`.
+Parse string `y` for `Time`, `Complex` and `Rational` format and if match return the value.
+Otherwise return the input string `y`.
 """
 function parseothers(y, doparsetime, doparsecomplex, doparserational)
                 
@@ -121,6 +123,19 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
 end
 
 """
+    
+    readcsv2(source, T::Type=Any; opts...)
+
+Equivalent to [`readdlm2`](@ref) with fix delimiter ',' and decimal='.'. 
+Default type `Any` includes also parsing `DateTime`, `Date`, `Time`, `Complex` and `Rational`.
+"""
+readcsv2(input; opts...) = 
+    readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
+
+readcsv2(input, T::Type; opts...) = 
+    readdlm2auto(input, ',', T, '\n', false; decimal='.', opts...)
+
+"""
 
     readdlm2(source; options...)
     readdlm2(source, T::Type; options...)
@@ -144,8 +159,8 @@ Time format `\"HH:MM[:SS[.s{1,9}]]\"`. To switch off parsing Dates and Time set:
 
 If all data is numeric, the result will be a numeric array. In other cases
 a heterogeneous array of numbers, dates and strings is returned. To include parsing for Complex and 
-Rational numbers, use `Any` as Type argument. Homogeneous arrays are possible for the Types Int, 
-Float64, Bool, Complex, Rational, DateTime, Date and Time.
+Rational numbers, use `Any` as Type argument. Homogeneous arrays are supported for the Type-Arguments:
+`Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 # Additional Keyword Arguments
 
@@ -195,8 +210,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
     (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`) 
-        contains numeric code elements only. `readdlm2()` needs at least 
-        one non-numeric code element or character for parsing dates.
+        contains numeric code elements only. At least one non-numeric 
+        code element or character is needed for parsing dates.
         """)    
     
     # "parsing-matrix" for different T::Types
@@ -249,7 +264,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
             Error: Regex substitution from Decimal=`$decimal` to '.' and using `$decimal` in a 
             Dates format string directly between two digit elements (codes: YymdHMSs) doesn't work.
             Therefore, use e.g. `S.s` instead of `S$(decimal)s` in the DateTime format
-            string of `readdlm2()`. But, because of the blank before the second digit element, 
+            string. But, because of the blank before the second digit element, 
             for example do not(!) change `Y$(decimal) m`.
             """
             )    
@@ -262,7 +277,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         # Error if decimal mark to replace is also the delim Char
         "1"*string(dlm)*"1" != replace("1"*string(dlm)*"1", rs[1], rs[2]) && error(
             """
-            Error in readdlm2(): 
+            Error: Decimal mark to replace is also the delim Char.
             Pre-processing with decimal mark Regex substitution
             for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!
             """)
@@ -310,8 +325,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
 end # end function readdlm2auto()
 
 
-# writedlm2
-# =========
+# writedlm2 and writecsv2
+# =======================
 
 """
 
@@ -355,6 +370,15 @@ function complexformat(a, decimal, imsuffix) # change decimal mark and imsuffix 
     decimal != '.' && (a = replace(a, '.', decimal))
     return a
 end
+
+"""
+
+    writecsv2(filename, A; opts...)
+
+Equivalent to [`writedlm2`](@ref) with `delim` set to comma and decimal='.'.
+"""
+writecsv2(f, a; opts...) = 
+    writedlm2auto(f, a, ','; decimal='.', opts...)
 
 """
 
@@ -421,12 +445,12 @@ function writedlm2auto(f, a, dlm;
     (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`) 
-        contains numeric code elements only. `readdlm2()` needs at least 
-        one non-numeric code element or character for parsing dates.
+        contains numeric code elements only. At least one non-numeric 
+        code element or character is needed for parsing dates.
         """)     
 
     string(dlm) == string(decimal) && error(
-        "Error in writedlm(): decimal = delim = ´$(dlm)´ - change decimal or delim!")
+        "Error: decimal = delim = ´$(dlm)´ - change decimal or delim!")
 
     imsuffix != "im" && imsuffix != "i" && imsuffix != "j" && error(
     "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
