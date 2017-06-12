@@ -99,14 +99,15 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
     end
 
     if doparsecomplex # parse Complex
-        mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?)(im|i|j) *$", y)
-        if mc != nothing 
-            isfloat = mc[2] != nothing || mc[3] != nothing || mc[6] != nothing || mc[7] != nothing
-            if isfloat
-                return complex(parse(Float64, mc[1]), parse(Float64, mc[4]*mc[5]))
-            else
-                return complex(parse(Int, mc[1]), parse(Int, mc[4]*mc[5]))
-            end
+        mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?|(-?\d+)//(\d+)) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?|(\d+)//(\d+))(\*im|\*i|\*j|im|i|j) *$", y)
+        if mc != nothing      
+            real = 
+                (mc[4] != nothing && mc[5] != nothing)? //(parse(Int, mc[4]), parse(Int, mc[5])):
+                (mc[2] == nothing && mc[3] == nothing)? parse(Int, mc[1]): parse(Float64, mc[1])
+            imag =
+                (mc[10] != nothing && mc[11] != nothing)? //(parse(Int, mc[6]*mc[10]), parse(Int, mc[11])):
+                (mc[8] == nothing && mc[9] == nothing)? parse(Int, mc[6]*mc[7]): parse(Float64, mc[6]*mc[7])
+            return complex(real, imag)
         end
     end
 
@@ -126,8 +127,8 @@ end
     
     readcsv2(source, T::Type=Any; opts...)
 
-Equivalent to [`readdlm2`](@ref) with fix delimiter ',' and decimal='.'. 
-Default type `Any` includes also parsing `DateTime`, `Date`, `Time`, `Complex` and `Rational`.
+Equivalent to [`readdlm2`](@ref) with delim set to `','` and `decimal='.'`. Default Type `Any`
+includes parsing of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 """
 readcsv2(input; opts...) = 
     readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
@@ -332,7 +333,7 @@ end # end function readdlm2auto()
 
     floatformat(a, decimal::Char, write_short::Bool) 
 
-Convert Int or Float64 numbers to string, optional with print_shortest and change of decimal mark.
+Convert Int or Float64 numbers to String, optional with print_shortest and change of decimal mark.
 """
 function floatformat(a, decimal, write_short) 
     if write_short == false
@@ -350,7 +351,7 @@ end
 
     timeformat(a, decimal::Char) 
 
-Convert Time to string, optional with change of decimal mark for secounds.
+Convert Time to String, optional with change of decimal mark for secounds.
 """
 function timeformat(a, decimal) # change decimal mark in string(Time)
     a = string(a)
@@ -362,7 +363,7 @@ end
 
     Complexformat(a, decimal::Char, imsuffix::AbstractString) 
 
-Convert Complex number to string, optional with change of decimal and/or imsuffix.
+Convert Complex number to String, optional with change of decimal and/or imsuffix.
 """
 function complexformat(a, decimal, imsuffix) # change decimal mark and imsuffix for Complex
     a = string(a)
@@ -375,7 +376,7 @@ end
 
     writecsv2(filename, A; opts...)
 
-Equivalent to [`writedlm2`](@ref) with `delim` set to comma and decimal='.'.
+Equivalent to [`writedlm2`](@ref) with delim set to `','` and `decimal='.'`.
 """
 writecsv2(f, a; opts...) = 
     writedlm2auto(f, a, ','; decimal='.', opts...)
