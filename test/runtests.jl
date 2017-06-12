@@ -608,6 +608,22 @@ rm("test.csv")
 @test b == Complex[complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
 @test h == AbstractString["test1" "test2"]
 
+a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
+writedlm2("test.csv", a, imsuffix="i")
+@test readstring("test.csv") == "-1//3 - 7//5*i;1//1 - 1//3*i;-0,5 + 3,0e-19i\n"
+b = readdlm2("test.csv", Complex)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Complex,2}
+
+a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "-1//3 - 7//5*im;1//1 - 1//3*im;-0,5 + 3,0e-19im\n"
+b = readdlm2("test.csv", Complex)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Complex,2}
+
 # Test Time read and write
 a = Time[Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
 writedlm2("test.csv", a)
@@ -737,4 +753,13 @@ writecsv2("test.csv", a)
 @test readstring("test.csv") == "23:55:56.123456789,23:55:56.123456,23:55:56.123,12:45:00,11:23:11\n"
 b = readcsv2("test.csv")
 @test b == a
+
+# Test readcsv/writecsv with Complex - Rationals 
+a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
+b = readcsv2("test.csv", Complex)
+rm("test.csv")
+@test a == b
+@test typeof(b) == Array{Complex,2}
 
