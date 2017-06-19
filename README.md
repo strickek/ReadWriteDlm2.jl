@@ -2,11 +2,11 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter and `','` as default decimal mark. The basic idea of this functions is to support the "decimal comma countries". 
+The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences in usage are: `';'` as default delimiter, `','` as default decimal mark and support of `Date`, `DateTime`, `Time`, `Complex` and `Rational` types. The basic idea of this functions is to support the "decimal comma countries". 
 
-Because of additional capabilities for `Date`, `DateTime`, `Time`, `Complex` and `Rational` types, `ReadWriteDlm2` is also useful for "decimal dot" users. In most cases the functions `readcsv2()` and `writecsv2()` will help, because they have the right defaults: Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\t'` or `','` and `decimal='.'`. 
+Because of it additional capabilities for types, `ReadWriteDlm2` is also useful for "decimal dot" users. In most cases the functions `readcsv2()` and `writecsv2()` will help, because they have the right defaults: Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\t'` or `','` and `decimal='.'`. 
 
-Support for `Time`, `Complex` and `Rational` types and the functions `readcsv2()`/`writecsv2()` start with Version for Julia 0.6.
+Support for `Time`, `Complex` and `Rational` and the functions `readcsv2()`/`writecsv2()` start with Version for Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
 
 ### Installation
@@ -59,11 +59,6 @@ a heterogeneous array of numbers, dates and strings is returned. To include pars
 `Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments:
 `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
-### Documentation For Base `readdlm()`
-More information about Base functionality and (keyword) arguments - which are also 
-supported by `readdlm2()` - is available in the 
-[stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
-
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
@@ -77,6 +72,11 @@ supported by `readdlm2()` - is available in the
 
 Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type `Any` includes parsing
 of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+
+### Documentation For Base `readdlm()`
+More information about Base functionality and (keyword) arguments - which are also 
+supported by `readdlm2()` and `readcsv2()` - is available in the 
+[stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
 | Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   | Complex, Rational |
@@ -118,11 +118,6 @@ Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are writ
 the `locale` language. For writing `Complex` numbers the imaginary component suffix can be changed with the
 `imsuffix=` keyword argument.
 
-### Documentation For Base `writedlm()`
-More information about Base functionality and (keyword-) arguments - which are also 
-supported by `writedlm2()` - is available in the 
-[stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
-
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
@@ -136,6 +131,11 @@ supported by `writedlm2()` - is available in the
     writecsv2(filename, A; opts...)
     
 Equivalent to `writedlm2` with fix delimiter `','` and `decimal='.'`. 
+
+### Documentation For Base `writedlm()`
+More information about Base functionality and (keyword-) arguments - which are also 
+supported by `writedlm2()` and `writecsv2()` - is available in the 
+[stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
 | Module        | Function           | Delimiter | Dec.Mark | Date(Time) | Write Numbers    |
