@@ -474,21 +474,21 @@ rm("test.csv")
 # Test locale for french and german
 Dates.LOCALES["french"] = Dates.DateLocale(
     ["janvier", "février", "mars", "avril", "mai", "juin",
-     "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+        "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
     ["janv", "févr", "mars", "avril", "mai", "juin",
-     "juil", "août", "sept", "oct", "nov", "déc"],
+        "juil", "août", "sept", "oct", "nov", "déc"],
     ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
-["lu", "ma", "me", "je", "ve", "sa", "di"],
-)
+    ["lu", "ma", "me", "je", "ve", "sa", "di"],
+    )
 
 Dates.LOCALES["german"] = Dates.DateLocale(
-["Januar", "Februar", "März", "April", "Mai", "Juni",
-    "Juli", "August", "September", "Oktober", "November", "Dezember"],
-["Jan", "Feb", "Mar", "Apr", "Mai", "Jun",
-    "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
-["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
-["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
-)
+    ["Januar", "Februar", "März", "April", "Mai", "Juni",
+        "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    ["Jan", "Feb", "Mar", "Apr", "Mai", "Jun",
+        "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+    ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+    ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+    )
 
 a = DateTime(2017,5,1,5,59,1)
 writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="french")
@@ -754,7 +754,7 @@ writecsv2("test.csv", a)
 b = readcsv2("test.csv")
 @test b == a
 
-# Test readcsv/writecsv with Complex - Rationals 
+# Test readcsv2/writecsv2 with Complex - Rationals 
 a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
 writecsv2("test.csv", a)
 @test readstring("test.csv") == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
