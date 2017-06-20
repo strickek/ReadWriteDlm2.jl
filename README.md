@@ -61,9 +61,9 @@ a heterogeneous array of numbers, dates and strings is returned. To include pars
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](http://docs.julialang.org/en/stable/manual/strings/?highlight=regular%20expressions#regular-expressions) (r, s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for DateTime parsing, default is ISO
-* `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-parsing) for Date parsing, default is ISO
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](https://docs.julialang.org/en/stable/manual/strings/#Regular-Expressions-1) (r, s)-tuple, change d,d to d.d if `decimal=','`
+* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
+* `dfs="yyyy-mm-dd"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for Date parsing, default is ISO
 * `locale="english"`: language for parsing dates names, default is english
 
 ### Function `readcsv2()`
@@ -76,7 +76,7 @@ of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time
 ### Documentation For Base `readdlm()`
 More information about Base functionality and (keyword) arguments - which are also 
 supported by `readdlm2()` and `readcsv2()` - is available in the 
-[stable documentation for readdlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=readdlm#Base.readdlm). 
+[stable documentation for readdlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.readdlm-Tuple{Any,Char,Type,Char}). 
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
 | Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   | Complex, Rational |
@@ -121,8 +121,8 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting),  DateTime write format, default is ISO
-* `dfs="yyyy-mm-dd"`: [format string](http://docs.julialang.org/en/stable/stdlib/dates/#man-date-formatting), Date write format, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
+* `dfs="yyyy-mm-dd"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
 * `locale="english"`: language for writing dates names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"i"`, `"j"` or `"im"`(=default)
 
@@ -133,9 +133,9 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 Equivalent to `writedlm2` with fix delimiter `','` and `decimal='.'`. 
 
 ### Documentation For Base `writedlm()`
-More information about Base functionality and (keyword-) arguments - which are also 
+More information about Base functionality - which is also 
 supported by `writedlm2()` and `writecsv2()` - is available in the 
-[stable documentation for writedlm()](http://docs.julialang.org/en/stable/stdlib/io-network/?highlight=writedlm#Base.writedlm).
+[stable documentation for writedlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.writedlm).
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
 | Module        | Function           | Delimiter | Dec.Mark | Date(Time) | Write Numbers    |
