@@ -8,13 +8,13 @@
 """
 # ReadWriteDlm2 - CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 
-# `readdlm2(), writedlm2()`:
+## `readdlm2(), writedlm2()`:
 The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to 
 `readdlm()` and `writedlm()` of Julia Base.  Differences are: `';'` as default delimiter, 
 `','` as default decimal mark and support of `Date`, `DateTime`, `Time`, `Complex` and 
 `Rational` types. The basic idea of these functions is to support the "decimal comma countries". 
 
-# `readcsv2(), writecsv2()`:
+## `readcsv2(), writecsv2()`:
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: 
 Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` 
 and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\t'` or `','` and `decimal='.'`. 
