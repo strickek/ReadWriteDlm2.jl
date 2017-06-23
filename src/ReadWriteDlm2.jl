@@ -17,9 +17,9 @@ The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are simil
 ## `readcsv2(), writecsv2()`:
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: 
 Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` 
-and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\t'` or `','` and `decimal='.'`. 
+and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\\t'` or `','` and `decimal='.'`. 
 
-## Detailed Documentation:
+### Detailed Documentation:
 For more information about functionality and (keyword) arguments see `?help` for `readdlm2()`, 
 `writedlm2()`, `readcsv2()` and `writecsv2()`.
 """
