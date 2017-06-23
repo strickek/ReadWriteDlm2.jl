@@ -1,4 +1,4 @@
-#Tests for WriteReadDlm2 - License is MIT: http://julialang.org/license
+#Tests for ReadWriteDlm2 - License is MIT: http://julialang.org/license
 
 #Start Test Script
 using ReadWriteDlm2
@@ -8,7 +8,6 @@ using Base.Dates
 # Run tests
 
 # 1st block modified standardtests
-# Test readdlm2() and writedlm2() - License is MIT: http://julialang.org/license
 
 isequaldlm(m1, m2, t) = isequal(m1, m2) && (eltype(m1) == eltype(m2) == t)
 
