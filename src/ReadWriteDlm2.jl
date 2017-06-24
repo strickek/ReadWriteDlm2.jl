@@ -318,10 +318,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
     isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data? y = data.
 
     # Formats, Regex for Date/DateTime parsing
-    dtdf = DateFormat(dtfs, locale)
-    ddf = DateFormat(dfs, locale) 
-    rdt = dfregex(dtfs, locale)
-    rd = dfregex(dfs, locale)
+    doparsedatetime && (dtdf = DateFormat(dtfs, locale); rdt = dfregex(dtfs, locale))
+    doparsedate && (ddf = DateFormat(dfs, locale); rd = dfregex(dfs, locale))
 
     for i in eachindex(y)
         if isa(y[i], AbstractString) 
