@@ -2,7 +2,7 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`ReadWriteDlm2` Functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to them of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex` and `Rational` types and for special "decimal" marks. 
+`ReadWriteDlm2` Functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to them of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex` and `Rational` types and for special decimal marks. 
 
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
 
@@ -58,7 +58,7 @@ In addition to Base `readdlm()`, strings are also parsed for `Dates` (default fo
 `Time` format `HH:MM[:SS[.s{1,9}]]`. To switch off parsing Dates/Time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-If all data is numeric, the result will be a numeric array. In other cases
+If all data is numeric, the result will be a numeric array, if data is empty, a 0×0 Array{T,2}. In other cases
 a heterogeneous array of numbers, dates and strings is returned. To include parsing for `Complex` and 
 `Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments:
 `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
