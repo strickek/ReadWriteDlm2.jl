@@ -799,12 +799,14 @@ a = nothing
 writedlm2("test.csv", a)
 @test readstring("test.csv") == "nothing\n"
 b = readdlm2("test.csv")
+@test typeof(readdlm2("test.csv", Void)) == Array{Void,2}
 rm("test.csv")
 @test typeof(b) == Array{Any,2}
 @test isequal(a, b[1])
 writecsv2("test.csv", a)
 @test readstring("test.csv") == "nothing\n"
 b = readcsv2("test.csv")
+@test typeof(readcsv2("test.csv", Void)) == Array{Void,2}
 rm("test.csv")
 @test typeof(b) == Array{Any,2}
 @test isequal(a, b[1])
