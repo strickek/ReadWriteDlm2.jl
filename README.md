@@ -2,8 +2,7 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` have additional support for `Date`, `DateTime`, `Time`, 
-`Complex` and `Rational` types. 
+`ReadWriteDlm2` Functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to them of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex` and `Rational` types and for special "decimal" marks. 
 
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
 
@@ -25,14 +24,14 @@ Pkg.add("ReadWriteDlm2")
 julia> using ReadWriteDlm2                        # make readdlm2, readcsv2, writedlm2 and writecsv2 available
 
 julia> A = Any[1 1.2; "text" Date(2017)];         # test array with: Int, Float64, String and Date type
-julia> writedlm2("test1.csv", A)                  # test1.csv: "1;1,2\ntext;2017-01-01\n"
+julia> writedlm2("test1.csv", A)                  # test1.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
 julia> readdlm2("test1.csv")                      # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
   
 julia> B = Any[1 complex(1.5,2.7);1.0 1//3];      # test array with: Int, Complex, Float64 and Rational type
-julia> writecsv2("test2.csv", B)                  # test2.csv: "1,1.5 + 2.7im\n1.0,1//3\n"
+julia> writecsv2("test2.csv", B)                  # test2.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
 julia> readcsv2("test2.csv")                      # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1    1.5+2.7im
@@ -86,7 +85,7 @@ supported by `readdlm2()` and `readcsv2()` - is available in the
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
 | Module        | Function               | Delimiter  | Dec.Mark  | Date(Time)   | Complex, Rational |
 |:------------- |:-----------------------|:----------:|:---------:|:-------------|:------------------|
-| Base.DataFmt  | `readdlm()`            | `' '`      | `'.'`     | n.a.(String) | n.a.(String)      |
+| Base.DataFmt  | `readdlm()`            | `' '`      | `'.'`     | n.a. (String)| n.a. (String)     |
 | ReadWriteDlm2 | `readdlm2()`           | `';'`      | `','`     | parse ISO    | Optional (Type)   |
 | ReadWriteDlm2 | `readcsv2()`           | `','`      | `'.'`     | parse ISO    | Default (Type=Any)|
 
@@ -135,7 +134,7 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 
     writecsv2(filename, A; opts...)
     
-Equivalent to `writedlm2` with fix delimiter `','` and `decimal='.'`. 
+Equivalent to `writedlm2` with fixed delimiter `','` and `decimal='.'`. 
 
 ### Documentation For Base `writedlm()`
 More information about Base functionality - which is also 
