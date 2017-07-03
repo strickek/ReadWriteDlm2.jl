@@ -762,3 +762,79 @@ rm("test.csv")
 @test a == b
 @test typeof(b) == Array{Complex,2}
 
+# Tests for empty IO-Data
+a = ""
+writedlm2("test.csv", a)
+@test readstring("test.csv") == ""
+b = readdlm2("test.csv")
+@test typeof(b) == Array{Float64,2}
+@test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
+rm("test.csv")
+@test isempty(b)
+writecsv2("test.csv", a)
+@test readstring("test.csv") == ""
+b = readcsv2("test.csv")
+@test typeof(b) == Array{Any,2}
+@test typeof(readcsv2("test.csv", Float64)) == Array{Float64,2}
+rm("test.csv")
+@test isempty(b)
+
+a = [""]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "\n"
+b = readdlm2("test.csv")
+@test typeof(b) == Array{Float64,2}
+@test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
+rm("test.csv")
+@test isempty(b)
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "\n"
+b = readcsv2("test.csv")
+@test typeof(b) == Array{Any,2}
+@test typeof(readcsv2("test.csv", Float64)) == Array{Float64,2}
+rm("test.csv")
+@test isempty(b)
+
+a = nothing
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "nothing\n"
+b = readdlm2("test.csv")
+rm("test.csv")
+@test typeof(b) == Array{Any,2}
+@test isequal(a, b[1])
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "nothing\n"
+b = readcsv2("test.csv")
+rm("test.csv")
+@test typeof(b) == Array{Any,2}
+@test isequal(a, b[1])
+
+a = [nothing]
+a = reshape(a, 1,1)
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "nothing\n"
+b = readdlm2("test.csv")
+rm("test.csv")
+@test typeof(b) == Array{Any,2}
+@test isequal(a, b)
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "nothing\n"
+b = readdlm2("test.csv")
+rm("test.csv")
+@test typeof(b) == Array{Any,2}
+@test isequal(a, b)
+
+a = [1.2 NaN "" nothing]
+writedlm2("test.csv", a)
+@test readstring("test.csv") == "1,2;NaN;;nothing\n"
+b = readdlm2("test.csv")
+rm("test.csv")
+@test isequal(a, b)
+
+a = [1.2 NaN "" nothing]
+writecsv2("test.csv", a)
+@test readstring("test.csv") == "1.2,NaN,,nothing\n"
+b = readcsv2("test.csv")
+rm("test.csv")
+@test isequal(a, b)
+
