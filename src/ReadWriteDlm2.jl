@@ -8,16 +8,18 @@
 """
 ## ReadWriteDlm2 - CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 
+### Extended read and write formats:
+`readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` have additional support for 
+`Date`, `DateTime`, `Time`, `Complex` and `Rational` types. 
+
 ### `readdlm2(), writedlm2()`:
-The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to 
-`readdlm()` and `writedlm()` of Julia Base.  Differences are: `';'` as default delimiter, 
-`','` as default decimal mark and support of `Date`, `DateTime`, `Time`, `Complex` and 
-`Rational` types. The basic idea of these functions is to support the "decimal comma countries". 
+The basic idea of these functions is to support the "decimal comma countries". They use 
+`';'` as default delimiter and `','` as default decimal mark. "decimal dot" users of this
+functions have to define delimiter and `decimal='.'`
 
 ### `readcsv2(), writecsv2()`:
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: 
-Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` 
-and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\\t'` or `','` and `decimal='.'`. 
+Delimiter is `','` (fix) and `decimal='.'`. Default Type 'Any' aktivates parsing for all Types.
 
 ### Detailed Documentation:
 For more information about functionality and (keyword) arguments see `?help` for `readdlm2()`, 
@@ -258,6 +260,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
     elseif T == Rational
         doparserational = true
         convertarray = true
+    elseif T == Void
+        convertarray = true
     elseif T == Any
         doparsedatetime = !isempty(dtfs)
         doparsedate = !isempty(dfs)
@@ -273,7 +277,14 @@ function readdlm2auto(input, dlm, T, eol, auto;
         T2 = T
     end 
     
-   if !isempty(rs) && decimal != '.' # pre-processing of decimal mark should be done
+    s = readstring(input) # new
+    
+    # empty input data - return empty array
+    if isempty(s) || s == string(eol)
+        return Array{T2}(0,0)
+    end
+   
+    if !isempty(rs) && decimal != '.' # pre-processing of decimal mark should be done
         
         # Error if decimal mark to replace is also "decimal" in a date format string
         rs == (r"(\d),(\d)", s"\1.\2") &&
@@ -301,19 +312,13 @@ function readdlm2auto(input, dlm, T, eol, auto;
             for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!
             """)
 
-        # read input string, do regex substitution
-        s = replace(readstring(input), rs[1], rs[2])
+        # regex substitution decimal
+        s = replace(s, rs[1], rs[2])
         
-        # using Base.DataFmt internal functions to read dlm-string
-        z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
-        
-    else # read with standard readdlm(), no regex
-        if auto
-            z = readdlm(input, dlm, eol; opts...)
-        else
-            z = readdlm(input, dlm, T2, eol; opts...)
-        end
     end
+        
+    # using Base.DataFmt internal functions to read dlm-string
+    z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
 
     isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data? y = data.
 
@@ -327,6 +332,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 try y[i] = DateTime(y[i], dtdf) catch; end 
             elseif doparsedate && ismatch(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
+            elseif y[i] == "nothing"
+                try y[i] = nothing catch; end
             else # parse Time, Complex and Rational
                 try y[i] = parseothers(y[i], doparsetime, doparsecomplex, doparserational) catch; end
             end
@@ -473,7 +480,9 @@ function writedlm2auto(f, a, dlm;
     "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
     
     if isa(a, Union{Number, Date, DateTime})
-         a = [a]  # create 1 element Array 
+         a = [a]  # create 1 element Array
+    elseif a == nothing
+        a = ["nothing"]
     end
 
     if isa(a, AbstractArray)
