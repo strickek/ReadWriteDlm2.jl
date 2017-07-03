@@ -6,7 +6,7 @@
 
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
 
-The basic idea of `readdlm2(), writedlm2()` is to support the "decimal comma countries". This functions use 
+The basic idea of `readdlm2(), writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#file). This functions use 
 `';'` as default delimiter and `','` as default decimal mark. "decimal dot" users of this functions have to define 
 delimiter and `decimal='.'`. 
 
