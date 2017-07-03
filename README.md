@@ -60,8 +60,8 @@ In addition to Base `readdlm()`, strings are also parsed for `Dates` (default fo
 
 If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}`. In other cases
 a heterogeneous array of numbers, dates and strings is returned. To include parsing for `Complex` and 
-`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments:
-`Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments like:
+`String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
