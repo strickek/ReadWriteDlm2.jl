@@ -180,8 +180,8 @@ Time format `\"HH:MM[:SS[.s{1,9}]]\"`. To switch off parsing Dates and Time set:
 
 If all data is numeric, the result will be a numeric array, if data is empty, a 0×0 Array{T,2}. In other cases
 a heterogeneous array of numbers, dates and strings is returned. To include parsing for Complex and 
-Rational numbers, use `Any` as Type argument. Homogeneous arrays are supported for the Type-Arguments:
-`Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+Rational numbers, use `Any` as Type argument. Homogeneous arrays are supported for the Type-Arguments like:
+`String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 # Additional Keyword Arguments
 
