@@ -2,9 +2,14 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-The functions `readdlm2()` and `writedlm2()` of module `ReadWriteDlm2` are similar to `readdlm()` and `writedlm()` of Julia Base.  Differences are: `';'` as default delimiter, `','` as default decimal mark and support of `Date`, `DateTime`, `Time`, `Complex` and `Rational` types. The basic idea of these functions is to support the "decimal comma countries". 
+`readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` have additional support for `Date`, `DateTime`, `Time`, 
+`Complex` and `Rational` types. 
 
-For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: Delimiter `','`, Type `Any` and  `decimal='.'`. Using the more flexible functions `readdlm2()` and `writdlm2()` needs delimiter argument explicit set to `' '`, `'\t'` or `','` and `decimal='.'`. 
+For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type 'Any' aktivates parsing for all Types.
+
+The basic idea of `readdlm2(), writedlm2()` is to support the "decimal comma countries". This functions use 
+`';'` as default delimiter and `','` as default decimal mark. "decimal dot" users of this functions have to define 
+delimiter and `decimal='.'`. 
 
 Support for `Time`, `Complex` and `Rational` and the functions `readcsv2()`/`writecsv2()` start with Version for Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
