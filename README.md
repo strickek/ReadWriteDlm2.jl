@@ -4,7 +4,7 @@
 
 `ReadWriteDlm2` Functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks. 
 
-For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
+For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
 
 The basic idea of `readdlm2(), writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#file). These functions use 
 `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define 
