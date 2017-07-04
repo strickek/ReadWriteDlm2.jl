@@ -2,7 +2,7 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`ReadWriteDlm2` Functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks. 
+`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks. 
 
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
 
