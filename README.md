@@ -143,7 +143,7 @@ supported by `writedlm2()` and `writecsv2()` - is available in the
 [stable documentation for writedlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.writedlm).
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
-| Module        | Function           | Delimiter | Dec.Mark | Date(Time) | Write Numbers    |
+| Module        | Function           | Delimiter | Dec. mark| Date(Time) | Write Numbers    |
 |:------------- |:------------------ |:---------:|:--------:|:---------- |:-----------------|
 | Base.DataFmt  | `writedlm()`       | `'\t'`    | `'.'`    | ISO-Format | print_shortest() |
 | ReadWriteDlm2 | `writedlm2()`      | `';'`     | `','`    | ISO-Format | like print()     |
