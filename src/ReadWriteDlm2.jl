@@ -1,25 +1,22 @@
-# strickek 2017 - License is MIT: http://julialang.org/license
-# ReadWriteDlm2 
-#   - main function like Base.DataFmt
-#   - additional support for DateTime, Date, Time, Complex und Rational types
-#   - readdlm2 and writedlm2 defaults are for decimal comma users primary
-#   - readcsv2 and writecsv2 are for decimal dot users with need of extended type parsing
+# Stricker Klaus 2017 - License is MIT: http://julialang.org/license
+# ReadWriteDlm2 - https://github.com/strickek/ReadWriteDlm2.jl
 
 """
 ## ReadWriteDlm2 - CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
 
-### Extended read and write formats:
-`readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` have additional support for 
-`Date`, `DateTime`, `Time`, `Complex` and `Rational` types. 
+### Extended formats and types:
+`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those
+of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types 
+and special decimal marks. 
+
+### `readcsv2(), writecsv2()`:
+For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: 
+Delimiter is `','` (fixed) and `decimal='.'`. Default Type 'Any' aktivates parsing for all Types.
 
 ### `readdlm2(), writedlm2()`:
 The basic idea of these functions is to support the "decimal comma countries". They use 
-`';'` as default delimiter and `','` as default decimal mark. "decimal dot" users of this
-functions have to define delimiter and `decimal='.'`
-
-### `readcsv2(), writecsv2()`:
-For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the right defaults: 
-Delimiter is `','` (fix) and `decimal='.'`. Default Type 'Any' aktivates parsing for all Types.
+`';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these
+functions need to define delimiter and `decimal='.'`
 
 ### Detailed Documentation:
 For more information about functionality and (keyword) arguments see `?help` for `readdlm2()`, 
@@ -32,8 +29,9 @@ using Base.Dates,
 
 export readdlm2, writedlm2, readcsv2, writecsv2
 
-# readdlm2 and readcsv2
-# =====================
+
+# readdlm2() and readcsv2()
+# =========================
 
 """
 
@@ -42,7 +40,7 @@ export readdlm2, writedlm2, readcsv2, writecsv2
 Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
 
 Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
-a date string. The regex groups are named according to the `format`string codes. The locale
+a date string. The regex groups are named according to the `format`string codes. The `locale`
 is used to calculate min and max length of month and day names (for codes: UuEe).
 """
 function dfregex(df::AbstractString, locale::AbstractString="english")
@@ -147,8 +145,8 @@ end
     
     readcsv2(source, T::Type=Any; opts...)
 
-Equivalent to [`readdlm2`](@ref) with delim set to `','` and `decimal='.'`. Default Type `Any`
-includes parsing of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type `Any` activates
+parsing of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 """
 readcsv2(input; opts...) = 
     readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
@@ -174,30 +172,30 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base readdlm(), strings are also parsed for Dates formats (ISO) and the
-Time format `\"HH:MM[:SS[.s{1,9}]]\"`. To switch off parsing Dates and Time set:
+In addition to Base readdlm(), strings are also parsed for `Dates` formats (ISO) and the
+`Time` format `\"HH:MM[:SS[.s{1,9}]]\"`. To deactivate parsing dates/time set:
 `dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-If all data is numeric, the result will be a numeric array, if data is empty, a 0×0 Array{T,2}. In other cases
-a heterogeneous array of numbers, dates and strings is returned. To include parsing for Complex and 
-Rational numbers, use `Any` as Type argument. Homogeneous arrays are supported for the Type-Arguments like:
+If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}` is returned. 
+In other cases a heterogeneous array of numbers, dates and strings is returned. To activate parsing for `Complex` and 
+`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments such as:
 `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 # Additional Keyword Arguments
 
-* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string for DateTime parsing, default is ISO
-* `dfs=\"yyyy-mm-dd\"`: format string for Date parsing, default is ISO
-* `locale=\"english\"`: language for parsing dates names, default is english
+* `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regular expression (r,s)-tuple, change d,d to d.d if `decimal=','`
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: Format string for DateTime parsing, default is ISO
+* `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
+* `locale=\"english\"`: Language for parsing dates names, default is english
 
 Find more information about Base `readdlm()` functionality and (keyword) arguments -
 which are also supported by `readdlm2()` - in `help` for `readdlm()`.
 
-# Code Example 
-for reading the Excel (lang=german) textfile `test_de.csv`:
+# Code Example
+Read the Excel (lang=german) text-file `test_de.csv` and store the array in data:
 ```
-test = readdlm2(\"test_de.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
+data = readdlm2(\"test_de.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
 ```
 """
 
@@ -299,7 +297,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
             """
             )    
         
-        # change default regex substitution Tuple if decimal != ','
+        # Change default regex substitution Tuple if decimal != ','
         if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
             rs = (Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
@@ -312,12 +310,12 @@ function readdlm2auto(input, dlm, T, eol, auto;
             for `$(dlm)` (= delim!!) is not allowed - change rs/decimal or delim!
             """)
 
-        # regex substitution decimal
+        # Regex substitution decimal
         s = replace(s, rs[1], rs[2])
         
     end
         
-    # using Base.DataFmt internal functions to read dlm-string
+    # Using Base.DataFmt internal functions to read dlm-string
     z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
 
     isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data? y = data.
@@ -346,17 +344,17 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     return z
 
-end # end function readdlm2auto()
+end # End function readdlm2auto()
 
 
-# writedlm2 and writecsv2
-# =======================
+# writedlm2() and writecsv2()
+# ===========================
 
 """
 
     floatformat(a, decimal::Char, write_short::Bool) 
 
-Convert Int or Float64 numbers to String, optional with print_shortest and change of decimal mark.
+Convert Int or Float64 numbers to String, optional with `print_shortest()` and change of decimal mark.
 """
 function floatformat(a, decimal, write_short) 
     if write_short == false
@@ -397,9 +395,10 @@ end
 
 """
 
-    writecsv2(filename, A; opts...)
+    writecsv2(f::IO, A; opts...)
+    writecsv2(f::AbstractString, A; opts...)
 
-Equivalent to [`writedlm2`](@ref) with delim set to `','` and `decimal='.'`.
+Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 """
 writecsv2(f, a; opts...) = 
     writedlm2auto(f, a, ','; decimal='.', opts...)
@@ -415,32 +414,32 @@ Write `A` (a vector, matrix, or an iterable collection of iterable rows) as text
 (either a filename string or an IO stream). The columns will be separated by `';'`, 
 another `delim` (Char or String) can be defined.
 
-By default a pre-processing of floats takes place. Floats are parsed to strings
+By default, a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
 Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information `writedlm2()`
-writes long like print() by default. Set `write_short=true` to have the same behavior as
-in Base `writedlm()`.
+writes long like print() by default. Set `write_short=true` to arrive at the same result as
+with Base `writedlm()`.
 
-In `writedlm2()` the output format for Date and DateTime data can be defined with format strings.
-Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in `locale`
-language. For writing Complex numbers the imaginary component suffix can be changed with the
+In `writedlm2()` the output format for `Date` and `DateTime` data can be defined with format strings.
+Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in the `locale`
+language. For writing `Complex` numbers the imaginary component suffix can be selected with the
 `imsuffix=` keyword argument.
 
 # Additional Keyword Arguments
 
 * `decimal=','`: Charater for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: format string, DateTime write format, default is ISO
-* `dfs=\"yyyy-mm-dd\"`: format string, Date write format, default is ISO
-* `locale=\"english\"`: language for DateTime writing, default is english
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: Format string, DateTime write format, default is ISO
+* `dfs=\"yyyy-mm-dd\"`: Format string, Date write format, default is ISO
+* `locale=\"english\"`: Language for DateTime writing, default is english
 * `imsuffix=\"im\"`: Complex - imaginary component suffix `\"i\"`, `\"j\"` or `\"im\"`(=default)
 
-# Code Example 
-for writing the Julia `test` data to an text file `test_de.csv` readable by Excel (lang=german):
+# Code Example
+Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
 ```
-writedlm2(\"test_de.csv\", test, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
+writedlm2(\"test_de.csv\", data, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
 ```
 """
 
@@ -509,6 +508,6 @@ function writedlm2auto(f, a, dlm;
 
     writedlm(f, b, dlm; opts...)
 
-    end # end function writedlm2auto()
+    end # End function writedlm2auto()
 
-end # end module ReadWriteDlm2
+end # End module ReadWriteDlm2
