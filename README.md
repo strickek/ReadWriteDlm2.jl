@@ -64,11 +64,11 @@ a heterogeneous array of numbers, dates and strings is returned. To activate par
 `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Additional Keyword Arguments `readdlm2()`
-* `decimal=','`: decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [regular expression](https://docs.julialang.org/en/stable/manual/strings/#Regular-Expressions-1) (r, s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
-* `dfs="yyyy-mm-dd"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for Date parsing, default is ISO
-* `locale="english"`: language for parsing dates names, default is english
+* `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [Regular expression](https://docs.julialang.org/en/stable/manual/strings/#Regular-Expressions-1) (r, s)-tuple, change d,d to d.d if `decimal=','`
+* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for Date parsing, default is ISO
+* `locale="english"`: Language for parsing dates names, default is english
 
 ### Function `readcsv2()`
 
@@ -125,9 +125,9 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
-* `dfs="yyyy-mm-dd"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
-* `locale="english"`: language for writing date names, default is english
+* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
+* `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"i"`, `"j"` or `"im"`(=default)
 
 ### Function `writecsv2()`
