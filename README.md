@@ -21,7 +21,7 @@ Pkg.add("ReadWriteDlm2")
 
 ### Basic Examples: How To Use `ReadWriteDlm2`
 ```
-julia> using ReadWriteDlm2                        # make readdlm2, readcsv2, writedlm2 and writecsv2 available
+julia> using ReadWriteDlm2                        # activate readdlm2, readcsv2, writedlm2 and writecsv2
 
 julia> A = Any[1 1.2; "text" Date(2017)];         # test array with: Int, Float64, String and Date type
 julia> writedlm2("test1.csv", A)                  # test1.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
@@ -55,12 +55,12 @@ When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument
 Pre-processing can be switched off with: `rs=()`.
 
 In addition to Base `readdlm()`, strings are also parsed for `Dates` (default formats are ISO) and
-`Time` format `HH:MM[:SS[.s{1,9}]]`. To switch off parsing Dates/Time set: `dfs="", dtfs=""`.
+`Time` format `HH:MM[:SS[.s{1,9}]]`. To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}`. In other cases
-a heterogeneous array of numbers, dates and strings is returned. To include parsing for `Complex` and 
-`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments like:
+If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}` is returned. In other cases
+a heterogeneous array of numbers, dates and strings is returned. To activate parsing for `Complex` and 
+`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments such as:
 `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Additional Keyword Arguments `readdlm2()`
@@ -74,7 +74,7 @@ a heterogeneous array of numbers, dates and strings is returned. To include pars
 
     readcsv2(source, T::Type=Any; opts...)
 
-Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type `Any` includes parsing
+Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type `Any` activates parsing
 of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
 ### Documentation For Base `readdlm()`
@@ -89,7 +89,7 @@ supported by `readdlm2()` and `readcsv2()` - is available in the
 | ReadWriteDlm2 | `readdlm2()`           | `';'`      | `','`     | parse ISO    | Optional (Type)   |
 | ReadWriteDlm2 | `readcsv2()`           | `','`      | `'.'`     | parse ISO    | Default (Type=Any)|
 
--> `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` gives the same result as `readdlm(source)`.
+-> `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` returns the same result as `readdlm(source)`.
 
 ### Example `readdlm2()`
 Read the Excel (lang=german) text-file `test_de.csv` and store the array in `data`:
@@ -101,7 +101,7 @@ data = readdlm2("test_de.csv", dfs="dd.mm.yyyy", dtfs="dd.mm.yyyy HH:MM")
 
 ## Function `writedlm2()`
 Write `A` (a vector, matrix, or an iterable collection of iterable rows) as text to `f` 
-(either a filename string or an IO stream). The columns will be separated by `';'`,
+(either a filename string or an IO stream). The columns are separated by `';'`,
 another `delim` (Char or String) can be defined.
 
     writedlm2(f::IO, A; options...)
@@ -114,12 +114,12 @@ with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
 Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information
-`writedlm2()` writes long like print() by default. Set `write_short=true` to have 
-the same behaviour as in Base `writedlm()`.
+`writedlm2()` writes long like print() by default. Set `write_short=true` to arrive at
+the same result as with Base `writedlm()`.
 
 In `writedlm2()` the output format for `Date` and `DateTime` data can be defined with format strings.
 Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in
-the `locale` language. For writing `Complex` numbers the imaginary component suffix can be changed with the
+the `locale` language. For writing `Complex` numbers the imaginary component suffix can be selected with the
 `imsuffix=` keyword argument.
 
 ### Additional Keyword Arguments `writedlm2()`
@@ -127,7 +127,7 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
 * `dtfs="yyyy-mm-ddTHH:MM:SS"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
 * `dfs="yyyy-mm-dd"`: [format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
-* `locale="english"`: language for writing dates names, default is english
+* `locale="english"`: language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"i"`, `"j"` or `"im"`(=default)
 
 ### Function `writecsv2()`
@@ -148,7 +148,7 @@ supported by `writedlm2()` and `writecsv2()` - is available in the
 | ReadWriteDlm2 | `writedlm2()`      | `';'`     | `','`    | ISO-Format | like print()     |
 | ReadWriteDlm2 | `writecsv2()`      | `','`     | `'.'`    | ISO-Format | like print()     |
 
--> `writedlm2(f, A, '\t', decimal='.', write_short=true)`  gives the same result as  `writedlm(f, A)`.
+-> `writedlm2(f, A, '\t', decimal='.', write_short=true)`  return the same result as  `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
