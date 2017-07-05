@@ -21,7 +21,7 @@ Pkg.add("ReadWriteDlm2")
 
 ### Basic Examples: How To Use `ReadWriteDlm2`
 ```
-julia> using ReadWriteDlm2                        # activate readdlm2, readcsv2, writedlm2 and writecsv2
+julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
 
 julia> A = [1 1.2; "text" Date(2017)];         # test array with: Int, Float64, String and Date type
 julia> writedlm2("test1.csv", A)               # test1.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
