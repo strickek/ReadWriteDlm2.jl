@@ -269,7 +269,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         T2 = T
     end 
     
-    s = readstring(input) # new
+    s = readstring(input)
     
     # empty input data - return empty array
     if isempty(s) || s == string(eol)
