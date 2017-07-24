@@ -56,11 +56,6 @@ In addition to Base `readdlm()`, data is also parsed for `Dates` formats (ISO), 
 `HH:MM[:SS[.s{1,9}]]` and for complex and rational numbers. To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}` is returned. In other cases
-a heterogeneous array of numbers, dates and strings is returned. To activate parsing for `Complex` and 
-`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments such as:
-`String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
-
 The result will be a (heterogeneous) array of default element type `Any`. Homogeneous arrays are supported for 
 Type arguments such as: `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` 
 and `Time`. If data is empty, a `0×0 Array{T,2}` is returned.
