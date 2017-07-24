@@ -452,7 +452,7 @@ writedlm2(f::AbstractString, a, dlm; opts...) =
 function writedlm2auto(f, a, dlm;
         decimal::Char=',',
         write_short::Bool=false,
-        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS.s",
         dfs::AbstractString="yyyy-mm-dd",
         locale::AbstractString="english",
         imsuffix::AbstractString="im", 
