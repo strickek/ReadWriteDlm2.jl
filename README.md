@@ -80,7 +80,7 @@ supported by `readdlm2()` and `readcsv2()` - is available in the
 [stable documentation for readdlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.readdlm-Tuple{Any,Char,Type,Char}). 
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
-| Module        | Function               | Delimiter  | Dec. mark | Element Type | Extended Parsing  |
+| Module        | Function               | Delimiter  | Dec. Mark | Element Type | Extended Parsing  |
 |:------------- |:-----------------------|:----------:|:---------:|:-------------|:------------------|
 | Base.DataFmt  | `readdlm()`            | `' '`      | `'.'`     | Float64/Any  | No (String)       |
 | ReadWriteDlm2 | `readdlm2()`           | `';'`      | `','`     | Any          | Yes               |
@@ -137,13 +137,13 @@ supported by `writedlm2()` and `writecsv2()` - is available in the
 [stable documentation for writedlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.writedlm).
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
-| Module        | Function           | Delimiter | Dec. mark| Write Numbers    |
+| Module        | Function           | Delimiter | Dec. Mark| Write Numbers    |
 |:------------- |:------------------ |:---------:|:--------:|:-----------------|
 | Base.DataFmt  | `writedlm()`       | `'\t'`    | `'.'`    | print_shortest() |
 | ReadWriteDlm2 | `writedlm2()`      | `';'`     | `','`    | like print()     |
 | ReadWriteDlm2 | `writecsv2()`      | `','`     | `'.'`    | like print()     |
 
--> `writedlm2(f, A, '\t', decimal='.', write_short=true)` write the same as `writedlm(f, A)`.
+-> `writedlm2(f, A, '\t', decimal='.', write_short=true)` writes the same as `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
