@@ -4,11 +4,9 @@
 
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks. 
 
-For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`. Default Type `Any` aktivates parsing for all Types.
+For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`.
 
-The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#file). These functions use 
-`';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define 
-delimiter and `decimal='.'`. 
+The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`. 
 
 Support for `Time`, `Complex` and `Rational` as well as the functions `readcsv2()` and `writecsv2()` start with Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
@@ -54,8 +52,8 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base `readdlm()`, strings are also parsed for `Dates` (default formats are ISO) and
-`Time` format `HH:MM[:SS[.s{1,9}]]`. To deactivate parsing dates/time set: `dfs="", dtfs=""`.
+In addition to Base `readdlm()`, data is also parsed for `Dates` formats (ISO), the`Time` format 
+`HH:MM[:SS[.s{1,9}]]` and for complex and rational numbers. To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}` is returned. In other cases
@@ -63,10 +61,14 @@ a heterogeneous array of numbers, dates and strings is returned. To activate par
 `Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments such as:
 `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
 
+The result will be a (heterogeneous) array of default element type `Any`. Homogeneous arrays are supported for 
+Type arguments such as: `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` 
+and `Time`. If data is empty, a `0×0 Array{T,2}` is returned.
+
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [Regular expression](https://docs.julialang.org/en/stable/manual/strings/#Regular-Expressions-1) (r, s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for Date parsing, default is ISO
 * `locale="english"`: Language for parsing dates names, default is english
 
@@ -83,20 +85,17 @@ supported by `readdlm2()` and `readcsv2()` - is available in the
 [stable documentation for readdlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.readdlm-Tuple{Any,Char,Type,Char}). 
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
-| Module        | Function               | Delimiter  | Dec. mark | Date(Time)   | Complex, Rational |
+| Module        | Function               | Delimiter  | Dec. mark | Element Type | Extended Parsing  |
 |:------------- |:-----------------------|:----------:|:---------:|:-------------|:------------------|
-| Base.DataFmt  | `readdlm()`            | `' '`      | `'.'`     | n.a. (String)| n.a. (String)     |
-| ReadWriteDlm2 | `readdlm2()`           | `';'`      | `','`     | parse ISO    | Optional (Type)   |
-| ReadWriteDlm2 | `readcsv2()`           | `','`      | `'.'`     | parse ISO    | Default (Type=Any)|
-
--> `readdlm2(source, ' ', decimal='.', dfs="", dtfs="")` returns the same result as `readdlm(source)`.
+| Base.DataFmt  | `readdlm()`            | `' '`      | `'.'`     | Float64/Any  | No (String)       |
+| ReadWriteDlm2 | `readdlm2()`           | `';'`      | `','`     | Any          | Yes               |
+| ReadWriteDlm2 | `readcsv2()`           | `','`      | `'.'`     | Any          | Yes               |
 
 ### Example `readdlm2()`
 Read the Excel (lang=german) text-file `test_de.csv` and store the array in `data`:
 ```
 data = readdlm2("test_de.csv", dfs="dd.mm.yyyy", dtfs="dd.mm.yyyy HH:MM")
 ```
-
 
 
 ## Function `writedlm2()`
@@ -125,7 +124,7 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dtfs="yyyy-mm-ddTHH:MM:SS"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
 * `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"i"`, `"j"` or `"im"`(=default)
@@ -143,13 +142,13 @@ supported by `writedlm2()` and `writecsv2()` - is available in the
 [stable documentation for writedlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.writedlm).
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
-| Module        | Function           | Delimiter | Dec. mark| Date(Time) | Write Numbers    |
-|:------------- |:------------------ |:---------:|:--------:|:---------- |:-----------------|
-| Base.DataFmt  | `writedlm()`       | `'\t'`    | `'.'`    | ISO-Format | print_shortest() |
-| ReadWriteDlm2 | `writedlm2()`      | `';'`     | `','`    | ISO-Format | like print()     |
-| ReadWriteDlm2 | `writecsv2()`      | `','`     | `'.'`    | ISO-Format | like print()     |
+| Module        | Function           | Delimiter | Dec. mark| Write Numbers    |
+|:------------- |:------------------ |:---------:|:--------:|:-----------------|
+| Base.DataFmt  | `writedlm()`       | `'\t'`    | `'.'`    | print_shortest() |
+| ReadWriteDlm2 | `writedlm2()`      | `';'`     | `','`    | like print()     |
+| ReadWriteDlm2 | `writecsv2()`      | `','`     | `'.'`    | like print()     |
 
--> `writedlm2(f, A, '\t', decimal='.', write_short=true)`  return the same result as  `writedlm(f, A)`.
+-> `writedlm2(f, A, '\t', decimal='.', write_short=true)` write the same as `writedlm(f, A)`.
 
 ### Example `writedlm2()`
 Write Julia `data` to text-file `test_de.csv`, readable by Excel (lang=german):
