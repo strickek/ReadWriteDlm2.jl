@@ -11,9 +11,9 @@ using Base.Dates
 
 isequaldlm(m1, m2, t) = isequal(m1, m2) && (eltype(m1) == eltype(m2) == t)
 
-@test isequaldlm(readdlm2(IOBuffer("1;2\n3;4\n5;6\n")), [1. 2; 3 4; 5 6], Float64)
+@test isequaldlm(readdlm2(IOBuffer("1;2\n3;4\n5;6\n"), Float64), [1. 2; 3 4; 5 6], Float64)
 @test isequaldlm(readdlm2(IOBuffer("1;2\n3;4\n5;6\n"), Int), [1 2; 3 4; 5 6], Int)
-@test isequaldlm(readdlm2(IOBuffer("1 2\n3 4\n5 6\n"),' '), [1. 2; 3 4; 5 6], Float64)
+@test isequaldlm(readdlm2(IOBuffer("1 2\n3 4\n5 6\n"),' ', Float64), [1. 2; 3 4; 5 6], Float64)
 @test isequaldlm(readdlm2(IOBuffer("1 2\n3 4\n5 6\n"), ' ', Int), [1 2; 3 4; 5 6], Int)
 
 @test size(readdlm2(IOBuffer("1;2;3;4\n1;2;3"))) == (2,4)
@@ -27,7 +27,7 @@ let result1 = reshape(Any["", "", "", "", "", "", 1.0, 1.0, "", "", "", "", "", 
     @test isequaldlm(readdlm2(IOBuffer(";;;1;;;;2;3;;;4;\n;;;1;;;1\n")), result1, Any)
     @test isequaldlm(readdlm2(IOBuffer("   1    2 3   4 \n   1   1\n"), ' '), result1, Any)
     @test isequaldlm(readdlm2(IOBuffer("   1    2 3   4 \n   1   1\n"), ' '), result1, Any)
-    @test isequaldlm(readdlm2(IOBuffer("1;2\n3;4 \n")), [[1.0, 3.0] [2.0, 4.0]], Float64)
+    @test isequaldlm(readdlm2(IOBuffer("1;2\n3;4 \n"), Float64), [[1.0, 3.0] [2.0, 4.0]], Float64)
 end
 
 let result1 = reshape(Any["", "", "", "", "", "", "भारत", 1.0, "", "", "", "", "", 1.0, 2.0, "", 3.0, "", "", "", "", "", 4.0, "", "", ""], 2, 13)
@@ -67,11 +67,11 @@ end
 
 @test isequaldlm(readdlm2(IOBuffer("\n1;2;3\n4;5;6\n\n\n"), skipblanks=false),
                 reshape(Any["",1.0,4.0,"","","",2.0,5.0,"","","",3.0,6.0,"",""], 5, 3), Any)
-@test isequaldlm(readdlm2(IOBuffer("\n1;2;3\n4;5;6\n\n\n"), skipblanks=true),
+@test isequaldlm(readdlm2(IOBuffer("\n1;2;3\n4;5;6\n\n\n"), Float64, skipblanks=true),
                 reshape([1.0,4.0,2.0,5.0,3.0,6.0], 2, 3), Float64)
 @test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), skipblanks=false), 
                 reshape(Any[1.0,"",4.0,2.0,"",5.0], 3, 2), Any)
-@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), skipblanks=true), 
+@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), Float64, skipblanks=true), 
                 reshape([1.0,4.0,2.0,5.0], 2, 2), Float64)
 
 let x = bitrand(5, 10), io = IOBuffer()
@@ -162,8 +162,8 @@ let x = ["\"hello\"", "world\""], io = IOBuffer()
 end
 
 # test comments
-@test isequaldlm(readdlm2(IOBuffer("#this is comment\n1;2;3\n#one more comment\n4;5;6")), [1. 2. 3.;4. 5. 6.], Float64)
-@test isequaldlm(readdlm2(IOBuffer("#this is \n#comment\n1;2;3\n#one more \n#comment\n4;5;6")), [1. 2. 3.;4. 5. 6.], Float64)
+@test isequaldlm(readdlm2(IOBuffer("#this is comment\n1;2;3\n#one more comment\n4;5;6"), Float64), [1. 2. 3.;4. 5. 6.], Float64)
+@test isequaldlm(readdlm2(IOBuffer("#this is \n#comment\n1;2;3\n#one more \n#comment\n4;5;6"), Float64), [1. 2. 3.;4. 5. 6.], Float64)
 @test isequaldlm(readdlm2(IOBuffer("1;2;#3\n4;5;6")), [1. 2. "";4. 5. 6.], Any)
 @test isequaldlm(readdlm2(IOBuffer("1#;2;3\n4;5;6")), [1. "" "";4. 5. 6.], Any)
 @test isequaldlm(readdlm2(IOBuffer("1;2;\"#3\"\n4;5;6")), [1. 2. "#3";4. 5. 6.], Any)
@@ -340,21 +340,21 @@ rm("test.csv")
 
 a = [DateTime(2015) 5.1 "Text1";10 190.0e5 4.0]
 writedlm2("test.csv", a, write_short=true)
-@test readstring("test.csv") == "2015-01-01T00:00:00;5,1;Text1\n10;19e6;4\n"
+@test readstring("test.csv") == "2015-01-01T00:00:00.0;5,1;Text1\n10;19e6;4\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == DateTime(2015)
 
 a = DateTime(2017)
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01T00:00:00\n"
+@test readstring("test.csv") == "2017-01-01T00:00:00.0\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == DateTime(2017)
 
 a = Any[Date(2017,1,14) DateTime(2017,2,15,23,40,59)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-14;2017-02-15T23:40:59\n"
+@test readstring("test.csv") == "2017-01-14;2017-02-15T23:40:59.0\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test isequaldlm(a, b, Any)
@@ -365,7 +365,7 @@ writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 writedlm2("test.csv", a, dfs="", dtfs="")
 @test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
+@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
 writedlm2("test.csv", a, decimal='.', dfs="\\Y\\ear: yyyy", dtfs="\\Y\\ear: yyyy")
 @test readstring("test.csv") == "Year: 2017;Year: 2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
@@ -545,7 +545,7 @@ writedlm2("test.csv", a)
 """
 Nr;Wert
 1;2017-01-01
-2;2018-01-01T00:00:00
+2;2018-01-01T00:00:00.0
 3;23:54:45,123456078
 4;1,5e10 + 5,0im
 5;300//1
@@ -563,7 +563,7 @@ writedlm2("test.csv", a, '\t', decimal='.')
 """
 Nr\tValue
 1\t2017-01-01
-2\t2018-01-01T00:00:00
+2\t2018-01-01T00:00:00.0
 3\t23:54:45.123456078
 4\t1.5e10 + 5.0im
 5\t300//1
@@ -660,7 +660,7 @@ rm("test.csv")
 # Test DateTime read and write
 a = DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01T00:00:00;2016-01-01T00:00:00\n2015-01-01T00:00:00;2014-01-01T00:00:00\n"
+@test readstring("test.csv") == "2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
 b = readdlm2("test.csv", DateTime)
 rm("test.csv")
 @test b == a
@@ -668,7 +668,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n2017-01-01T00:00:00;2016-01-01T00:00:00\n2015-01-01T00:00:00;2014-01-01T00:00:00\n"
+@test readstring("test.csv") == "test1;test2\n2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
 b, h = readdlm2("test.csv", DateTime, header=true)
 rm("test.csv")
 @test b == DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
@@ -721,7 +721,7 @@ writecsv2("test.csv", a)
 """
 Nr,Value
 1,2017-01-01
-2,2018-01-01T00:00:00
+2,2018-01-01T00:00:00.0
 3,23:54:45.123456078
 4,1.5e10 + 5.0im
 5,300//1
@@ -751,6 +751,7 @@ a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23
 writecsv2("test.csv", a)
 @test readstring("test.csv") == "23:55:56.123456789,23:55:56.123456,23:55:56.123,12:45:00,11:23:11\n"
 b = readcsv2("test.csv")
+rm("test.csv")
 @test b == a
 
 # Test readcsv2/writecsv2 with Complex - Rationals 
@@ -767,7 +768,7 @@ a = ""
 writedlm2("test.csv", a)
 @test readstring("test.csv") == ""
 b = readdlm2("test.csv")
-@test typeof(b) == Array{Float64,2}
+@test typeof(b) == Array{Any,2}
 @test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
 rm("test.csv")
 @test isempty(b)
@@ -783,7 +784,7 @@ a = [""]
 writedlm2("test.csv", a)
 @test readstring("test.csv") == "\n"
 b = readdlm2("test.csv")
-@test typeof(b) == Array{Float64,2}
+@test typeof(b) == Array{Any,2}
 @test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
 rm("test.csv")
 @test isempty(b)
@@ -840,3 +841,19 @@ b = readcsv2("test.csv")
 rm("test.csv")
 @test isequal(a, b)
 
+# Test write and read of random Any array with 10000 rows
+n = 10000
+A = Array{Any}(n,9)
+for i = 1:n
+    A[i,:] = Any[randn() rand(Int) rand(Bool) rand(Date(1980,1,1):Date(2017,12,31)) rand(Dates.Time(0,0,0,0,0,0):Dates.Nanosecond(1):Dates.Time(23,59,59,999,999,999)) rand(DateTime(1980,1,1,0,0,0,0):Dates.Millisecond(1):DateTime(2017,12,31,23,59,59,999)) randstring(24) complex(randn(), randn()) (rand(Int)//rand(Int))]
+end
+
+writedlm2("test.csv", A)
+B = readdlm2("test.csv")
+rm("test.csv")
+@test isequaldlm(A, B, Any)
+
+writecsv2("test.csv", A)
+B = readcsv2("test.csv")
+rm("test.csv")
+@test isequaldlm(A, B, Any)
