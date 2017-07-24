@@ -11,12 +11,12 @@ and special decimal marks.
 
 ### `readcsv2(), writecsv2()`:
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: 
-Delimiter is `','` (fixed) and `decimal='.'`. Default Type 'Any' aktivates parsing for all Types.
+Delimiter is `','` (fixed) and `decimal='.'`.
 
 ### `readdlm2(), writedlm2()`:
 The basic idea of these functions is to support the "decimal comma countries". They use 
 `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these
-functions need to define delimiter and `decimal='.'`
+functions need to define `decimal='.'`
 
 ### Detailed Documentation:
 For more information about functionality and (keyword) arguments see `?help` for `readdlm2()`, 
@@ -39,8 +39,7 @@ export readdlm2, writedlm2, readcsv2, writecsv2
 
 Create a regex string `r\"^...\$\"` for the given `Date` or `DateTime` `format`string `df`.
 
-Use `ismatch()` to test for true/false. With `match()` it is possible to extract parts of 
-a date string. The regex groups are named according to the `format`string codes. The `locale`
+The regex groups are named according to the `format`string codes. The `locale`
 is used to calculate min and max length of month and day names (for codes: UuEe).
 """
 function dfregex(df::AbstractString, locale::AbstractString="english")
@@ -59,9 +58,10 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
                         (i == 2 && df[1] == df[2])) ? (repeat_count + 1) : 1
         r = r * (
         (i > 1 && df[(i - 1)] == '\\') ? string(df[i]) :
-        (df[i] == 'y' && !repeat_next) ? "(?<y>\\d{$repeat_count})" :
-        (df[i] == 'Y' && repeat_count < 5 && !repeat_next) ? "(?<y>\\d{4})" :
-        (df[i] == 'Y' && repeat_count > 4 && !repeat_next) ? "(?<y>\\d{$repeat_count})" :
+        (df[i] == 'y' && repeat_count < 5 && !repeat_next) ? "(?<y>\\d{1,4})" :
+        (df[i] == 'y' && repeat_count > 4 && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
+        (df[i] == 'Y' && repeat_count < 5 && !repeat_next) ? "(?<y>\\d{1,4})" :   # new
+        (df[i] == 'Y' && repeat_count > 4 && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
         (df[i] == 'm' && repeat_count == 1 && !repeat_next) ? "(?<m>0?[1-9]|1[012])" :
         (df[i] == 'm' && repeat_count == 2 && !repeat_next) ? "(?<m>0[1-9]|1[012])" : 
         (df[i] == 'm' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])" : 
@@ -81,7 +81,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         (df[i] == 'S' && repeat_count == 1 && !repeat_next) ? "(?<S>\\d|[0-5]\\d)" :
         (df[i] == 'S' && repeat_count == 2 && !repeat_next) ? "(?<S>[0-5]\\d)" : 
         (df[i] == 'S' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<S>[0-5]\\d)" :
-        (df[i] == '.' && i < ldf && df[(i + 1)] == 's') ? "" :
+        (df[i] == '.' && dotsec) ? "" :
         (df[i] == '.') ? "\\." :
         (df[i] == 's' && dotsec == true && repeat_count < 4 && !repeat_next) ? "(\\.(?<s>\\d{0,3}0{0,6}))?" :
         (df[i] == 's' && dotsec == true && repeat_count > 3 && !repeat_next) ? "(\\.(?<s>\\d{$(repeat_count)}))?" :
@@ -172,20 +172,19 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base readdlm(), strings are also parsed for `Dates` formats (ISO) and the
-`Time` format `\"HH:MM[:SS[.s{1,9}]]\"`. To deactivate parsing dates/time set:
+In addition to Base readdlm(), data is also parsed for `Dates` formats (ISO), the `Time` format 
+`\"HH:MM[:SS[.s{1,9}]]\"` and for complex and rational numbers. To deactivate parsing dates/time set:
 `dfs=\"\", dtfs=\"\"`. `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-If all data is numeric, the result will be a numeric array, if data is empty, a `0×0 Array{T,2}` is returned. 
-In other cases a heterogeneous array of numbers, dates and strings is returned. To activate parsing for `Complex` and 
-`Rational` numbers, use `Any` as Type argument. Homogeneous arrays are supported for Type arguments such as:
-`String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+The result will be a (heterogeneous) array of default type `Any`. Homogeneous arrays are supported for 
+Type arguments such as: `String`, `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` 
+and `Time`. If data is empty, a `0×0 Array{T,2}` is returned.
 
 # Additional Keyword Arguments
 
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regular expression (r,s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: Format string for DateTime parsing, default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
 * `locale=\"english\"`: Language for parsing dates names, default is english
 
@@ -200,19 +199,19 @@ data = readdlm2(\"test_de.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
 """
 
 readdlm2(input; opts...) =
-    readdlm2auto(input, ';', Float64, '\n', true; opts...)
+    readdlm2auto(input, ';', Any, '\n', true; opts...)
 
 readdlm2(input, T::Type; opts...) =
     readdlm2auto(input, ';', T, '\n', false; opts...)
 
 readdlm2(input, dlm::Char; opts...) =
-    readdlm2auto(input, dlm, Float64, '\n', true; opts...)
+    readdlm2auto(input, dlm, Any, '\n', true; opts...)
 
 readdlm2(input, dlm::Char, T::Type; opts...) =
     readdlm2auto(input, dlm, T, '\n', false; opts...)
 
 readdlm2(input, dlm::Char, eol::Char; opts...) =
-    readdlm2auto(input, dlm, Float64, eol, true; opts...)
+    readdlm2auto(input, dlm, Any, eol, true; opts...)
 
 readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
     readdlm2auto(input, dlm, T, eol, false; opts...)
@@ -220,7 +219,7 @@ readdlm2(input, dlm::Char, T::Type, eol::Char; opts...) =
 function readdlm2auto(input, dlm, T, eol, auto;
         decimal::Char=',',
         rs::Tuple=(r"(\d),(\d)", s"\1.\2"),
-        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS",
+        dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS.s",
         dfs::AbstractString="yyyy-mm-dd", 
         locale::AbstractString="english",
         opts...)
@@ -241,7 +240,13 @@ function readdlm2auto(input, dlm, T, eol, auto;
     doparserational = false
     convertarray = false
     T2 = Any
-    if T == DateTime
+    if T == Any
+        doparsedatetime = !isempty(dtfs)
+        doparsedate = !isempty(dfs)
+        doparsetime = doparsedatetime && doparsedate
+        doparsecomplex = true
+        doparserational = true
+    elseif T == DateTime
         isempty(dtfs) && error("Error: Parsing for DateTime - format string `dtfs` is empty.")
         doparsedatetime = true
         convertarray = true
@@ -260,17 +265,6 @@ function readdlm2auto(input, dlm, T, eol, auto;
         convertarray = true
     elseif T == Void
         convertarray = true
-    elseif T == Any
-        doparsedatetime = !isempty(dtfs)
-        doparsedate = !isempty(dfs)
-        doparsetime = true
-        doparsecomplex = true
-        doparserational = true
-    elseif T == Float64 && auto == true
-        T2 = T
-        doparsedatetime = !isempty(dtfs)
-        doparsedate = !isempty(dfs)
-        doparsetime = doparsedatetime && doparsedate
     else
         T2 = T
     end 
