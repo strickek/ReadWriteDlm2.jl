@@ -425,7 +425,7 @@ language. For writing `Complex` numbers the imaginary component suffix can be se
 
 * `decimal=','`: Charater for writing decimal marks, default is a comma
 * `write_short=false`: Bool - use print() to write data, set `true` for print_shortest()
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS\"`: Format string, DateTime write format, default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string, DateTime write format, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string, Date write format, default is ISO
 * `locale=\"english\"`: Language for DateTime writing, default is english
 * `imsuffix=\"im\"`: Complex - imaginary component suffix `\"i\"`, `\"j\"` or `\"im\"`(=default)
