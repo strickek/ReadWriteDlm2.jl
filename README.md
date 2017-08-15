@@ -131,11 +131,6 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
     
 Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`. 
 
-### Documentation For Base `writedlm()`
-More information about Base functionality - which is also 
-supported by `writedlm2()` and `writecsv2()` - is available in the 
-[stable documentation for writedlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.writedlm).
-
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
 | Module        | Function           | Delimiter | Dec. Mark| Write Numbers    |
 |:------------- |:------------------ |:---------:|:--------:|:-----------------|
