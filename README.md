@@ -71,8 +71,7 @@ and `Time`. If data is empty, a `0×0 Array{T,2}` is returned.
 
     readcsv2(source, T::Type=Any; opts...)
 
-Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type `Any` activates parsing
-of `Bool`, `Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`.
 
 ### Documentation For Base `readdlm()`
 More information about Base functionality and (keyword) arguments - which are also 
