@@ -6,7 +6,7 @@
 
 * For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`.
 
-* The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`. 
+* The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg?uselang=en#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`. 
 
 Support for `Time`, `Complex` and `Rational` as well as the functions `readcsv2()` and `writecsv2()` start with Julia 0.6.
 For documentation of `ReadWriteDlm2` for Julia 0.5 see: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
