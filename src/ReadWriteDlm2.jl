@@ -412,9 +412,8 @@ By default, a pre-processing of floats takes place. Floats are parsed to strings
 with decimal mark changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
-Base `writedlm()` writes `3000.0` always short as `3e3`. To keep type information `writedlm2()`
-writes long like print() by default. Set `write_short=true` to arrive at the same result as
-with Base `writedlm()`.
+Base `writedlm()` writes `3000.0` always short as `3e3`. Function `writedlm2()` writes long like
+print() by default. Set `write_short=true` to arrive at the same result as with Base `writedlm()`.
 
 In `writedlm2()` the output format for `Date` and `DateTime` data can be defined with format strings.
 Defaults are the ISO formats. Day (`E`, `e`) and month (`U`, `u`) names are written in the `locale`
