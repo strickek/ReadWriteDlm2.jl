@@ -3,8 +3,6 @@
 
 """
 ## ReadWriteDlm2 - CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
-
-### Extended formats and types:
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those
 of Base.DataFmt, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types 
 and special decimal marks. 
