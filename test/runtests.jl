@@ -286,10 +286,10 @@ end
 
 
 # fix #13179 parsing unicode lines with default delmiters
-@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1\tα\n2\tβ\n"), '\t'), Any[1 "α"; 2 "β"], Any)
-@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1;α\n2;β\n")), Any[1 "α"; 2 "β"], Any)
-@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1\tα\n2\tβ\n"), '\t', rs=()), Any[1 "α"; 2 "β"], Any)
-@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1;α\n2;β\n"), rs=()), Any[1 "α"; 2 "β"], Any)
+@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1\tα\n2\tβ\n"), '\t', comments=true), Any[1 "α"; 2 "β"], Any)
+@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1;α\n2;β\n"), comments=true), Any[1 "α"; 2 "β"], Any)
+@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1\tα\n2\tβ\n"), '\t', rs=(), comments=true), Any[1 "α"; 2 "β"], Any)
+@test isequaldlm(readdlm2(IOBuffer("# Should ignore this π\n1;α\n2;β\n"), rs=(), comments=true), Any[1 "α"; 2 "β"], Any)
 
 # BigInt parser
 let data = "1;2;3"
