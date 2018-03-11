@@ -321,7 +321,7 @@ end
 
 # issue #21207
 let data = "\"1\";\"灣\"\"灣灣灣灣\";\"3\""
-    @test readdlm2(IOBuffer(data), ',') == Any[1 "灣\"灣灣灣灣" 3]
+    @test readdlm2(IOBuffer(data)) == Any[1 "灣\"灣灣灣灣" 3]
 end
 
 # issue #11484: useful error message for invalid readdlm filepath arguments
