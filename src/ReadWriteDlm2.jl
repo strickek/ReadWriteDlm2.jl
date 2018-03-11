@@ -282,7 +282,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     # empty input data - return empty array
     if (isempty(s) || (s == string(eol)))
-        return Array{T2}(0,0)
+        return Array{T2}(undef, 0, 0)
     end
 
     if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark
