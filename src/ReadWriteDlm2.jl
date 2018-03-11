@@ -53,7 +53,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
     r = "^ *"; repeat_count = 1; ldf = length(df); dotsec = false
     for i = 1:ldf
-        repeat_next = ((i < ldf) && (df[(i + 1))] == df[i]) ? true : false
+        repeat_next = ((i < ldf) && (df[(i + 1)] == df[i])) ? true : false
         ((df[i] == '.') && (i < ldf) && (df[(i + 1)] == 's')) && (dotsec = true)
         repeat_count = (((i > 2) && (df[(i - 2)] != '\\') && (df[(i - 1)] == df[i])) ||
                         ((i == 2) && (df[1] == df[2]))) ? (repeat_count + 1) : 1
