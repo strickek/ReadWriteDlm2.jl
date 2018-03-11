@@ -231,8 +231,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
         locale::AbstractString="english",
         opts...)
 
-    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]")) ||
-    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]"))) && info(
+    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]"))) ||
+    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]")))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
