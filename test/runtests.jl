@@ -109,13 +109,13 @@ end
 let x = [0.1 0.3 0.5], io = IOBuffer()
     writedlm2(io, x, ", ")
     seek(io, 0)
-    @test readstring(io) == "0,1, 0,3, 0,5\n"
+    @test read(io, String) == "0,1, 0,3, 0,5\n"
 end
 
 let x = [0.1 0.3 0.5], io = IOBuffer()
     writedlm2(io, x, "; ")
     seek(io, 0)
-    @test readstring(io) == "0,1; 0,3; 0,5\n"
+    @test read(io, String) == "0,1; 0,3; 0,5\n"
 end
 
 let x = [0.1 0.3 0.5], io = IOBuffer()
@@ -342,36 +342,36 @@ end
 
 a = [Date(2015) 5.1 "Text1";10 190.0e5 4.0]
 writedlm2("test.csv", a, decimal='€')
-@test readstring("test.csv") == "2015-01-01;5€1;Text1\n10;1€9e7;4€0\n"
+@test read("test.csv", String) == "2015-01-01;5€1;Text1\n10;1€9e7;4€0\n"
 b = readdlm2("test.csv", rs=(r"(\d)€(\d)", s"\1.\2"))
 rm("test.csv")
 @test b[1] == Date(2015)
 
 a = DateTime(2017)
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01T00:00:00.0\n"
+@test read("test.csv", String) == "2017-01-01T00:00:00.0\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == DateTime(2017)
 
 a = Any[Date(2017,1,14) DateTime(2017,2,15,23,40,59)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-14;2017-02-15T23:40:59.0\n"
+@test read("test.csv", String) == "2017-01-14;2017-02-15T23:40:59.0\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test isequaldlm(a, b, Any)
 
 a = Any[Date(2017, 1, 1) DateTime(2017, 2, 15, 23, 0, 0)]
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
-@test readstring("test.csv") == "01/2017;15.02.2017/23.h\n"
+@test read("test.csv", String) == "01/2017;15.02.2017/23.h\n"
 writedlm2("test.csv", a, dfs="", dtfs="")
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00\n"
+@test read("test.csv", String) == "2017-01-01;2017-02-15T23:00:00\n"
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "2017-01-01;2017-02-15T23:00:00.0\n"
+@test read("test.csv", String) == "2017-01-01;2017-02-15T23:00:00.0\n"
 writedlm2("test.csv", a, decimal='.', dfs="\\Y\\ear: yyyy", dtfs="\\Y\\ear: yyyy")
-@test readstring("test.csv") == "Year: 2017;Year: 2017\n"
+@test read("test.csv", String) == "Year: 2017;Year: 2017\n"
 writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
-@test readstring("test.csv") == "01/2017;15.02.2017/23.h\n"
+@test read("test.csv", String) == "01/2017;15.02.2017/23.h\n"
 b = readdlm2("test.csv", dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
 @test isequaldlm(a, b, Any)
 b = readdlm2("test.csv", rs=(), dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
@@ -380,35 +380,35 @@ rm("test.csv")
 
 a = Date(2017,5,1)
 writedlm2("test.csv", a, dfs="dd.mm.yyyy")
-@test readstring("test.csv") == "01.05.2017\n"
+@test read("test.csv", String) == "01.05.2017\n"
 b = readdlm2("test.csv", dfs="dd.mm.yyyy")
 rm("test.csv")
 @test b[1] == a
 
 a = "ABC"
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "A\nB\nC\n"
+@test read("test.csv", String) == "A\nB\nC\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == "A" && b[3] == "C"
 
 D = rand(1:9, 10, 5)
 writedlm2("test.csv", D)
-@test length(readstring("test.csv")) == 100
+@test length(read("test.csv", String)) == 100
 b = readdlm2("test.csv")
 rm("test.csv")
 @test D == b
 
 a = 10.9
 writedlm2("test.csv", a, decimal='€')
-@test readstring("test.csv") == "10€9\n"
+@test read("test.csv", String) == "10€9\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == "10€9"
 
 a = 10.9
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "10.9\n"
+@test read("test.csv", String) == "10.9\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test b[1] == 10.9
@@ -434,14 +434,14 @@ rm("test.csv")
 # test date format strings with variable length
 a = DateTime(2017,5,1,5,59,1)
 writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S")
-@test readstring("test.csv") == "Monday, 01.05.2017 5:59:1\n"
+@test read("test.csv", String) == "Monday, 01.05.2017 5:59:1\n"
 b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S")
 rm("test.csv")
 @test a == b[1]
 
 a = DateTime(2017,5,1,5,59,1,898)
 writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s")
-@test readstring("test.csv") == "Monday, 1.May 2017 5:59:1,898\n"
+@test read("test.csv", String) == "Monday, 1.May 2017 5:59:1,898\n"
 b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s")
 rm("test.csv")
 @test a == b[1]
@@ -449,7 +449,7 @@ rm("test.csv")
 # test date format strings with fix length
 a = [DateTime(2017,5,1,5,59,1,898) 1.0 1.1 1.222e7 1 true]
 writedlm2("test.csv", a, dtfs="yyyyymmmdddTHHHMMMSSSsss")
-@test readstring("test.csv") == "02017005001T005059001898;1,0;1,1;1,222e7;1;true\n"
+@test read("test.csv", String) == "02017005001T005059001898;1,0;1,1;1,222e7;1;true\n"
 b = readdlm2("test.csv", dtfs="yyyyymmmdddTHHHMMMSSSsss")
 rm("test.csv")
 @test b == a
@@ -457,7 +457,7 @@ rm("test.csv")
 #Time parsing
 a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23,55,56,123) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "23:55:56,123456789;23:55:56,123456;23:55:56,123;12:45:00;11:23:11\n"
+@test read("test.csv", String) == "23:55:56,123456789;23:55:56,123456;23:55:56,123;12:45:00;11:23:11\n"
 b = readdlm2("test.csv")
 @test b == a
 write("test.csv", "23:55:56.123456789;23:55:56,123456;23:55:56,123;12:45;11:23:11\n")
@@ -467,7 +467,7 @@ rm("test.csv")
 
 a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
 writedlm2("test.csv", a, decimal='.')
-@test readstring("test.csv") == "23:55:56.123456;12:45:00;11:23:11\n"
+@test read("test.csv", String) == "23:55:56.123456;12:45:00;11:23:11\n"
 @test readdlm2("test.csv", dtfs="", dfs="") == ["23:55:56.123456" "12:45:00" "11:23:11"]
 @test readdlm2("test.csv") == a
 rm("test.csv")
@@ -493,28 +493,28 @@ Dates.LOCALES["german"] = Dates.DateLocale(
 
 a = DateTime(2017,5,1,5,59,1)
 writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="french")
-@test readstring("test.csv") == "lundi, 01.05.2017 5:59:1\n"
+@test read("test.csv", String) == "lundi, 01.05.2017 5:59:1\n"
 b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S", locale="french")
 rm("test.csv")
 @test b[1] == a
 
 a = DateTime(2017,1,1,5,59,1,898)
 writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s", locale="french")
-@test readstring("test.csv") == "dimanche, 1.janv 2017 5:59:1,898\n"
+@test read("test.csv", String) == "dimanche, 1.janv 2017 5:59:1,898\n"
 b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s", locale="french")
 rm("test.csv")
 @test b[1] == a
 
 a = DateTime(2017,8,1,5,59,1)
 writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="german")
-@test readstring("test.csv") == "Dienstag, 01.08.2017 5:59:1\n"
+@test read("test.csv", String) == "Dienstag, 01.08.2017 5:59:1\n"
 b = readdlm2("test.csv", dtfs="E, dd.mm.yyyy H:M:S", locale="german")
 rm("test.csv")
 @test b[1] == a
 
 a = DateTime(2017,11,1,5,59,1,898)
 writedlm2("test.csv", a, dtfs="E, d. U yyyy H:M:S,s", locale="german")
-@test readstring("test.csv") == "Mittwoch, 1. November 2017 5:59:1,898\n"
+@test read("test.csv", String) == "Mittwoch, 1. November 2017 5:59:1,898\n"
 b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S.s", locale="german")
 rm("test.csv")
 @test b[1] == a
@@ -522,7 +522,7 @@ rm("test.csv")
 # Test Complex and Rational parsing
 a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "-1 - 2im;1,2 - 2,0im;1,0e9 + 3,0e19im;1//3;-1//5;1//2;1//0;0//1\n"
+@test read("test.csv", String) == "-1 - 2im;1,2 - 2,0im;1,0e9 + 3,0e19im;1//3;-1//5;1//2;1//0;0//1\n"
 b = readdlm2("test.csv", Any)
 rm("test.csv")
 @test isequaldlm(a, b, Any)
@@ -535,7 +535,7 @@ rm("test.csv")
 # Test Complex and Rational parsing - decimal = '.', delimiter = \t
 a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
 writedlm2("test.csv", a, '\t', decimal='.')
-@test readstring("test.csv") == "-1 - 2im\t1.2 - 2.0im\t1.0e9 + 3.0e19im\t1//3\t-1//5\t1//2\t1//0\t0//1\n"
+@test read("test.csv", String) == "-1 - 2im\t1.2 - 2.0im\t1.0e9 + 3.0e19im\t1//3\t-1//5\t1//2\t1//0\t0//1\n"
 b = readdlm2("test.csv",'\t', Any, decimal='.')
 rm("test.csv")
 @test isequaldlm(a, b, Any)
@@ -543,7 +543,7 @@ rm("test.csv")
 #  Test different types with header and Any Array - decimal comma
 a = Any["Nr" "Wert";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writedlm2("test.csv", a)
-@test readstring("test.csv") ==
+@test read("test.csv", String) ==
 """
 Nr;Wert
 1;2017-01-01
@@ -561,7 +561,7 @@ rm("test.csv")
 #  Test different types with header and Any Array - english decimal
 a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writedlm2("test.csv", a, '\t', decimal='.')
-@test readstring("test.csv") ==
+@test read("test.csv", String) ==
 """
 Nr\tValue
 1\t2017-01-01
@@ -579,7 +579,7 @@ rm("test.csv")
 # Test Complex Array read and write
 a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
+@test read("test.csv", String) == "-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
 b = readdlm2("test.csv", Complex)
 rm("test.csv")
 @test a == b
@@ -587,7 +587,7 @@ rm("test.csv")
 
 a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
 writedlm2("test.csv", a, imsuffix="i")
-@test readstring("test.csv") == "-1 - 2i;1,2 - 2,0i;-1,0e9 + 3,0e-19i\n"
+@test read("test.csv", String) == "-1 - 2i;1,2 - 2,0i;-1,0e9 + 3,0e-19i\n"
 b = readdlm2("test.csv", Complex)
 rm("test.csv")
 @test a == b
@@ -595,7 +595,7 @@ rm("test.csv")
 
 a = Any["test" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+@test read("test.csv", String) == "test;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
 b = readdlm2("test.csv", Any)
 rm("test.csv")
 @test a == b
@@ -603,7 +603,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+@test read("test.csv", String) == "test1;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
 b, h = readdlm2("test.csv", Complex, header=true)
 rm("test.csv")
 @test b == Complex[complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
@@ -611,7 +611,7 @@ rm("test.csv")
 
 a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
 writedlm2("test.csv", a, imsuffix="i")
-@test readstring("test.csv") == "-1//3 - 7//5*i;1//1 - 1//3*i;-0,5 + 3,0e-19i\n"
+@test read("test.csv", String) == "-1//3 - 7//5*i;1//1 - 1//3*i;-0,5 + 3,0e-19i\n"
 b = readdlm2("test.csv", Complex)
 rm("test.csv")
 @test a == b
@@ -619,7 +619,7 @@ rm("test.csv")
 
 a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "-1//3 - 7//5*im;1//1 - 1//3*im;-0,5 + 3,0e-19im\n"
+@test read("test.csv", String) == "-1//3 - 7//5*im;1//1 - 1//3*im;-0,5 + 3,0e-19im\n"
 b = readdlm2("test.csv", Complex)
 rm("test.csv")
 @test a == b
@@ -628,7 +628,7 @@ rm("test.csv")
 # Test Time read and write
 a = Time[Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
+@test read("test.csv", String) == "12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
 b = readdlm2("test.csv", Time)
 rm("test.csv")
 @test b == a
@@ -636,7 +636,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
+@test read("test.csv", String) == "test1;test2\n12:54:43,123456789;13:45:00\n01:45:58,000000001;23:59:59\n"
 b, h = readdlm2("test.csv", Time, header=true)
 rm("test.csv")
 @test b == Time[Time(12,54,43,123,456,789) Time(13,45);Time(1,45,58,0,0,1) Time(23,59,59)]
@@ -645,7 +645,7 @@ rm("test.csv")
 # Test Rational read and write
 a = Rational[456//123 123//45;456//23 1203//45]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "152//41;41//15\n456//23;401//15\n"
+@test read("test.csv", String) == "152//41;41//15\n456//23;401//15\n"
 b = readdlm2("test.csv", Rational)
 rm("test.csv")
 @test b == a
@@ -653,7 +653,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";456//123 123//45;456//23 1203//45]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n152//41;41//15\n456//23;401//15\n"
+@test read("test.csv", String) == "test1;test2\n152//41;41//15\n456//23;401//15\n"
 b, h = readdlm2("test.csv", Rational, header=true)
 rm("test.csv")
 @test b == Rational[456//123 123//45;456//23 1203//45]
@@ -662,7 +662,7 @@ rm("test.csv")
 # Test DateTime read and write
 a = DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
+@test read("test.csv", String) == "2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
 b = readdlm2("test.csv", DateTime)
 rm("test.csv")
 @test b == a
@@ -670,7 +670,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
+@test read("test.csv", String) == "test1;test2\n2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
 b, h = readdlm2("test.csv", DateTime, header=true)
 rm("test.csv")
 @test b == DateTime[DateTime(2017) DateTime(2016);DateTime(2015) DateTime(2014)]
@@ -679,7 +679,7 @@ rm("test.csv")
 # Test Date read and write
 a = Date[Date(2017) Date(2016);Date(2015) Date(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
+@test read("test.csv", String) == "2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
 b = readdlm2("test.csv", Date)
 rm("test.csv")
 @test b == a
@@ -687,7 +687,7 @@ rm("test.csv")
 
 a = Any["test1" "test2";Date(2017) Date(2016);Date(2015) Date(2014)]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "test1;test2\n2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
+@test read("test.csv", String) == "test1;test2\n2017-01-01;2016-01-01\n2015-01-01;2014-01-01\n"
 b, h = readdlm2("test.csv", Date, header=true)
 rm("test.csv")
 @test b == Date[Date(2017) Date(2016);Date(2015) Date(2014)]
@@ -696,7 +696,7 @@ rm("test.csv")
 # Test alternative rs Tuple - is decimal ignored?
 a = Float64[1.1 1.2;2.1 2.2]
 writedlm2("test.csv", a, decimal='€')
-@test readstring("test.csv") == "1€1;1€2\n2€1;2€2\n"
+@test read("test.csv", String) == "1€1;1€2\n2€1;2€2\n"
 b = readdlm2("test.csv", Any, rs=(r"(\d)€(\d)", s"\1.\2"), decimal='n')
 rm("test.csv")
 @test a == b
@@ -711,7 +711,7 @@ rm("test.csv")
 # test readcsv2 and writecsv2 with alternative decimal
 a = Float64[1.1 1.2;2.1 2.2]
 writecsv2("test.csv", a, decimal='€')
-@test readstring("test.csv") == "1€1,1€2\n2€1,2€2\n"
+@test read("test.csv", String) == "1€1,1€2\n2€1,2€2\n"
 b = readcsv2("test.csv", Any, rs=(r"(\d)€(\d)", s"\1.\2"), decimal='n')
 rm("test.csv")
 @test a == b
@@ -719,7 +719,7 @@ rm("test.csv")
 #  Test different types with header for readcsv2 and writecsv2
 a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writecsv2("test.csv", a)
-@test readstring("test.csv") ==
+@test read("test.csv", String) ==
 """
 Nr,Value
 1,2017-01-01
@@ -751,7 +751,7 @@ rm("test.csv")
 #Time types for readcsv2 and writecsv2
 a = [Dates.Time(23,55,56,123,456,789) Dates.Time(23,55,56,123,456) Dates.Time(23,55,56,123) Dates.Time(12,45) Dates.Time(11,23,11)]
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "23:55:56.123456789,23:55:56.123456,23:55:56.123,12:45:00,11:23:11\n"
+@test read("test.csv", String) == "23:55:56.123456789,23:55:56.123456,23:55:56.123,12:45:00,11:23:11\n"
 b = readcsv2("test.csv")
 rm("test.csv")
 @test b == a
@@ -759,7 +759,7 @@ rm("test.csv")
 # Test readcsv2/writecsv2 with Complex - Rationals
 a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
+@test read("test.csv", String) == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
 b = readcsv2("test.csv", Complex)
 rm("test.csv")
 @test a == b
@@ -768,14 +768,14 @@ rm("test.csv")
 # Tests for empty IO-Data
 a = ""
 writedlm2("test.csv", a)
-@test readstring("test.csv") == ""
+@test read("test.csv", String) == ""
 b = readdlm2("test.csv")
 @test typeof(b) == Array{Any,2}
 @test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
 rm("test.csv")
 @test isempty(b)
 writecsv2("test.csv", a)
-@test readstring("test.csv") == ""
+@test read("test.csv", String) == ""
 b = readcsv2("test.csv")
 @test typeof(b) == Array{Any,2}
 @test typeof(readcsv2("test.csv", Float64)) == Array{Float64,2}
@@ -784,14 +784,14 @@ rm("test.csv")
 
 a = [""]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "\n"
+@test read("test.csv", String) == "\n"
 b = readdlm2("test.csv")
 @test typeof(b) == Array{Any,2}
 @test typeof(readdlm2("test.csv", Any)) == Array{Any,2}
 rm("test.csv")
 @test isempty(b)
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "\n"
+@test read("test.csv", String) == "\n"
 b = readcsv2("test.csv")
 @test typeof(b) == Array{Any,2}
 @test typeof(readcsv2("test.csv", Float64)) == Array{Float64,2}
@@ -800,14 +800,14 @@ rm("test.csv")
 
 a = nothing
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "nothing\n"
+@test read("test.csv", String) == "nothing\n"
 b = readdlm2("test.csv")
 @test typeof(readdlm2("test.csv", Void)) == Array{Void,2}
 rm("test.csv")
 @test typeof(b) == Array{Any,2}
 @test isequal(a, b[1])
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "nothing\n"
+@test read("test.csv", String) == "nothing\n"
 b = readcsv2("test.csv")
 @test typeof(readcsv2("test.csv", Void)) == Array{Void,2}
 rm("test.csv")
@@ -817,13 +817,13 @@ rm("test.csv")
 a = [nothing]
 a = reshape(a, 1,1)
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "nothing\n"
+@test read("test.csv", String) == "nothing\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test typeof(b) == Array{Any,2}
 @test isequal(a, b)
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "nothing\n"
+@test read("test.csv", String) == "nothing\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test typeof(b) == Array{Any,2}
@@ -831,14 +831,14 @@ rm("test.csv")
 
 a = [1.2 NaN "" nothing]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == "1,2;NaN;;nothing\n"
+@test read("test.csv", String) == "1,2;NaN;;nothing\n"
 b = readdlm2("test.csv")
 rm("test.csv")
 @test isequal(a, b)
 
 a = [1.2 NaN "" nothing]
 writecsv2("test.csv", a)
-@test readstring("test.csv") == "1.2,NaN,,nothing\n"
+@test read("test.csv", String) == "1.2,NaN,,nothing\n"
 b = readcsv2("test.csv")
 rm("test.csv")
 @test isequal(a, b)

@@ -231,8 +231,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
         locale::AbstractString="english",
         opts...)
 
-    ((!isempty(dtfs) && !ismatch(Regex("[^YymdHMSs]"), dtfs)) ||
-    (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
+    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]")) ||
+    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]"))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
@@ -278,7 +278,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         T2 = T
     end
 
-    s = readstring(input)
+    s = read(input, String)
 
     # empty input data - return empty array
     if isempty(s) || s == string(eol)
@@ -289,7 +289,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
         # Error: Decimal mark to replace is also "decimal" in date format string
         rs == (r"(\d),(\d)", s"\1.\2") &&
-        ismatch(Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"), dtfs*" "*dfs) &&
+        contains(dtfs*" "*dfs, Regex("([YymdHMSs]+$decimal[YymdHMSs]+)")) &&
         error(
             """
             Error: Regex substitution from Decimal=`$decimal` to '.' and using
@@ -307,7 +307,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         end
 
         # Error if decimal mark to replace is also the delim Char
-        "1"*string(dlm)*"1" != replace("1"*string(dlm)*"1", rs[1], rs[2]) &&
+        "1"*string(dlm)*"1" != replace("1"*string(dlm)*"1", rs[1] => rs[2]) &&
         error(
             """
             Error: Decimal mark to replace is also the delim Char.
@@ -316,7 +316,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
             """)
 
         # Regex substitution decimal
-        s = replace(s, rs[1], rs[2])
+        s = replace(s, rs[1] => rs[2])
 
     end
 
@@ -331,9 +331,9 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     for i in eachindex(y)
         if isa(y[i], AbstractString)
-            if doparsedatetime && ismatch(rdt, y[i]) # parse DateTime
+            if doparsedatetime && contains(y[i], rdt) # parse DateTime
                 try y[i] = DateTime(y[i], dtdf) catch; end
-            elseif doparsedate && ismatch(rd, y[i]) # parse Date
+            elseif doparsedate && contains(y[i], rd) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
             elseif y[i] == "nothing"
                 try y[i] = nothing catch; end
@@ -363,7 +363,7 @@ Convert Int or Float64 numbers to String and change decimal mark.
 """
 function floatformat(a, decimal)
     a = string(a)
-    decimal != '.' && (a = replace(a, '.', decimal))
+    decimal != '.' && (a = replace(a, '.' => decimal))
     return a
 end
 
@@ -375,7 +375,7 @@ Convert Time to String, optional with change of decimal mark for secounds.
 """
 function timeformat(a, decimal)
     a = string(a)
-    decimal != '.' && (a = replace(a, '.', decimal))
+    decimal != '.' && (a = replace(a, '.' => decimal))
     return a
 end
 
@@ -460,8 +460,8 @@ function writedlm2auto(f, a, dlm;
         imsuffix::AbstractString="im",
         opts...)
 
-    ((!isempty(dtfs) && !ismatch(Regex("[^YymdHMSs]"), dtfs)) ||
-    (!isempty(dfs) && !ismatch(Regex("[^YymdHMSs]"), dfs))) && info(
+    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]")) ||
+    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]"))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
