@@ -1,9 +1,11 @@
 #Tests for ReadWriteDlm2 - License is MIT: http://julialang.org/license
 
 #Start Test Script
+using DelimitedFiles
 using ReadWriteDlm2
-using Base.Test
-using Base.Dates
+using Test
+using Random
+using Dates
 
 # Run tests
 
@@ -69,9 +71,9 @@ end
                 reshape(Any["",1.0,4.0,"","","",2.0,5.0,"","","",3.0,6.0,"",""], 5, 3), Any)
 @test isequaldlm(readdlm2(IOBuffer("\n1;2;3\n4;5;6\n\n\n"), Float64, skipblanks=true),
                 reshape([1.0,4.0,2.0,5.0,3.0,6.0], 2, 3), Float64)
-@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), skipblanks=false), 
+@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), skipblanks=false),
                 reshape(Any[1.0,"",4.0,2.0,"",5.0], 3, 2), Any)
-@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), Float64, skipblanks=true), 
+@test isequaldlm(readdlm2(IOBuffer("1;2\n\n4;5"), Float64, skipblanks=true),
                 reshape([1.0,4.0,2.0,5.0], 2, 2), Float64)
 
 let x = bitrand(5, 10), io = IOBuffer()
@@ -162,12 +164,12 @@ let x = ["\"hello\"", "world\""], io = IOBuffer()
 end
 
 # test comments
-@test isequaldlm(readdlm2(IOBuffer("#this is comment\n1;2;3\n#one more comment\n4;5;6"), Float64), [1. 2. 3.;4. 5. 6.], Float64)
-@test isequaldlm(readdlm2(IOBuffer("#this is \n#comment\n1;2;3\n#one more \n#comment\n4;5;6"), Float64), [1. 2. 3.;4. 5. 6.], Float64)
-@test isequaldlm(readdlm2(IOBuffer("1;2;#3\n4;5;6")), [1. 2. "";4. 5. 6.], Any)
-@test isequaldlm(readdlm2(IOBuffer("1#;2;3\n4;5;6")), [1. "" "";4. 5. 6.], Any)
-@test isequaldlm(readdlm2(IOBuffer("1;2;\"#3\"\n4;5;6")), [1. 2. "#3";4. 5. 6.], Any)
-@test isequaldlm(readdlm2(IOBuffer("1;2;3\n #with leading whitespace\n4;5;6")), [1. 2. 3.;" " "" "";4. 5. 6.], Any)
+@test isequaldlm(readdlm2(IOBuffer("#this is comment\n1;2;3\n#one more comment\n4;5;6"), Float64, comments=true), [1. 2. 3.;4. 5. 6.], Float64)
+@test isequaldlm(readdlm2(IOBuffer("#this is \n#comment\n1;2;3\n#one more \n#comment\n4;5;6"), Float64, comments=true), [1. 2. 3.;4. 5. 6.], Float64)
+@test isequaldlm(readdlm2(IOBuffer("1;2;#3\n4;5;6"), comments=true), [1. 2. "";4. 5. 6.], Any)
+@test isequaldlm(readdlm2(IOBuffer("1#;2;3\n4;5;6"), comments=true), [1. "" "";4. 5. 6.], Any)
+@test isequaldlm(readdlm2(IOBuffer("1;2;\"#3\"\n4;5;6"), comments=true), [1. 2. "#3";4. 5. 6.], Any)
+@test isequaldlm(readdlm2(IOBuffer("1;2;3\n #with leading whitespace\n4;5;6"), comments=true), [1. 2. 3.;" " "" "";4. 5. 6.], Any)
 
 # test skipstart with true
 let x = ["a" "b" "c"; "d" "e" "f"; "g" "h" "i"; "A" "B" "C"; 1 2 3; 4 5 6; 7 8 9], io = IOBuffer()
@@ -317,6 +319,18 @@ let data = "\"721\";\"1438\";\"1439\";\"…\";\"1\""
     @test readdlm2(IOBuffer(data)) == Any[721  1438  1439  "…"  1]
 end
 
+# issue #21207
+let data = "\"1\";\"灣\"\"灣灣灣灣\";\"3\""
+    @test readdlm2(IOBuffer(data), ',') == Any[1 "灣\"灣灣灣灣" 3]
+end
+
+# issue #11484: useful error message for invalid readdlm filepath arguments
+@test_throws ArgumentError readdlm2(tempdir())
+
+
+@testset "complex" begin
+    @test readdlm2(IOBuffer("3+4im; 4+5im"), ',', Complex{Int}) == [3+4im 4+5im]
+end
 
 # 2nd block
 # Test the new functions of ReadWriteDlm2
@@ -327,23 +341,11 @@ let data = "2015-01-01;5,1;Text1\n10;19e6;4\n"
 end
 
 a = [Date(2015) 5.1 "Text1";10 190.0e5 4.0]
-writedlm2("test.csv", a, write_short=true)
-@test readstring("test.csv") == "2015-01-01;5,1;Text1\n10;19e6;4\n"
-b = readdlm2("test.csv")
-rm("test.csv")
-@test b[1] == Date(2015)
 writedlm2("test.csv", a, decimal='€')
-# @test readstring("test.csv") == "2015-01-01;5€1;Text1\n10;1€9e7;4€0\n"
+@test readstring("test.csv") == "2015-01-01;5€1;Text1\n10;1€9e7;4€0\n"
 b = readdlm2("test.csv", rs=(r"(\d)€(\d)", s"\1.\2"))
 rm("test.csv")
 @test b[1] == Date(2015)
-
-a = [DateTime(2015) 5.1 "Text1";10 190.0e5 4.0]
-writedlm2("test.csv", a, write_short=true)
-@test readstring("test.csv") == "2015-01-01T00:00:00.0;5,1;Text1\n10;19e6;4\n"
-b = readdlm2("test.csv")
-rm("test.csv")
-@test b[1] == DateTime(2015)
 
 a = DateTime(2017)
 writedlm2("test.csv", a)
@@ -460,7 +462,7 @@ b = readdlm2("test.csv")
 @test b == a
 write("test.csv", "23:55:56.123456789;23:55:56,123456;23:55:56,123;12:45;11:23:11\n")
 b = readdlm2("test.csv")
-rm("test.csv") 
+rm("test.csv")
 @test b == a
 
 a = [Dates.Time(23,55,56,123,456) Dates.Time(12,45) Dates.Time(11,23,11)]
@@ -500,7 +502,7 @@ a = DateTime(2017,1,1,5,59,1,898)
 writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s", locale="french")
 @test readstring("test.csv") == "dimanche, 1.janv 2017 5:59:1,898\n"
 b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s", locale="french")
-rm("test.csv") 
+rm("test.csv")
 @test b[1] == a
 
 a = DateTime(2017,8,1,5,59,1)
@@ -514,7 +516,7 @@ a = DateTime(2017,11,1,5,59,1,898)
 writedlm2("test.csv", a, dtfs="E, d. U yyyy H:M:S,s", locale="german")
 @test readstring("test.csv") == "Mittwoch, 1. November 2017 5:59:1,898\n"
 b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S.s", locale="german")
-rm("test.csv") 
+rm("test.csv")
 @test b[1] == a
 
 # Test Complex and Rational parsing
@@ -527,7 +529,7 @@ rm("test.csv")
 # Complex and Rational - tolerance with blancs, i/j and different signes
 write("test.csv", "    -1-2j; 1,2 - 2,0i ;1.0E9+3.0E19im;   -1//-3;1//-5;  1//2 ;1//-0;-0//1 \n")
 b = readdlm2("test.csv", Any)
-rm("test.csv") 
+rm("test.csv")
 @test b == a
 
 # Test Complex and Rational parsing - decimal = '.', delimiter = \t
@@ -541,7 +543,7 @@ rm("test.csv")
 #  Test different types with header and Any Array - decimal comma
 a = Any["Nr" "Wert";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writedlm2("test.csv", a)
-@test readstring("test.csv") == 
+@test readstring("test.csv") ==
 """
 Nr;Wert
 1;2017-01-01
@@ -556,10 +558,10 @@ rm("test.csv")
 @test a[2:end,:] == b[1]
 @test a[1:1,:] == b[2]
 
-#  Test different types with header and Any Array - english decimal 
+#  Test different types with header and Any Array - english decimal
 a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writedlm2("test.csv", a, '\t', decimal='.')
-@test readstring("test.csv") == 
+@test readstring("test.csv") ==
 """
 Nr\tValue
 1\t2017-01-01
@@ -703,8 +705,8 @@ rm("test.csv")
 # ================================
 
 # test comments with readcsv2
-@test isequaldlm(readcsv2(IOBuffer("#this is comment\n1,2,3\n#one more comment\n4,5,6")), Any[1 2 3;4 5 6], Any)
-@test isequaldlm(readcsv2(IOBuffer("#this is \n#comment\n1,2,3\n#one more \n#comment\n4,5,6")), Any[1 2 3;4 5 6], Any)
+@test isequaldlm(readcsv2(IOBuffer("#this is comment\n1,2,3\n#one more comment\n4,5,6"), comments=true), Any[1 2 3;4 5 6], Any)
+@test isequaldlm(readcsv2(IOBuffer("#this is \n#comment\n1,2,3\n#one more \n#comment\n4,5,6"), comments=true), Any[1 2 3;4 5 6], Any)
 
 # test readcsv2 and writecsv2 with alternative decimal
 a = Float64[1.1 1.2;2.1 2.2]
@@ -717,7 +719,7 @@ rm("test.csv")
 #  Test different types with header for readcsv2 and writecsv2
 a = Any["Nr" "Value";1 Date(2017);2 DateTime(2018);3 Dates.Time(23,54,45,123,456,78);4 1.5e10+5im;5 1500//5;6 1.5e10]
 writecsv2("test.csv", a)
-@test readstring("test.csv") == 
+@test readstring("test.csv") ==
 """
 Nr,Value
 1,2017-01-01
@@ -754,7 +756,7 @@ b = readcsv2("test.csv")
 rm("test.csv")
 @test b == a
 
-# Test readcsv2/writecsv2 with Complex - Rationals 
+# Test readcsv2/writecsv2 with Complex - Rationals
 a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
 writecsv2("test.csv", a)
 @test readstring("test.csv") == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
