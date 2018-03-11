@@ -1,4 +1,4 @@
-# Stricker Klaus 2017 - License is MIT: http://julialang.org/license
+# Stricker Klaus 2018 - License is MIT: http://julialang.org/license
 # ReadWriteDlm2 - https://github.com/strickek/ReadWriteDlm2.jl
 
 """
@@ -53,41 +53,41 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
     codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
     r = "^ *"; repeat_count = 1; ldf = length(df); dotsec = false
     for i = 1:ldf
-        repeat_next = (i < ldf && df[(i + 1)] == df[i]) ? true : false
-        (df[i] == '.' && i < ldf && df[(i + 1)] == 's') && (dotsec = true)
-        repeat_count = (((i > 2 && df[(i - 2)] != '\\' && df[(i - 1)] == df[i])) ||
-                        (i == 2 && df[1] == df[2])) ? (repeat_count + 1) : 1
+        repeat_next = ((i < ldf) && (df[(i + 1))] == df[i]) ? true : false
+        ((df[i] == '.') && (i < ldf) && (df[(i + 1)] == 's')) && (dotsec = true)
+        repeat_count = (((i > 2) && (df[(i - 2)] != '\\') && (df[(i - 1)] == df[i])) ||
+                        ((i == 2) && (df[1] == df[2]))) ? (repeat_count + 1) : 1
         r = r * (
-        (i > 1 && df[(i - 1)] == '\\') ? string(df[i]) :
-        (df[i] == 'y' && repeat_count < 5 && !repeat_next) ? "(?<y>\\d{1,4})" :
-        (df[i] == 'y' && repeat_count > 4 && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
-        (df[i] == 'Y' && repeat_count < 5 && !repeat_next) ? "(?<y>\\d{1,4})" :   # new
-        (df[i] == 'Y' && repeat_count > 4 && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
-        (df[i] == 'm' && repeat_count == 1 && !repeat_next) ? "(?<m>0?[1-9]|1[012])" :
-        (df[i] == 'm' && repeat_count == 2 && !repeat_next) ? "(?<m>0[1-9]|1[012])" :
-        (df[i] == 'm' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])" :
-        (df[i] == 'u' && repeat_count == 1) ? "(?<u>[A-Za-z\u00C0-\u017F]{$(ule[1]),$(ule[2])})" :
-        (df[i] == 'U' && repeat_count == 1) ? "(?<U>[A-Za-z\u00C0-\u017F]{$(Ule[1]),$(Ule[2])})" :
-        (df[i] == 'e' && repeat_count == 1) ? "(?<e>[A-Za-z\u00C0-\u017F]{$(ele[1]),$(ele[2])})" :
-        (df[i] == 'E' && repeat_count == 1) ? "(?<E>[A-Za-z\u00C0-\u017F]{$(Ele[1]),$(Ele[2])})" :
-        (df[i] == 'd' && repeat_count == 1 && !repeat_next) ? "(?<d>0?[1-9]|[12]\\d|3[01])" :
-        (df[i] == 'd' && repeat_count == 2 && !repeat_next) ? "(?<d>0[1-9]|[12]\\d|3[01])" :
-        (df[i] == 'd' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])" :
-        (df[i] == 'H' && repeat_count == 1 && !repeat_next) ? "(?<H>0?\\d|1\\d|2[0-3])" :
-        (df[i] == 'H' && repeat_count == 2 && !repeat_next) ? "(?<H>0\\d|1\\d|2[0-3])" :
-        (df[i] == 'H' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])" :
-        (df[i] == 'M' && repeat_count == 1 && !repeat_next) ? "(?<M>\\d|[0-5]\\d)" :
-        (df[i] == 'M' && repeat_count == 2 && !repeat_next) ? "(?<M>[0-5]\\d)" :
-        (df[i] == 'M' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<M>[0-5]\\d)" :
-        (df[i] == 'S' && repeat_count == 1 && !repeat_next) ? "(?<S>\\d|[0-5]\\d)" :
-        (df[i] == 'S' && repeat_count == 2 && !repeat_next) ? "(?<S>[0-5]\\d)" :
-        (df[i] == 'S' && repeat_count > 2 && !repeat_next) ? "0{$(repeat_count-2)}(?<S>[0-5]\\d)" :
-        (df[i] == '.' && dotsec) ? "" :
-        (df[i] == '.') ? "\\." :
-        (df[i] == 's' && dotsec == true && repeat_count < 4 && !repeat_next) ? "(\\.(?<s>\\d{0,3}0{0,6}))?" :
-        (df[i] == 's' && dotsec == true && repeat_count > 3 && !repeat_next) ? "(\\.(?<s>\\d{$(repeat_count)}))?" :
-        (df[i] == 's' && dotsec == false && repeat_count < 4 && !repeat_next) ? "(?<s>\\d{3})?" :
-        (df[i] == 's' && dotsec == false && repeat_count > 3 && !repeat_next) ? "(?<s>\\d{$(repeat_count)})?" :
+        ((i > 1) && (df[(i - 1)] == '\\')) ? string(df[i]) :
+        ((df[i] == 'y') && (repeat_count < 5) && !repeat_next) ? "(?<y>\\d{1,4})" :
+        ((df[i] == 'y') && (repeat_count > 4) && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
+        ((df[i] == 'Y') && (repeat_count < 5) && !repeat_next) ? "(?<y>\\d{1,4})" :   # new
+        ((df[i] == 'Y') && (repeat_count > 4) && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
+        ((df[i] == 'm') && (repeat_count == 1) && !repeat_next) ? "(?<m>0?[1-9]|1[012])" :
+        ((df[i] == 'm') && (repeat_count == 2) && !repeat_next) ? "(?<m>0[1-9]|1[012])" :
+        ((df[i] == 'm') && (repeat_count > 2) && !repeat_next) ? "0{$(repeat_count-2)}(?<m>0[1-9]|1[012])" :
+        ((df[i] == 'u') && (repeat_count == 1)) ? "(?<u>[A-Za-z\u00C0-\u017F]{$(ule[1]),$(ule[2])})" :
+        ((df[i] == 'U') && (repeat_count == 1)) ? "(?<U>[A-Za-z\u00C0-\u017F]{$(Ule[1]),$(Ule[2])})" :
+        ((df[i] == 'e') && (repeat_count == 1)) ? "(?<e>[A-Za-z\u00C0-\u017F]{$(ele[1]),$(ele[2])})" :
+        ((df[i] == 'E') && (repeat_count == 1)) ? "(?<E>[A-Za-z\u00C0-\u017F]{$(Ele[1]),$(Ele[2])})" :
+        ((df[i] == 'd') && (repeat_count == 1) && !repeat_next) ? "(?<d>0?[1-9]|[12]\\d|3[01])" :
+        ((df[i] == 'd') && (repeat_count == 2) && !repeat_next) ? "(?<d>0[1-9]|[12]\\d|3[01])" :
+        ((df[i] == 'd') && (repeat_count > 2) && !repeat_next) ? "0{$(repeat_count-2)}(?<d>0[1-9]|[12]\\d|3[01])" :
+        ((df[i] == 'H') && (repeat_count == 1) && !repeat_next) ? "(?<H>0?\\d|1\\d|2[0-3])" :
+        ((df[i] == 'H') && (repeat_count == 2) && !repeat_next) ? "(?<H>0\\d|1\\d|2[0-3])" :
+        ((df[i] == 'H') && (repeat_count > 2) && !repeat_next) ? "0{$(repeat_count-2)}(?<H>0\\d|1\\d|2[0-3])" :
+        ((df[i] == 'M') && (repeat_count == 1) && !repeat_next) ? "(?<M>\\d|[0-5]\\d)" :
+        ((df[i] == 'M') && (repeat_count == 2) && !repeat_next) ? "(?<M>[0-5]\\d)" :
+        ((df[i] == 'M') && (repeat_count > 2) && !repeat_next) ? "0{$(repeat_count-2)}(?<M>[0-5]\\d)" :
+        ((df[i] == 'S') && (repeat_count == 1) && !repeat_next) ? "(?<S>\\d|[0-5]\\d)" :
+        ((df[i] == 'S') && (repeat_count == 2) && !repeat_next) ? "(?<S>[0-5]\\d)" :
+        ((df[i] == 'S') && (repeat_count > 2) && !repeat_next) ? "0{$(repeat_count-2)}(?<S>[0-5]\\d)" :
+        ((df[i] == '.') && dotsec) ? "" :
+        ((df[i] == '.')) ? "\\." :
+        ((df[i] == 's') && (dotsec == true) && (repeat_count < 4) && !repeat_next) ? "(\\.(?<s>\\d{0,3}0{0,6}))?" :
+        ((df[i] == 's') && (dotsec == true) && (repeat_count > 3) && !repeat_next) ? "(\\.(?<s>\\d{$(repeat_count)}))?" :
+        ((df[i] == 's') && (dotsec == false) && (repeat_count < 4) && !repeat_next) ? "(?<s>\\d{3})?" :
+        ((df[i] == 's') && (dotsec == false) && (repeat_count > 3) && !repeat_next) ? "(?<s>\\d{$(repeat_count)})?" :
         in(df[i], codechars) ? "" : string(df[i])
         )
     end
@@ -121,11 +121,11 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
         mc = match(r"^ *(-?\d+(\.\d+)?([eE]-?\d+)?|(-?\d+)//(\d+)) ?([\+-]) ?(\d+(\.\d+)?([eE]-?\d+)?|(\d+)//(\d+))(\*im|\*i|\*j|im|i|j) *$", y)
         if mc != nothing
             real =
-                (mc[4] != nothing && mc[5] != nothing) ? //(parse(Int, mc[4]), parse(Int, mc[5])) :
-                (mc[2] == nothing && mc[3] == nothing) ? parse(Int, mc[1]) : parse(Float64, mc[1])
+                ((mc[4] != nothing) && (mc[5] != nothing)) ? //(parse(Int, mc[4]), parse(Int, mc[5])) :
+                ((mc[2] == nothing) && (mc[3] == nothing)) ? parse(Int, mc[1]) : parse(Float64, mc[1])
             imag =
-                (mc[10] != nothing && mc[11] != nothing) ? //(parse(Int, mc[6]*mc[10]), parse(Int, mc[11])) :
-                (mc[8] == nothing && mc[9] == nothing) ? parse(Int, mc[6]*mc[7]) : parse(Float64, mc[6]*mc[7])
+                ((mc[10] != nothing) && (mc[11] != nothing)) ? //(parse(Int, mc[6]*mc[10]), parse(Int, mc[11])) :
+                ((mc[8] == nothin) && (mc[9] == nothing)) ? parse(Int, mc[6]*mc[7]) : parse(Float64, mc[6]*mc[7])
             return complex(real, imag)
         end
     end
@@ -281,15 +281,15 @@ function readdlm2auto(input, dlm, T, eol, auto;
     s = read(input, String)
 
     # empty input data - return empty array
-    if isempty(s) || s == string(eol)
+    if (isempty(s) || (s == string(eol)))
         return Array{T2}(0,0)
     end
 
-    if !isempty(rs) && decimal != '.' # do pre-processing of decimal mark
+    if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark
 
         # Error: Decimal mark to replace is also "decimal" in date format string
-        rs == (r"(\d),(\d)", s"\1.\2") &&
-        contains(dtfs*" "*dfs, Regex("([YymdHMSs]+$decimal[YymdHMSs]+)")) &&
+        ((rs == (r"(\d),(\d)", s"\1.\2")) &&
+        contains(dtfs*" "*dfs, Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"))) &&
         error(
             """
             Error: Regex substitution from Decimal=`$decimal` to '.' and using
@@ -302,7 +302,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
             )
 
         # Change default regex substitution Tuple if decimal != ','
-        if rs == (r"(\d),(\d)", s"\1.\2") && decimal != ','
+        if ((rs == (r"(\d),(\d)", s"\1.\2")) && (decimal != ','))
             rs = (Regex("(\\d)$decimal(\\d)"), s"\1.\2")
         end
 
@@ -363,7 +363,7 @@ Convert Int or Float64 numbers to String and change decimal mark.
 """
 function floatformat(a, decimal)
     a = string(a)
-    decimal != '.' && (a = replace(a, '.' => decimal))
+    (decimal != '.') && (a = replace(a, '.' => decimal))
     return a
 end
 
@@ -375,7 +375,7 @@ Convert Time to String, optional with change of decimal mark for secounds.
 """
 function timeformat(a, decimal)
     a = string(a)
-    decimal != '.' && (a = replace(a, '.' => decimal))
+    (decimal != '.') && (a = replace(a, '.' => decimal))
     return a
 end
 
@@ -387,8 +387,8 @@ Convert Complex number to String, optional change of decimal and/or imsuffix.
 """
 function complexformat(a, decimal, imsuffix)
     a = string(a)
-    imsuffix != "im" && (a = string(split(a, "im")[1], imsuffix))
-    decimal != '.' && (a = replace(a, '.', decimal))
+    (imsuffix != "im") && (a = string(split(a, "im")[1], imsuffix))
+    (decimal != '.') && (a = replace(a, '.', decimal))
     return a
 end
 
@@ -460,18 +460,18 @@ function writedlm2auto(f, a, dlm;
         imsuffix::AbstractString="im",
         opts...)
 
-    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]")) ||
-    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]"))) && info(
+    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]"))) ||
+    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]")))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
         code element or character is needed for parsing dates.
         """)
 
-    string(dlm) == string(decimal) && error(
+    (string(dlm) == string(decimal)) && error(
         "Error: decimal = delim = ´$(dlm)´ - change decimal or delim!")
 
-    imsuffix != "im" && imsuffix != "i" && imsuffix != "j" && error(
+    ((imsuffix != "im") && (imsuffix != "i") && (imsuffix != "j")) && error(
     "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
 
     if isa(a, Union{Number, Date, DateTime})
@@ -485,8 +485,8 @@ function writedlm2auto(f, a, dlm;
         dtdf = DateFormat(dtfs, locale)
         fd = !isempty(dfs)    # Bool: format Date
         ddf = DateFormat(dfs, locale)
-        ft = decimal != '.'   # Bool: format Time (change decimal)
-        fc = (imsuffix != "im" || decimal != '.') # Bool: format Complex
+        ft = (decimal != '.')   # Bool: format Time (change decimal)
+        fc = ((imsuffix != "im") || (decimal != '.')) # Bool: format Complex
 
         # create b for manipulation/write - keep a unchanged
         b = similar(a, Any)
