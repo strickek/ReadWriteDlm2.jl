@@ -22,14 +22,14 @@ Pkg.add("ReadWriteDlm2")
 ```
 julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
 
-julia> A = Any[1 1.2; "text" Date(2017)];         # create array with: Int, Float64, String and Date type
+julia> A = Any[1 1.2; "text" Date(2017)];      # create array with: Int, Float64, String and Date type
 julia> writedlm2("test1.csv", A)               # test1.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
 julia> readdlm2("test1.csv")                   # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
 
-julia> B = Any[1 complex(1.5,2.7);1.0 1//3];      # create array with: Int, Complex, Float64 and Rational type
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
 julia> writecsv2("test2.csv", B)               # test2.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
 julia> readcsv2("test2.csv")                   # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
@@ -86,11 +86,6 @@ supported by `readdlm2()` and `readcsv2()` - is available in the
 | ReadWriteDlm2  | `readdlm2()`           | `';'`      | `','`     | Any          | Yes               |
 | ReadWriteDlm2  | `readcsv2()`           | `','`      | `'.'`     | Any          | Yes               |
 
-### Example `readdlm2()`
-Read the Excel (decimal comma) text-file `test_dc.csv` and store the array in `data`:
-```
-data = readdlm2("test_dc.csv", dfs="dd.mm.yyyy", dtfs="dd.mm.yyyy HH:MM")
-```
 
 
 ## Function `writedlm2()`
@@ -127,16 +122,10 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 
 ### Compare Default Functionality `writedlm()` - `writedlm2()` - `writecsv2()`
-| Module          | Function           | Delimiter | Dec. Mark|
-|:--------------- |:------------------ |:---------:|:--------:|
-| DelimitedFiles  | `writedlm()`       | `'\t'`    | `'.'`    |
-| ReadWriteDlm2   | `writedlm2()`      | `';'`     | `','`    |
-| ReadWriteDlm2   | `writecsv2()`      | `','`     | `'.'`    |
+| Module          | Function           | Delimiter | Decimal Mark |
+|:--------------- |:------------------ |:---------:|:------------:|
+| DelimitedFiles  | `writedlm()`       | `'\t'`    | `'.'`        |
+| ReadWriteDlm2   | `writedlm2()`      | `';'`     | `','`        |
+| ReadWriteDlm2   | `writecsv2()`      | `','`     | `'.'`        |
 
 -> `writedlm2(f, A, '\t', decimal='.')` writes the same as `writedlm(f, A)`.
-
-### Example `writedlm2()`
-Write Julia `data` to text-file `test_dc.csv`, readable by Excel (decimal comma):
-```
-writedlm2("test_dc.csv", data, dtfs="dd.mm.yyyy HH:MM", dfs="dd.mm.yyyy")
-```
