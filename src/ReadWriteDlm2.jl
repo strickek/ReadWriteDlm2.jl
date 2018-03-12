@@ -149,6 +149,22 @@ end
 Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type
 `Any` activates parsing of `Bool`, `Int`, `Float64`, `Complex`, `Rational`,
 `DateTime`, `Date` and `Time`.
+
+# Code Example
+```jldoctest
+julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
+
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+
+julia> writecsv2("test.csv", B)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+
+julia> readcsv2("test.csv")                    # read CSV data: All four types are parsed correctly!
+2×2 Array{Any,2}:
+ 1    1.5+2.7im
+ 1.0    1//3
+
+ julia> rm("test.csv")
+ ```
 """
 readcsv2(input; opts...) =
     readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
@@ -200,9 +216,19 @@ Find more information about `readdlm()` functionality and (keyword) arguments -
  which are also supported by `readdlm2()` - in `help` for `readdlm()`.
 
 # Code Example
-Read the Excel decimal comma csv-file `test_dc.csv` and store the array in data:
-```
-data = readdlm2(\"test_dc.csv\", dfs=\"dd.mm.yyyy\", dtfs=\"dd.mm.yyyy HH:MM\")
+```jldoctest
+julia> using ReadWriteDlm2, Dates             # activate ReadWriteDlm2 and Dates
+
+julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64, String and Date type
+
+julia> writedlm2("test.csv", A)               # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+
+julia> readdlm2("test.csv")                   # read `CSV` data: All four types are parsed correctly!
+2×2 Array{Any,2}:
+ 1        1.2
+  "text"   2017-01-01
+
+julia> rm("test.csv")
 ```
 """
 readdlm2(input; opts...) =
@@ -398,6 +424,20 @@ end
     writecsv2(f::AbstractString, A; opts...)
 
 Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
+
+# Code Example
+```jldoctest
+julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
+
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+
+julia> writecsv2("test.csv", B)                # write test.csv(with decimal dot)
+
+julia> read("test.csv", String)                # show written test.csv data
+"1,1.5 + 2.7im\n1.0,1//3\n"
+
+julia> rm("test.csv")
+```
 """
 writecsv2(f, a; opts...) =
     writedlm2auto(f, a, ','; decimal='.', opts...)
@@ -435,9 +475,17 @@ default is ISO
 `\"i\"` or `\"j\"`
 
 # Code Example
-Write Julia `data` to csv-file `test_dc.csv`, readable by Excel (decimal comma):
-```
-writedlm2(\"test_dc.csv\", data, dtfs=\"dd.mm.yyyy HH:MM\", dfs=\"dd.mm.yyyy\")
+```jldoctest
+julia> using ReadWriteDlm2, Dates             # activate ReadWriteDlm2 and Dates
+
+julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64, String and Date type
+
+julia> writedlm2("test.csv", A)               # write test.csv(with decimal comma)
+
+julia> read("test.csv", String)               # show written test.csv data
+"1;1,2\ntext;2017-01-01\n"
+
+julia> rm("test.csv")
 ```
 """
 writedlm2(io::IO, a; opts...) =
