@@ -176,7 +176,9 @@ end
 end
 
 @testset "skipstart" begin
-    x = ["a" "b" "c"; "d" "e" "f"; "g" "h" "i"; "A" "B" "C"; 1 2 3; 4 5 6; 7 8 9], io = IOBuffer()
+    x = ["a" "b" "c"; "d" "e" "f"; "g" "h" "i"; "A" "B" "C"; 1 2 3; 4 5 6; 7 8 9]
+    io = IOBuffer()
+    
     writedlm2(io, x, quotes=false)
     seek(io, 0)
     (data, hdr) = readdlm2(io, header=true, skipstart=3)
