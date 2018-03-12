@@ -109,10 +109,10 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
             h = parse(Int, mt[1])
             mi = parse(Int, mt[2])
             (mt[4] == nothing) ? s = ms = us = ns = 0 :
-            s  = parse(Int, lpad(mt[4], 2, 0)); (mt[6] == nothing) ? ms = us = ns = 0 :
-            ms = parse(Int, rpad(mt[6], 3, 0)); (mt[7] == nothing) ? us = ns = 0 :
-            us = parse(Int, rpad(mt[7], 3, 0)); (mt[8] == nothing) ? ns = 0 :
-            ns = parse(Int, rpad(mt[8], 3, 0))
+            s  = parse(Int, lpad(string(mt[4]), 2, string(0))); (mt[6] == nothing) ? ms = us = ns = 0 :
+            ms = parse(Int, rpad(string(mt[6]), 3, string(0))); (mt[7] == nothing) ? us = ns = 0 :
+            us = parse(Int, rpad(string(mt[7]), 3, string(0))); (mt[8] == nothing) ? ns = 0 :
+            ns = parse(Int, rpad(string(mt[8]), 3, string(0)))
             return Dates.Time(h, mi, s, ms, us, ns)
         end
     end
@@ -282,7 +282,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     # empty input data - return empty array
     if (isempty(s) || (s == string(eol)))
-        return Array{T2}(undef, 0, 0)
+        return Array{T2}(undef,0,0)
     end
 
     if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark
