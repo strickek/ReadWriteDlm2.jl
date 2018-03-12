@@ -178,7 +178,7 @@ end
 @testset "skipstart" begin
     x = ["a" "b" "c"; "d" "e" "f"; "g" "h" "i"; "A" "B" "C"; 1 2 3; 4 5 6; 7 8 9]
     io = IOBuffer()
-    
+
     writedlm2(io, x, quotes=false)
     seek(io, 0)
     (data, hdr) = readdlm2(io, header=true, skipstart=3)
@@ -859,9 +859,9 @@ end
 @testset "10000 rows random" begin
     # Test write and read of random Any array with 10000 rows
     n = 10000
-    A = Array{Any}(n,9)
+    A = Array{Any}(undef, n, 9)
     for i = 1:n
-        A[i,:] = Any[randn() rand(Int) rand(Bool) rand(Date(1980,1,1):Date(2017,12,31)) rand(Dates.Time(0,0,0,0,0,0):Dates.Nanosecond(1):Dates.Time(23,59,59,999,999,999)) rand(DateTime(1980,1,1,0,0,0,0):Dates.Millisecond(1):DateTime(2017,12,31,23,59,59,999)) randstring(24) complex(randn(), randn()) (rand(Int)//rand(Int))]
+        A[i,:] = Any[randn() rand(Int) rand(Bool) rand(Date(1980,1,1):Day(1):Date(2017,12,31)) rand(Dates.Time(0,0,0,0,0,0):Dates.Nanosecond(1):Dates.Time(23,59,59,999,999,999)) rand(DateTime(1980,1,1,0,0,0,0):Dates.Millisecond(1):DateTime(2017,12,31,23,59,59,999)) randstring(24) complex(randn(), randn()) (rand(Int)//rand(Int))]
     end
 
     writedlm2("test.csv", A)
