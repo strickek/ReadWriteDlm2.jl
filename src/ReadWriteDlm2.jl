@@ -156,15 +156,15 @@ julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, wr
 
 julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
 
-julia> writecsv2("test.csv", B)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+julia> writecsv2("test.csv", B)                # test.csv(decimal dot): "1,1.5 + 2.7im\\n1.0,1//3\\n"
 
 julia> readcsv2("test.csv")                    # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1    1.5+2.7im
  1.0    1//3
 
- julia> rm("test.csv")
- ```
+julia> rm("test.csv")
+```
 """
 readcsv2(input; opts...) =
     readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
@@ -203,12 +203,9 @@ If data is empty, a `0×0 Array{T,2}` is returned.
 
 # Additional Keyword Arguments
 
-* `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if
-`rs`-tuple is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regular expression (r,s)-tuple,
-change d,d to d.d if `decimal=','`
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing,
-default is ISO
+* `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regular expression (r,s)-tuple, change d,d to d.d if `decimal=','`
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
 * `locale=\"english\"`: Language for parsing dates names, default is english
 
@@ -221,7 +218,7 @@ julia> using ReadWriteDlm2, Dates             # activate ReadWriteDlm2 and Dates
 
 julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64, String and Date type
 
-julia> writedlm2("test.csv", A)               # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+julia> writedlm2("test.csv", A)               # test.csv(decimal comma): "1;1,2\\ntext;2017-01-01\\n"
 
 julia> readdlm2("test.csv")                   # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
@@ -434,7 +431,7 @@ julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex
 julia> writecsv2("test.csv", B)                # write test.csv(with decimal dot)
 
 julia> read("test.csv", String)                # show written test.csv data
-"1,1.5 + 2.7im\n1.0,1//3\n"
+"1,1.5 + 2.7im\\n1.0,1//3\\n"
 
 julia> rm("test.csv")
 ```
@@ -467,12 +464,10 @@ and month (`U`, `u`) names are written in the `locale` language. For writing
 # Additional Keyword Arguments
 
 * `decimal=','`: Charater for writing decimal marks, default is a comma
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string, DateTime write format,
-default is ISO
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string, DateTime write format, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string, Date write format, default is ISO
 * `locale=\"english\"`: Language for DateTime writing, default is english
-* `imsuffix=\"im\"`: Complex - imaginary component suffix `\"im\"`(=default),
-`\"i\"` or `\"j\"`
+* `imsuffix=\"im\"`: Complex - imaginary component suffix `\"im\"`(=default), `\"i\"` or `\"j\"`
 
 # Code Example
 ```jldoctest
@@ -483,7 +478,7 @@ julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64,
 julia> writedlm2("test.csv", A)               # write test.csv(with decimal comma)
 
 julia> read("test.csv", String)               # show written test.csv data
-"1;1,2\ntext;2017-01-01\n"
+"1;1,2\\ntext;2017-01-01\\n"
 
 julia> rm("test.csv")
 ```

@@ -36,7 +36,7 @@ julia> readcsv2("test.csv")                    # read CSV data: All four types a
  1    1.5+2.7im
  1.0    1//3
 
- julia> rm("test.csv")
+julia> rm("test.csv")
 ```
 
 ## Function `readdlm2()`
