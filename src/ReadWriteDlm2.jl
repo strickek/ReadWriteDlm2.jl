@@ -125,7 +125,7 @@ function parseothers(y, doparsetime, doparsecomplex, doparserational)
                 ((mc[2] == nothing) && (mc[3] == nothing)) ? parse(Int, mc[1]) : parse(Float64, mc[1])
             imag =
                 ((mc[10] != nothing) && (mc[11] != nothing)) ? //(parse(Int, mc[6]*mc[10]), parse(Int, mc[11])) :
-                ((mc[8] == nothin) && (mc[9] == nothing)) ? parse(Int, mc[6]*mc[7]) : parse(Float64, mc[6]*mc[7])
+                ((mc[8] == nothing) && (mc[9] == nothing)) ? parse(Int, mc[6]*mc[7]) : parse(Float64, mc[6]*mc[7])
             return complex(real, imag)
         end
     end
@@ -282,7 +282,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     # empty input data - return empty array
     if (isempty(s) || (s == string(eol)))
-        return Array{T2}(undef, 0, 0) 
+        return Array{T2}(undef, 0, 0)
     end
 
     if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark

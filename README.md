@@ -22,14 +22,14 @@ Pkg.add("ReadWriteDlm2")
 ```
 julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
 
-julia> A = [1 1.2; "text" Date(2017)];         # create array with: Int, Float64, String and Date type
+julia> A = Any[1 1.2; "text" Date(2017)];         # create array with: Int, Float64, String and Date type
 julia> writedlm2("test1.csv", A)               # test1.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
 julia> readdlm2("test1.csv")                   # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
 
-julia> B = [1 complex(1.5,2.7);1.0 1//3];      # create array with: Int, Complex, Float64 and Rational type
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];      # create array with: Int, Complex, Float64 and Rational type
 julia> writecsv2("test2.csv", B)               # test2.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
 julia> readcsv2("test2.csv")                   # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
