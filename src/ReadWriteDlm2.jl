@@ -295,7 +295,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     elseif T == Rational
         doparserational = true
         convertarray = true
-    elseif T == Void
+    elseif T == Nothing
         convertarray = true
     else
         T2 = T
