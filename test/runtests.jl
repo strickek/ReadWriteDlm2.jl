@@ -325,8 +325,8 @@ end
         @test readdlm2(IOBuffer(data)) == Any[1 "灣\"灣灣灣灣" 3]
     end
 
-    # issue #11484: useful error message for invalid readdlm filepath arguments
-    # @test_throws ArgumentError readdlm2(tempdir())
+    issue #11484: useful error message for invalid readdlm filepath arguments
+    @test_throws ArgumentError readdlm2(tempdir())
 end
 
 @testset "complex" begin
