@@ -254,7 +254,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         locale::AbstractString="english",
         opts...)
 
-+    isfile(input) || throw(ArgumentError("Cannot open \'$input\': not a file"))
+    isfile(input) || throw(ArgumentError("Cannot open \'$input\': not a file"))
 
     ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]"))) ||
     (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]")))) && info(
