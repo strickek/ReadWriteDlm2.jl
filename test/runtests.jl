@@ -1,4 +1,4 @@
-#Tests for ReadWriteDlm2 - License is MIT: http://julialang.org/license
+#2018 Klaus Stricker - Tests for ReadWriteDlm2 - License is MIT: http://julialang.org/license
 
 #Start Test Script
 using DelimitedFiles
@@ -326,7 +326,8 @@ end
     end
 
     # issue #11484: useful error message for invalid readdlm filepath arguments
-    # @test_throws ArgumentError readdlm2(tempdir())
+    # alow SystemError in ReadWrtieDlm2 because error message is clear
+    @test_throws SystemError readdlm2(tempdir())
 end
 
 @testset "complex" begin
@@ -433,7 +434,7 @@ end
     @test a == b
 end
 
-@testset "date format strings" begin
+@testset "date format" begin
     # test date format strings with variable length
     a = DateTime(2017,5,1,5,59,1)
     writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S")
@@ -525,7 +526,7 @@ end
     @test b[1] == a
 end
 
-@testset "readwritedlm other types" begin
+@testset "other types" begin
     # Test Complex and Rational parsing
     a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
     writedlm2("test.csv", a)
@@ -856,9 +857,9 @@ end
     @test isequal(a, b)
 end
 
-@testset "10000 rows random" begin
+@testset "random data" begin
     # Test write and read of random Any array with 10000 rows
-    n = 10000
+    n = 1000
     A = Array{Any}(undef, n, 9)
     for i = 1:n
         A[i,:] = Any[randn() rand(Int) rand(Bool) rand(Date(1980,1,1):Day(1):Date(2017,12,31)) rand(Dates.Time(0,0,0,0,0,0):Dates.Nanosecond(1):Dates.Time(23,59,59,999,999,999)) rand(DateTime(1980,1,1,0,0,0,0):Dates.Millisecond(1):DateTime(2017,12,31,23,59,59,999)) randstring(24) complex(randn(), randn()) (rand(Int)//rand(Int))]
@@ -873,4 +874,33 @@ end
     B = readcsv2("test.csv")
     rm("test.csv")
     @test isequaldlm(A, B, Any)
+end
+
+
+@testset "abstract type" begin
+
+    #Abstract Time Types
+    a = TimeType[Date(2017, 1, 1) DateTime(2017, 2, 15, 23, 0, 0)]
+    writedlm2("test.csv", a, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
+    b = readdlm2("test.csv", TimeType, dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
+    @test isequaldlm(a, b, TimeType)
+    b = readdlm2("test.csv", TimeType, rs=(), dfs="mm/yyyy", dtfs="dd.mm.yyyy/HH.h")
+    rm("test.csv")
+    @test isequaldlm(a, b, TimeType)
+
+    # Abstract Number
+    a = Number[1 1.1 1//3 complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
+    writedlm2("test.csv", a)
+    @test read("test.csv", String) == "1;1,1;1//3;-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
+    b = readdlm2("test.csv", Number)
+    rm("test.csv")
+    @test a == b
+    @test typeof(b) == Array{Number,2}
+
+    # Abstract real
+    a = readdlm2(IOBuffer("1,1;2\n3;4,5\n5;1//3\n"), Real)
+    b = Real[1.1 2; 3 4.5; 5 1//3]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
 end

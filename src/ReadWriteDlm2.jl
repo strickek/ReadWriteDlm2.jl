@@ -191,7 +191,7 @@ the decimal Char in the `r`-string of `rs`. When a special regex substitution
 tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base readdlm(), data is also parsed for `Dates` formats (ISO),
+In addition to stdlib readdlm(), data is also parsed for `Dates` formats (ISO),
 the `Time` format `\"HH:MM[:SS[.s{1,9}]]\"` and for complex and rational numbers.
 To deactivate parsing dates/time set: `dfs=\"\", dtfs=\"\"`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
@@ -204,7 +204,7 @@ If data is empty, a `0×0 Array{T,2}` is returned.
 # Additional Keyword Arguments
 
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regular expression (r,s)-tuple, change d,d to d.d if `decimal=','`
+* `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, the default change d,d to d.d if `decimal=','`
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
 * `locale=\"english\"`: Language for parsing dates names, default is english
@@ -270,6 +270,53 @@ function readdlm2auto(input, dlm, T, eol, auto;
     doparserational = false
     convertarray = false
     T2 = Any
+
+# Test
+    if T == Any
+        doparsedatetime = !isempty(dtfs)
+        doparsedate = !isempty(dfs)
+        doparsetime = doparsedatetime && doparsedate
+        doparsecomplex = true
+        doparserational = true
+
+    elseif T <: Dates.AbstractDateTime
+        isempty(dtfs) && error(
+        "Error: Parsing for DateTime - format string `dtfs` is empty.")
+        doparsedatetime = true
+        convertarray = true
+    elseif T == Date
+        isempty(dtfs) && error(
+        "Error: Parsing for Date - format string `dfs` is empty.")
+        doparsedate = true
+        convertarray = true
+    elseif T == Time
+        doparsetime = true
+        convertarray = true
+    elseif T <: Dates.AbstractTime
+        doparsedatetime = !isempty(dtfs)
+        doparsedate = !isempty(dfs)
+        doparsetime = true
+        convertarray = true
+
+    elseif T == Complex
+        doparsecomplex = true
+        convertarray = true
+    elseif T <: AbstractFloat
+        T2 = T
+    elseif T <: Real
+        doparserational = true
+        convertarray = true
+    elseif T <: Number
+        doparsecomplex = true
+        doparserational = true
+        convertarray = true
+
+    elseif T == Nothing
+        convertarray = true
+    else
+        T2 = T
+    end
+#=
     if T == Any
         doparsedatetime = !isempty(dtfs)
         doparsedate = !isempty(dfs)
@@ -300,7 +347,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     else
         T2 = T
     end
-
+=#
     s = read(input, String)
 
     # empty input data - return empty array
@@ -450,8 +497,8 @@ Write `A` (a vector, matrix, or an iterable collection of iterable rows) as
 text to `f`(either a filename string or an IO stream). The columns will be
 separated by `';'`, another `delim` (Char or String) can be defined.
 
-By default, a pre-processing of floats takes place. Floats are parsed to strings
-with decimal mark changed from `'.'` to `','`. With the keyword argument
+By default, a pre-processing of values takes place. Before writing as strings,
+decimal marks are changed from `'.'` to `','`. With the keyword argument
 `decimal=` another decimal mark can be defined.
 To switch off this pre-processing set: `decimal='.'`.
 

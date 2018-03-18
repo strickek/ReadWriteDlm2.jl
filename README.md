@@ -1,6 +1,7 @@
 # ReadWriteDlm2
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
-[![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
+[![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.5.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.7.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2=0.7)
+[![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks.
 
@@ -8,14 +9,19 @@
 
 * The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg?uselang=en#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`.
 
-### Documentation of older Versions:
-* Julia 0.5: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md
-* Julia 0.6: https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md
+### Older Versions:
+* [`ReadWriteDlm2` documentation for Julia 0.5](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md)
+* [`ReadWriteDlm2` documentation for Julia 0.6](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md)
 
 ### Installation
 This package is registered and can be installed with:
 ```
-Pkg.add("ReadWriteDlm2")
+julia> using Pkg
+julia> Pkg.add("ReadWriteDlm2")
+```
+or within the [`Pkg3` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg3/#Pkg3.jl-1) use:
+```
+pkg> add ReadWriteDlm2
 ```
 
 ### Basic Examples: How To Use `ReadWriteDlm2`
@@ -55,7 +61,7 @@ For default `rs` the keyword argument `decimal=','` sets the decimal Char in the
 When a special regex substitution tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to Base `readdlm()`, data is also parsed for `Dates` formats (ISO), the`Time` format
+In addition to stdlib `readdlm()`, data is also parsed for `Dates` formats (ISO), the`Time` format
 `HH:MM[:SS[.s{1,9}]]` and for complex and rational numbers. To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
@@ -65,9 +71,9 @@ and `Time`. If data is empty, a `0×0 Array{T,2}` is returned.
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
-* `rs=(r"(\d),(\d)", s"\1.\2")`: [Regular expression](https://docs.julialang.org/en/stable/manual/strings/#Regular-Expressions-1) (r, s)-tuple, change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for DateTime parsing, default is ISO
-* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat) for Date parsing, default is ISO
+* `rs=(r"(\d),(\d)", s"\1.\2")`: [Regex](https://docs.julialang.org/en/latest/manual/strings/#Regular-Expressions-1) (r,s)-tuple, the default change d,d to d.d if `decimal=','`
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for DateTime parsing, default is ISO
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for Date parsing, default is ISO
 * `locale="english"`: Language for parsing dates names, default is english
 
 ### Function `readcsv2()`
@@ -78,8 +84,7 @@ Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`.
 
 ### Documentation For Base `readdlm()`
 More information about Base functionality and (keyword) arguments - which are also
-supported by `readdlm2()` and `readcsv2()` - is available in the
-[stable documentation for readdlm()](https://docs.julialang.org/en/stable/stdlib/io-network/#Base.DataFmt.readdlm-Tuple{Any,Char,Type,Char}).
+supported by `readdlm2()` and `readcsv2()` - is available in the [documentation for readdlm()](https://docs.julialang.org/en/latest/stdlib/DelimitedFiles/#DelimitedFiles.readdlm-Tuple{Any,AbstractChar,Type,AbstractChar}).
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
 | Module         | Function               | Delimiter  | Dec. Mark | Element Type | Extended Parsing  |
@@ -100,8 +105,8 @@ another `delim` (Char or String) can be defined.
     writedlm2(f::AbstractString, A; options...)
     writedlm2(f::AbstractString, A, delim; options...)
 
-By default, a pre-processing of floats takes place. Floats are parsed to strings
-with decimal mark changed from `'.'` to `','`. With a keyword argument
+By default, a pre-processing of values takes place. Before writing as strings,
+decimal marks are changed from `'.'` to `','`. With a keyword argument
 another decimal mark can be defined. To switch off this pre-processing set: `decimal='.'`.
 
 In `writedlm2()` the output format for `Date` and `DateTime` data can be defined with format strings.
@@ -111,8 +116,8 @@ the `locale` language. For writing `Complex` numbers the imaginary component suf
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
-* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat),  DateTime write format, default is ISO
-* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/stable/stdlib/dates/#Base.Dates.DateFormat), Date write format, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat),  DateTime write format, default is ISO
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat), Date write format, default is ISO
 * `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"im"`(=default), `"i"` or `"j"`
 
