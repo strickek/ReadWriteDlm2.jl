@@ -326,8 +326,7 @@ end
     end
 
     # issue #11484: useful error message for invalid readdlm filepath arguments
-    # alow SystemError in ReadWrtieDlm2 because error message is clear
-    @test_throws SystemError readdlm2(tempdir())
+    # not implemented in ReadWriteDlm2
 end
 
 @testset "complex" begin
