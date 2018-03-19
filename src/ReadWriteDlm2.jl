@@ -313,41 +313,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     elseif T == Nothing
         convertarray = true
-    else
-        T2 = T
     end
-#=
-    if T == Any
-        doparsedatetime = !isempty(dtfs)
-        doparsedate = !isempty(dfs)
-        doparsetime = doparsedatetime && doparsedate
-        doparsecomplex = true
-        doparserational = true
-    elseif T == DateTime
-        isempty(dtfs) && error(
-        "Error: Parsing for DateTime - format string `dtfs` is empty.")
-        doparsedatetime = true
-        convertarray = true
-    elseif T == Date
-        isempty(dtfs) && error(
-        "Error: Parsing for Date - format string `dfs` is empty.")
-        doparsedate = true
-        convertarray = true
-    elseif T == Time
-        doparsetime = true
-        convertarray = true
-    elseif T == Complex
-        doparsecomplex = true
-        convertarray = true
-    elseif T == Rational
-        doparserational = true
-        convertarray = true
-    elseif T == Nothing
-        convertarray = true
-    else
-        T2 = T
-    end
-=#
+
     s = read(input, String)
 
     # empty input data - return empty array
@@ -390,7 +357,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     end
 
-    # Using Base.DataFmt internal functions to read dlm-string
+    # Using stdlib DelimitedFiles internal functions to read dlm-string
     z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
 
     isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data?

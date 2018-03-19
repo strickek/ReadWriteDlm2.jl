@@ -9,9 +9,7 @@
 
 * The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg?uselang=en#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`.
 
-### Older Versions:
-* [`ReadWriteDlm2` documentation for Julia 0.5](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md)
-* [`ReadWriteDlm2` documentation for Julia 0.6](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md)
+* This documentation is for Julia 0.7 - for older versions see: [Julia 0.5](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.3.1/README.md), [Julia 0.6](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md)
 
 ### Installation
 This package is registered and can be installed with:
@@ -19,7 +17,7 @@ This package is registered and can be installed with:
 julia> using Pkg
 julia> Pkg.add("ReadWriteDlm2")
 ```
-or within the [`Pkg3` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg3/#Pkg3.jl-1) use:
+or within the [`Pkg3` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg3/#Pkg3.jl-1):
 ```
 pkg> add ReadWriteDlm2
 ```
