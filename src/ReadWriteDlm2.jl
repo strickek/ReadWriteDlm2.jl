@@ -253,8 +253,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
         locale::AbstractString="english",
         opts...)
 
-    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]"))) ||
-    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]")))) && info(
+    ((!isempty(dtfs) && !occursin(Regex("[^YymdHMSs]"), dtfs)) ||
+    (!isempty(dfs) && !occursin(Regex("[^YymdHMSs]"), dfs))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
@@ -327,7 +327,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
         # Error: Decimal mark to replace is also "decimal" in date format string
         ((rs == (r"(\d),(\d)", s"\1.\2")) &&
-        contains(dtfs*" "*dfs, Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"))) &&
+        occursin(Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"), dtfs*" "*dfs)) &&
         error(
             """
             Error: Regex substitution from Decimal=`$decimal` to '.' and using
@@ -369,9 +369,9 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     for i in eachindex(y)
         if isa(y[i], AbstractString)
-            if doparsedatetime && contains(y[i], rdt) # parse DateTime
+            if doparsedatetime && occursin(rdt, y[i]) # parse DateTime
                 try y[i] = DateTime(y[i], dtdf) catch; end
-            elseif doparsedate && contains(y[i], rd) # parse Date
+            elseif doparsedate && occursin(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
             elseif y[i] == "nothing"
                 try y[i] = nothing catch; end
@@ -515,8 +515,8 @@ function writedlm2auto(f, a, dlm;
         imsuffix::AbstractString="im",
         opts...)
 
-    ((!isempty(dtfs) && !contains(dtfs, Regex("[^YymdHMSs]"))) ||
-    (!isempty(dfs) && !contains(dfs, Regex("[^YymdHMSs]")))) && info(
+    ((!isempty(dtfs) && !occursin(Regex("[^YymdHMSs]"), dtfs)) ||
+    (!isempty(dfs) && !occursin(Regex("[^YymdHMSs]"), dfs))) && info(
         """
         Format string for DateTime(`$dtfs`) or Date(`$dfs`)
         contains numeric code elements only. At least one non-numeric
