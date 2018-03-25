@@ -903,3 +903,68 @@ end
     @test typeof(a) == typeof(b)
 
 end
+
+@testset "1 0 1 0 0" begin
+
+    # Different Types for "1 0 1 0 0"
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"))
+    b = Any[1 0 1 0 0]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Float64)
+    b = [1.0 0.0 1.0 0.0 0.0]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Float16)
+    b = Float16[1.0 0.0 1.0 0.0 0.0]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Int)
+    b = [1 0 1 0 0]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Char)
+    b = ['1' '0' '1' '0' '0']
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), AbstractString)
+    b = AbstractString["1" "0" "1" "0" "0"]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), String)
+    b = ["1" "0" "1" "0" "0"]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Bool)
+    b = [true false true false false]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Complex{Int})
+    b = [1+0im 0+0im 1+0im 0+0im 0+0im]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Complex{Float64})
+    b = [1.0+0.0im 0.0+0.0im 1.0+0.0im 0.0+0.0im 0.0+0.0im]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Complex{Rational{Int}})
+    b = [1//1+0//1*im 0//1+0//1*im 1//1+0//1*im 0//1+0//1*im 0//1+0//1*im]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+    a = readdlm2(IOBuffer("1;0;1;0;0\n"), Rational)
+    b = Rational[1//1 0//1 1//1 0//1 0//1]
+    @test a == b
+    @test typeof(a) == typeof(b)
+
+end

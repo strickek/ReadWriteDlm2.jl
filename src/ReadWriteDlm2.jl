@@ -197,8 +197,7 @@ To deactivate parsing dates/time set: `dfs=\"\", dtfs=\"\"`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
 The result will be a (heterogeneous) array of default type `Any`.
-Homogeneous arrays are supported for Type arguments such as: `String`, `Bool`,
-`Int`, `Float64`, `Complex`, `Rational`, `DateTime`, `Date` and `Time`.
+Other (abstract) types for the array elements could be defined.
 If data is empty, a `0×0 Array{T,2}` is returned.
 
 # Additional Keyword Arguments
@@ -313,6 +312,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     elseif T == Nothing
         convertarray = true
+    else
+        T2 = T
     end
 
     s = read(input, String)
@@ -431,8 +432,7 @@ end
 
 """
 
-    writecsv2(f::IO, A; opts...)
-    writecsv2(f::AbstractString, A; opts...)
+    writecsv2(f, A; opts...)
 
 Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 
@@ -455,10 +455,8 @@ writecsv2(f, a; opts...) =
 
 """
 
-    writedlm2(f::IO, A; opts...)
-    writedlm2(f::IO, A, delim; opts...)
-    writedlm2(f::AbstractString, A; opts...)
-    writedlm2(f::AbstractString, A, delim; opts...)
+    writedlm2(f, A; opts...)
+    writedlm2(f, A, delim; opts...)
 
 Write `A` (a vector, matrix, or an iterable collection of iterable rows) as
 text to `f`(either a filename string or an IO stream). The columns will be
