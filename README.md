@@ -163,7 +163,7 @@ julia> readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2"))    # alterna
 
 julia> rm("test.csv")
 ```
-#### `Date` And `DateTime` With `locale=\"french\"`
+#### `Date` And `DateTime` With `locale="french"`
 ```
 julia> using Dates
 
@@ -176,22 +176,28 @@ julia> Dates.LOCALES["french"] = Dates.DateLocale(
            ["lu", "ma", "me", "je", "ve", "sa", "di"],
            );
 
-julia> a = TimeType[Date(2017,1,1), DateTime(2017,1,1,5,59,1,898)]
-2-element Array{TimeType,1}:
- 2017-01-01
- 2017-01-01T05:59:01.898
+julia> a = [Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"]
+5-element Array{Any,1}:
+  2017-01-01
+  2017-01-01T05:59:01.898
+ 1
+ 1.0
+  "text"
 
 julia> writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 
 julia> read("test.csv", String)
-"dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n"
+"dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
 
-julia> # for readdlm2 use '.' as decimal in TimeTypes formats between two numbers ("S.s", not "S,s"):
+julia> # readdlm2(): Use '.' as decimal in TimeTypes formats between two numbers ("S.s", not "S,s")!
 
-julia> readdlm2("test.csv", TimeType, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S.s", locale="french")
-2×1 Array{TimeType,2}:
- 2017-01-01
- 2017-01-01T05:59:01.898
+julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S.s", locale="french")
+5×1 Array{Any,2}:
+  2017-01-01
+  2017-01-01T05:59:01.898
+ 1
+ 1.0
+  "text"
 
 julia> rm("test.csv")
 ```
