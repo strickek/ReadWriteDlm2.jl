@@ -17,7 +17,7 @@ This package is registered and can be installed within the [`Pkg3` REPL-mode](ht
 pkg> add ReadWriteDlm2
 ```
 
-### Basic Example: How To Use `ReadWriteDlm2`
+### Basic Example([-> more](#-more-examples)): How To Use `ReadWriteDlm2`
 ```
 julia> using ReadWriteDlm2, Dates              # activate modules ReadWriteDlm2 und Dates
 
@@ -123,11 +123,13 @@ Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 | ReadWriteDlm2   | `writedlm2()`      | `';'`     | `','`        |
 | ReadWriteDlm2   | `writecsv2()`      | `','`     | `'.'`        |
 
-## More Examples: How To Use `ReadWriteDlm2`
+
+
+## More Examples
 ```
 julia> using ReadWriteDlm2
 ```
-#### 'writecsv2' And 'readcsv2'
+#### `writecsv2()` And `readcsv2()`
 ```
 julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
 
@@ -140,7 +142,7 @@ julia> readcsv2("test.csv")                    # read CSV data: All four types a
 
 julia> rm("test.csv")
 ```
-#### 'writedlm2' And 'readdlm2' With Special 'decimal'
+#### `writedlm2()` And `readdlm2()` With Special `decimal=`
 ```
 julia> a = Float64[1.1 1.2;2.1 2.2]
 2×2 Array{Float64,2}:
@@ -161,7 +163,7 @@ julia> readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2"))    # alterna
 
 julia> rm("test.csv")
 ```
-#### 'Date' And 'DateTime' With 'locale=\"french\"'
+#### `Date` And `DateTime` With `locale=\"french\"`
 ```
 julia> using Dates
 
@@ -184,7 +186,7 @@ julia> writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", l
 julia> read("test.csv", String)
 "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n"
 
-julia> # for readdlm2 use '.' as decimal in dtfs-format between two numbers ('S.s' not 'S,s'):
+julia> # for readdlm2 use '.' as decimal in TimeTypes formats between two numbers ("S.s", not "S,s"):
 
 julia> readdlm2("test.csv", TimeType, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S.s", locale="french")
 2×1 Array{TimeType,2}:
