@@ -17,7 +17,7 @@ This package is registered and can be installed within the [`Pkg3` REPL-mode](ht
 pkg> add ReadWriteDlm2
 ```
 
-### Basic Example([-> more](#-more-examples)): How To Use `ReadWriteDlm2`
+### Basic Example([-> more](#more-examples)): How To Use `ReadWriteDlm2`
 ```
 julia> using ReadWriteDlm2, Dates              # activate modules ReadWriteDlm2 und Dates
 
