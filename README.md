@@ -189,9 +189,7 @@ julia> writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", l
 julia> read("test.csv", String)
 "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
 
-julia> # readdlm2(): Use '.' as decimal in TimeTypes formats between two numbers ("S.s", not "S,s")!
-
-julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S.s", locale="french")
+julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 5×1 Array{Any,2}:
   2017-01-01
   2017-01-01T05:59:01.898

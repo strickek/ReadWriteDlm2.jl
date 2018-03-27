@@ -446,8 +446,10 @@ end
     writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s")
     @test read("test.csv", String) == "Monday, 1.May 2017 5:59:1,898\n"
     b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s")
-    rm("test.csv")
     @test a == b[1]
+    b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S,s")
+    @test a == b[1]
+    rm("test.csv")
 
     # test date format strings with fix length
     a = [DateTime(2017,5,1,5,59,1,898) 1.0 1.1 1.222e7 1 true]
@@ -507,8 +509,10 @@ end
     writedlm2("test.csv", a, dtfs="E, d.u yyyy H:M:S,s", locale="french")
     @test read("test.csv", String) == "dimanche, 1.janv 2017 5:59:1,898\n"
     b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S.s", locale="french")
-    rm("test.csv")
     @test b[1] == a
+    b = readdlm2("test.csv", dtfs="E, d.u yyyy H:M:S,s", locale="french")
+    @test b[1] == a
+    rm("test.csv")
 
     a = DateTime(2017,8,1,5,59,1)
     writedlm2("test.csv", a, dtfs="E, dd.mm.yyyy H:M:S", locale="german")
@@ -521,8 +525,10 @@ end
     writedlm2("test.csv", a, dtfs="E, d. U yyyy H:M:S,s", locale="german")
     @test read("test.csv", String) == "Mittwoch, 1. November 2017 5:59:1,898\n"
     b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S.s", locale="german")
-    rm("test.csv")
     @test b[1] == a
+    b = readdlm2("test.csv", dtfs="E, d. U yyyy H:M:S,s", locale="german")
+    @test b[1] == a
+    rm("test.csv")
 end
 
 @testset "other types" begin

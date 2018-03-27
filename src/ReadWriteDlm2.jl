@@ -325,19 +325,17 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark
 
-        # Error: Decimal mark to replace is also "decimal" in date format string
-        ((rs == (r"(\d),(\d)", s"\1.\2")) &&
-        occursin(Regex("([YymdHMSs]+$decimal[YymdHMSs]+)"), dtfs*" "*dfs)) &&
-        error(
-            """
-            Error: Regex substitution from Decimal=`$decimal` to '.' and using
-            `$decimal` in a Dates format string directly between two digit
-            elements (codes: YymdHMSs) doesn't work.
-            Use e.g. `S.s` instead of `S$(decimal)s` in DateTime format string.
-            But, because of the blank before the second digit element, for
-            example do not(!) change `Y$(decimal) m`.
-            """
-            )
+        # adopt dfs if decimal between two digits of formatstring
+        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedate 
+            drs = (Regex("([YymdHM])$decimal([YymdHM])"), s"\1.\2")
+            dfs = replace(dfs, drs[1] => drs[2])
+        end
+        
+        # adopt dtfs if decimal between two digits of formatstring
+        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedatetime  
+            drs = (Regex("([YymdHMSs])$decimal([YymdHMSs])"), s"\1.\2")
+            dtfs = replace(dtfs, drs[1] => drs[2])
+        end
 
         # Change default regex substitution Tuple if decimal != ','
         if ((rs == (r"(\d),(\d)", s"\1.\2")) && (decimal != ','))
