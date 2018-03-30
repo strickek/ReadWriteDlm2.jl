@@ -21,9 +21,9 @@ pkg> add ReadWriteDlm2
 ```
 julia> using ReadWriteDlm2, Dates              # activate modules ReadWriteDlm2 und Dates
 
-julia> A = Any[1 1.2; "text" Date(2017)];      # create array with: Int, Float64, String and Date type
+julia> a = Any[1 1.2; "text" Date(2017)];      # create array with: Int, Float64, String and Date type
 
-julia> writedlm2("test.csv", A)                # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+julia> writedlm2("test.csv", a)                # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
 
 julia> readdlm2("test.csv")                    # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
@@ -126,14 +126,14 @@ Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 
 
 ## More Examples
-```
-julia> using ReadWriteDlm2
-```
+
 #### `writecsv2()` And `readcsv2()`
 ```
-julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+julia> using ReadWriteDlm2
 
-julia> writecsv2("test.csv", B)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+julia> a = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+
+julia> writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
 
 julia> readcsv2("test.csv")                    # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
@@ -144,6 +144,8 @@ julia> rm("test.csv")
 ```
 #### `writedlm2()` And `readdlm2()` With Special `decimal=`
 ```
+julia> using ReadWriteDlm2
+
 julia> a = Float64[1.1 1.2;2.1 2.2]
 2×2 Array{Float64,2}:
  1.1  1.2
@@ -165,7 +167,7 @@ julia> rm("test.csv")
 ```
 #### `Date` And `DateTime` With `locale="french"`
 ```
-julia> using Dates
+julia> using ReadWriteDlm2, Dates
 
 julia> Dates.LOCALES["french"] = Dates.DateLocale(
            ["janvier", "février", "mars", "avril", "mai", "juin",
@@ -176,8 +178,8 @@ julia> Dates.LOCALES["french"] = Dates.DateLocale(
            ["lu", "ma", "me", "je", "ve", "sa", "di"],
            );
 
-julia> a = [Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"]
-5-element Array{Any,1}:
+julia> a = hcat([Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"])
+5x1 Array{Any,2}:
   2017-01-01
   2017-01-01T05:59:01.898
  1
@@ -186,7 +188,7 @@ julia> a = [Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"]
 
 julia> writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 
-julia> read("test.csv", String)
+julia> read("test.csv", String)  # to see what have been written in "test.csv" file
 "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
 
 julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
@@ -196,6 +198,57 @@ julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", local
  1
  1.0
   "text"
+
+julia> rm("test.csv")
+```
+
+#### `readdlm2()` And `DataFrames` (Without Header)
+```
+julia> using ReadWriteDlm2, Dates, DataFrames
+
+julia> a = [Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
+2×2 Array{Any,2}:
+ 2017-01-01  1.4
+ 2017-01-02  1.8
+
+julia> writedlm2("test.csv", a)   # writes: "2017-01-01;1,4\n2017-01-02;1,8\n"
+
+julia> df = DataFrame(readdlm2("test.csv"))
+2×2 DataFrame
+│ Row │ x1         │ x2  │
+��������������������������������������������������
+│ 1   │ 2017-01-01 │ 1.4 │
+│ 2   │ 2017-01-02 │ 1.8 │
+
+julia> mean(df[:x2])
+1.6
+
+julia> rm("test.csv")
+```
+#### `readdlm2()` And `DataFrames` (With Header)
+```
+julia> using ReadWriteDlm2, Dates, DataFrames
+
+julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
+3×2 Array{Any,2}:
+ "date"       "value"
+ 2017-01-01  1.4
+ 2017-01-02  1.8
+
+julia> writedlm2("test.csv", a)   # writes: "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
+
+julia> a, h = readdlm2("test.csv", header=true)
+(Any[2017-01-01 1.4; 2017-01-02 1.8], AbstractString["date" "value"])
+
+julia> df = DataFrame(a, Symbol.(reshape(h,:)))   # h has to be a Symbol-Vector
+2×2 DataFrame
+│ Row │ date       │ value │
+���������������������������������������������������
+│ 1   │ 2017-01-01 │ 1.4   │
+│ 2   │ 2017-01-02 │ 1.8   │
+
+julia> mean(df[:value])
+1.6
 
 julia> rm("test.csv")
 ```

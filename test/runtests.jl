@@ -974,3 +974,67 @@ end
     @test typeof(a) == typeof(b)
 
 end
+
+
+@testset "Examples" begin
+
+    # README.md - Basic Example
+
+    a = Any[1 1.2; "text" Date(2017)]       # create array with: Int, Float64, String and Date type
+    writedlm2("test.csv", a)                # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+    @test readdlm2("test.csv") == a         # read `CSV` data: All four types are parsed correctly!
+    rm("test.csv")
+
+    
+    # README.md - More Examples
+
+    # `writecsv2()` And `readcsv2()`
+    a = Any[1 complex(1.5,2.7);1.0 1//3]    # create array with: Int, Complex, Float64 and Rational type
+    writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+    @test readcsv2("test.csv")  == a        # read CSV data: All four types are parsed correctly!
+    rm("test.csv")
+
+    # `writedlm2()` And `readdlm2()` With Special `decimal=`
+    a = Float64[1.1 1.2;2.1 2.2]
+    writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv' 
+    @test readdlm2("test.csv", Float64, decimal='€') == a     # standard: use keyword argument
+    @test readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2")) == a   # alternativ: rs-Regex-Tupel
+    rm("test.csv")
+
+    # `Date` And `DateTime` With `locale="french"`
+    Dates.LOCALES["french"] = Dates.DateLocale(
+        ["janvier", "février", "mars", "avril", "mai", "juin",
+            "juillet", "août", "septembre", "octobre", "novembre", "décembre"],
+        ["janv", "févr", "mars", "avril", "mai", "juin",
+            "juil", "août", "sept", "oct", "nov", "déc"],
+        ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"],
+        ["lu", "ma", "me", "je", "ve", "sa", "di"],
+        );
+
+    a = hcat([Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"])
+    writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
+
+    @test read("test.csv", String) == "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
+
+    @test readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french") == a
+    rm("test.csv")
+
+    # `readdlm2()` And `DataFrames` (Without Header)
+    using DataFrames
+    a = [Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
+    writedlm2("test.csv", a)   # writes: "2017-01-01;1,4\n2017-01-02;1,8\n"
+    @test read("test.csv", String) == "2017-01-01;1,4\n2017-01-02;1,8\n"
+    df = DataFrame(readdlm2("test.csv"))
+    @test mean(df[:x2]) == 1.6
+    rm("test.csv")
+    
+    # `readdlm2()` And `DataFrames` (With Header)
+    a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
+    writedlm2("test.csv", a)   # writes: "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
+    @test read("test.csv", String) == "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
+    a, h = readdlm2("test.csv", header=true)
+    df = DataFrame(a, Symbol.(reshape(h,:)))   # h has to be a Symbol-Vector
+    @test mean(df[:value]) == 1.6
+    rm("test.csv")
+
+end
