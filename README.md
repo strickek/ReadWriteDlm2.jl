@@ -101,7 +101,9 @@ In `writedlm2()` the output format for `Date` and `DateTime` data can be
 defined with format strings. Defaults are the ISO formats. Day (`E`, `e`) and
 month (`U`, `u`) names are written in the `locale` language. For writing
 `Complex` numbers the imaginary component suffix can be selected with the
-`imsuffix=` keyword argument.
+`imsuffix=` keyword argument. If `dfheader=true` instead of `header=true`,
+the first row of data will be read as header and returned in a
+tuple for DataFrame `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
@@ -109,6 +111,7 @@ month (`U`, `u`) names are written in the `locale` language. For writing
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat), Date write format, default is ISO
 * `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"im"`(=default), `"i"` or `"j"`
+* `dfheader=false`: Return header in format for DataFrame if `true`
 
 ### Function `writecsv2()`
 
@@ -150,9 +153,9 @@ julia> a = Float64[1.1 1.2;2.1 2.2]
 2×2 Array{Float64,2}:
  1.1  1.2
  2.1  2.2
- 
-julia> writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv' 
-   
+
+julia> writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv'
+
 julia> readdlm2("test.csv", Float64, decimal='€')      # standard: use keyword argument
 2×2 Array{Float64,2}:
  1.1  1.2
@@ -202,29 +205,6 @@ julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", local
 julia> rm("test.csv")
 ```
 
-#### `readdlm2()` And `DataFrames` (Without Header)
-```
-julia> using ReadWriteDlm2, Dates, DataFrames
-
-julia> a = [Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
-2×2 Array{Any,2}:
- 2017-01-01  1.4
- 2017-01-02  1.8
-
-julia> writedlm2("test.csv", a)   # writes: "2017-01-01;1,4\n2017-01-02;1,8\n"
-
-julia> df = DataFrame(readdlm2("test.csv"))
-2×2 DataFrame
-│ Row │ x1         │ x2  │
-��������������������������������������������������
-│ 1   │ 2017-01-01 │ 1.4 │
-│ 2   │ 2017-01-02 │ 1.8 │
-
-julia> mean(df[:x2])
-1.6
-
-julia> rm("test.csv")
-```
 #### `readdlm2()` And `DataFrames` (With Header)
 ```
 julia> using ReadWriteDlm2, Dates, DataFrames
@@ -235,15 +215,12 @@ julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
  2017-01-01  1.4
  2017-01-02  1.8
 
-julia> writedlm2("test.csv", a)   # writes: "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
+julia> writedlm2("test.csv", a)  # "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
 
-julia> a, h = readdlm2("test.csv", header=true)
-(Any[2017-01-01 1.4; 2017-01-02 1.8], AbstractString["date" "value"])
-
-julia> df = DataFrame(a, Symbol.(reshape(h,:)))   # h has to be a Symbol-Vector
+julia> df = DataFrame(readdlm2("test.csv", dfheader=true))
 2×2 DataFrame
 │ Row │ date       │ value │
-���������������������������������������������������
+������������������������������������������
 │ 1   │ 2017-01-01 │ 1.4   │
 │ 2   │ 2017-01-02 │ 1.8   │
 

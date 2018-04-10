@@ -6,6 +6,7 @@ using ReadWriteDlm2
 using Test
 using Random
 using Dates
+import ReadWriteDlm2.dfregex
 
 # Run tests
 
@@ -335,6 +336,41 @@ end
 
 # 2nd block
 # Test the new functions of ReadWriteDlm2
+
+@testset "dfregex" begin
+    @test true  == occursin(dfregex("HH:MM"), "22:00")
+    @test true  == occursin(dfregex("H:M"), "1:30")
+    @test true  == occursin(dfregex("H:M"), "10:30")
+    @test false == occursin(dfregex("H:M"), "10:62")
+    @test true  == occursin(dfregex("HHhMM"), "22h00")
+    @test false == occursin(dfregex("HHhMM"), "22h")
+    @test true  == occursin(dfregex("Hh"), "22h")
+    @test true  == occursin(dfregex("HhM\\min"), "22h15min")
+    @test true  == occursin(dfregex("yyyy-mm-dd"), "2018-01-23")
+    @test true  == occursin(dfregex("yyyy.mm.dd"), "2018.01.23")
+    @test false == occursin(dfregex("yyyy-mm-dd"), "2018.01.23")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM:SS"), "2018-01-23T23:52:00")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MM:SS"), "2018-01-23T23:72:00")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMz"), "2018-01-23T23:52+01:00")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMz"), "2018-01-23T23:52+0100")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMz"), "2018-01-23T23:52-10:00")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MM z"), "2018-01-23T23:52+01:00")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MM z"), "2018-01-23T23:52 ")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM z"), "2018-01-23T23:52 10:00")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMZ"), "2018-01-23T23:52UTC")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMZ"), "2018-01-23T23:52CET")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMZ"), "2018-01-23T23:52CEST")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MM Z"), "2018-01-23T23:52CET")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM Z"), "2018-01-23T23:52 CEST")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MM Z"), "2018-01-23T23:52CEST")
+    @test false == occursin(dfregex("yyyy-mm-ddTHH:MMZ"), "2018-01-23T23:52CE")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MMZZZZZZ"), "2018-01-23T23:52CEST")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM ZZZZ"), "2018-01-23T23:52 CET")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM zzzzzz"), "2018-01-23T23:52 +11:00")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM zzzz"), "2018-01-23T23:52 -09:00")
+    @test true  == occursin(dfregex("yyyy-mm-ddTHH:MM\\Z"), "2018-01-23T23:52Z")
+end
+
 @testset "new functions" begin
     let data = "2015-01-01;5,1;Text1\n10;19e6;4\n"
         @test isequaldlm(readdlm2(IOBuffer(data)), [Date(2015) 5.1 "Text1";10 190.0e5 4.0], Any)
@@ -985,7 +1021,7 @@ end
     @test readdlm2("test.csv") == a         # read `CSV` data: All four types are parsed correctly!
     rm("test.csv")
 
-    
+
     # README.md - More Examples
 
     # `writecsv2()` And `readcsv2()`
@@ -996,7 +1032,7 @@ end
 
     # `writedlm2()` And `readdlm2()` With Special `decimal=`
     a = Float64[1.1 1.2;2.1 2.2]
-    writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv' 
+    writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv'
     @test readdlm2("test.csv", Float64, decimal='€') == a     # standard: use keyword argument
     @test readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2")) == a   # alternativ: rs-Regex-Tupel
     rm("test.csv")
@@ -1019,22 +1055,12 @@ end
     @test readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french") == a
     rm("test.csv")
 
-    # `readdlm2()` And `DataFrames` (Without Header)
-    using DataFrames
-    a = [Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
-    writedlm2("test.csv", a)   # writes: "2017-01-01;1,4\n2017-01-02;1,8\n"
-    @test read("test.csv", String) == "2017-01-01;1,4\n2017-01-02;1,8\n"
-    df = DataFrame(readdlm2("test.csv"))
-    @test mean(df[:x2]) == 1.6
-    rm("test.csv")
-    
-    # `readdlm2()` And `DataFrames` (With Header)
+    # `readdlm2()` With Header for `DataFrames`
     a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
     writedlm2("test.csv", a)   # writes: "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
     @test read("test.csv", String) == "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
-    a, h = readdlm2("test.csv", header=true)
-    df = DataFrame(a, Symbol.(reshape(h,:)))   # h has to be a Symbol-Vector
-    @test mean(df[:value]) == 1.6
-    rm("test.csv")
+    @test readdlm2("test.csv", dfheader=true) ==
+        (Any[Date(2017,1,1) 1.4; Date(2017,1,2) 1.8], Symbol[:date, :value])
 
+    rm("test.csv")
 end

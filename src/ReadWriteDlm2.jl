@@ -2,7 +2,7 @@
 # ReadWriteDlm2 - https://github.com/strickek/ReadWriteDlm2.jl
 
 """
-## ReadWriteDlm2 - CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex and Rational
+## ReadWriteDlm2
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and
 `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional
 support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types
@@ -50,7 +50,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
     Ele = try extrema([length(Dates.dayname(i;locale=locale)) for i in 1:7])catch; (6, 9) end
     ele = try extrema([length(Dates.dayabbr(i;locale=locale)) for i in 1:7])catch; (3, 3) end
 
-    codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', '\\'
+    codechars = 'y', 'Y', 'm', 'u', 'e', 'U', 'E', 'd', 'H', 'M', 'S', 's', 'Z', 'z', '\\'
     r = "^ *"; repeat_count = 1; ldf = length(df); dotsec = false
     for i = 1:ldf
         repeat_next = ((i < ldf) && (df[(i + 1)] == df[i])) ? true : false
@@ -88,6 +88,8 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         ((df[i] == 's') && (dotsec == true) && (repeat_count > 3) && !repeat_next) ? "(\\.(?<s>\\d{$(repeat_count)}))?" :
         ((df[i] == 's') && (dotsec == false) && (repeat_count < 4) && !repeat_next) ? "(?<s>\\d{3})?" :
         ((df[i] == 's') && (dotsec == false) && (repeat_count > 3) && !repeat_next) ? "(?<s>\\d{$(repeat_count)})?" :
+        ((df[i] == 'z') && !repeat_next) ? "(?<z>[\\+|\\-]?(0\\d|1\\d|2[0-3]):?[0-5]\\d)" :
+        ((df[i] == 'Z') && !repeat_next) ? "(?<Z>[A-Z]{3,14})" :
         in(df[i], codechars) ? "" : string(df[i])
         )
     end
@@ -199,6 +201,8 @@ To deactivate parsing dates/time set: `dfs=\"\", dtfs=\"\"`.
 The result will be a (heterogeneous) array of default type `Any`.
 Other (abstract) types for the array elements could be defined.
 If data is empty, a `0×0 Array{T,2}` is returned.
+If `dfheader=true` instead of `header=true` is used, the returned tuple
+(data::Array{T,2}, header::Array{Symbol,1}) fits for DataFrame.
 
 # Additional Keyword Arguments
 
@@ -207,6 +211,7 @@ If data is empty, a `0×0 Array{T,2}` is returned.
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing, default is ISO
 * `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
 * `locale=\"english\"`: Language for parsing dates names, default is english
+* `dfheader=false`: Return header in format for DataFrame if `true`
 
 Find more information about `readdlm()` functionality and (keyword) arguments -
  which are also supported by `readdlm2()` - in `help` for `readdlm()`.
@@ -251,7 +256,13 @@ function readdlm2auto(input, dlm, T, eol, auto;
         dtfs::AbstractString="yyyy-mm-ddTHH:MM:SS.s",
         dfs::AbstractString="yyyy-mm-dd",
         locale::AbstractString="english",
+        dfheader::Bool=false,
         opts...)
+
+    if dfheader == true
+        opts = [opts...]
+        push!(opts, :header => true)
+    end
 
     ((!isempty(dtfs) && !occursin(Regex("[^YymdHMSs]"), dtfs)) ||
     (!isempty(dfs) && !occursin(Regex("[^YymdHMSs]"), dfs))) && info(
@@ -326,13 +337,13 @@ function readdlm2auto(input, dlm, T, eol, auto;
     if (!isempty(rs) && (decimal != '.')) # do pre-processing of decimal mark
 
         # adopt dfs if decimal between two digits of formatstring
-        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedate 
+        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedate
             drs = (Regex("([YymdHM])$decimal([YymdHM])"), s"\1.\2")
             dfs = replace(dfs, drs[1] => drs[2])
         end
-        
+
         # adopt dtfs if decimal between two digits of formatstring
-        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedatetime  
+        if (rs == (r"(\d),(\d)", s"\1.\2")) && doparsedatetime
             drs = (Regex("([YymdHMSs])$decimal([YymdHMSs])"), s"\1.\2")
             dtfs = replace(dtfs, drs[1] => drs[2])
         end
@@ -383,7 +394,11 @@ function readdlm2auto(input, dlm, T, eol, auto;
         isa(z, Tuple) ? z = (convert(Array{T}, y), h) : z = convert(Array{T}, z)
     end
 
-    return z
+    if dfheader == true && isa(z, Tuple)
+        return (z[1], Symbol.(reshape(z[2], :)))
+    else
+        return z
+    end
 
 end # End function readdlm2auto()
 
