@@ -58,7 +58,9 @@ To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 
 The result will be a (heterogeneous) array of default element type `Any`.
 Other (abstract) types for the array elements could be defined.
-If data is empty, a `0×0 Array{T,2}` is returned.
+If data is empty, a `0×0 Array{T,2}` is returned. If `dfheader=true` instead of
+`header=true`, the first row of data will be read as header and returned in a
+tuple for DataFrame `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
@@ -66,6 +68,7 @@ If data is empty, a `0×0 Array{T,2}` is returned.
 * `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for DateTime parsing, default is ISO
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for Date parsing, default is ISO
 * `locale="english"`: Language for parsing dates names, default is english
+* `dfheader=false`: Return header in format for DataFrame if `true`
 
 ### Function `readcsv2()`
 
@@ -101,9 +104,7 @@ In `writedlm2()` the output format for `Date` and `DateTime` data can be
 defined with format strings. Defaults are the ISO formats. Day (`E`, `e`) and
 month (`U`, `u`) names are written in the `locale` language. For writing
 `Complex` numbers the imaginary component suffix can be selected with the
-`imsuffix=` keyword argument. If `dfheader=true` instead of `header=true`,
-the first row of data will be read as header and returned in a
-tuple for DataFrame `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
+`imsuffix=` keyword argument. 
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
@@ -111,7 +112,6 @@ tuple for DataFrame `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat), Date write format, default is ISO
 * `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"im"`(=default), `"i"` or `"j"`
-* `dfheader=false`: Return header in format for DataFrame if `true`
 
 ### Function `writecsv2()`
 
