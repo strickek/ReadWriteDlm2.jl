@@ -370,8 +370,16 @@ function readdlm2auto(input, dlm, T, eol, auto;
     # Using stdlib DelimitedFiles internal functions to read dlm-string
     z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
 
-    isa(z, Tuple) ? (y, h) = z : y = z #Tuple(data, header) or only data?
-
+    if isa(z, Tuple)
+         y, h = z
+         if dfheader == true # format header to DataFrame format
+             h = Symbol.(reshape(h, :))
+             z = (y, h)
+         end
+    else
+         y = z
+    end
+    
     # Formats, Regex for Date/DateTime parsing
     doparsedatetime && (dtdf = DateFormat(dtfs, locale); rdt = dfregex(dtfs, locale))
     doparsedate && (ddf = DateFormat(dfs, locale); rd = dfregex(dfs, locale))
@@ -394,11 +402,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         isa(z, Tuple) ? z = (convert(Array{T}, y), h) : z = convert(Array{T}, z)
     end
 
-    if dfheader == true && isa(z, Tuple)
-        return (z[1], Symbol.(reshape(z[2], :)))
-    else
-        return z
-    end
+    return z
 
 end # End function readdlm2auto()
 
