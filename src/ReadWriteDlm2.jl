@@ -546,7 +546,7 @@ function writedlm2auto(f, a, dlm;
     ((imsuffix != "im") && (imsuffix != "i") && (imsuffix != "j")) && error(
     "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
 
-    if isa(a, Union{Number, Date, DateTime})
+    if isa(a, Union{Number, TimeType})
          a = [a]  # create 1 element Array
     elseif a == nothing
         a = ["nothing"]
@@ -571,7 +571,7 @@ function writedlm2auto(f, a, dlm;
             isa(a[i], Complex) && fc ? complexformat(a[i], decimal, imsuffix) :
             string(a[i])
         end
-    else  # a is not a Number, Date, DateTime or Array -> no preprocessing
+        else  # a is not a Number, TimeType or Array -> no preprocessing
         b = a
     end
 
