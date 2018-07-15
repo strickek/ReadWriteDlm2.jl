@@ -3,7 +3,7 @@
 [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.6.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2) [![ReadWriteDlm2](http://pkg.julialang.org/badges/ReadWriteDlm2_0.7.svg)](http://pkg.julialang.org/?pkg=ReadWriteDlm2=0.7)
 [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types and special decimal marks.
+`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational`, `Missing` types and special decimal marks.
 
 * For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`.
 
@@ -65,10 +65,11 @@ tuple for DataFrame `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [Regex](https://docs.julialang.org/en/latest/manual/strings/#Regular-Expressions-1) (r,s)-tuple, the default change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for DateTime parsing, default is ISO
-* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for Date parsing, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for DateTime parsing
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat) for Date parsing
 * `locale="english"`: Language for parsing dates names, default is english
 * `dfheader=false`: Return header in format for DataFrame if `true`
+* `missingstring=\"na\"`: How missing values are represented, default is `"na"`
 
 ### Function `readcsv2()`
 
@@ -108,10 +109,11 @@ month (`U`, `u`) names are written in the `locale` language. For writing
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
-* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat),  DateTime write format, default is ISO
-* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat), Date write format, default is ISO
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat),  DateTime write format
+* `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/#Dates.DateFormat), Date write format
 * `locale="english"`: Language for writing date names, default is english
 * `imsuffix="im"`: Complex - imaginary component suffix `"im"`(=default), `"i"` or `"j"`
+* `missingstring=\"na\"`: How missing values are written, default is `"na"`
 
 ### Function `writecsv2()`
 
@@ -154,17 +156,40 @@ julia> a = Float64[1.1 1.2;2.1 2.2]
  1.1  1.2
  2.1  2.2
 
-julia> writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv'
+julia> writedlm2("test.csv", a; decimal='€')     # '€' is decimal Char in 'test.csv'
 
-julia> readdlm2("test.csv", Float64, decimal='€')      # standard: use keyword argument
+julia> readdlm2("test.csv", Float64; decimal='€')      # standard: use keyword argument
 2×2 Array{Float64,2}:
  1.1  1.2
  2.1  2.2
 
-julia> readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2"))    # alternativ: rs-Regex-Tupel
+julia> readdlm2("test.csv", Float64; rs=(r"(\d)€(\d)", s"\1.\2"))    # alternativ: rs-Regex-Tupel
 2×2 Array{Float64,2}:
  1.1  1.2
  2.1  2.2
+
+julia> rm("test.csv")
+```
+#### `writedlm2()` And `readdlm2()` With Special Floats And Special Missing
+```
+julia> using ReadWriteDlm2
+
+julia> a = Union{Missing, Float64}[1.1 NaN;missing 2.2;1/0 -1/0]
+3×2 Array{Union{Missing, Float64},2}:
+   1.1        NaN
+    missing     2.2
+ Inf         -Inf
+
+julia> writedlm2("test.csv", a; missingstring="???")     # use "???" for missing data
+
+julia> read("test.csv", String)
+"1,1;NaN\n???;2,2\nInf;-Inf\n"
+
+julia> readdlm2("test.csv", Union{Missing, Float64}; missingstring="???")
+2×2 Array{Float64,2}:
+   1.1        NaN
+    missing     2.2
+ Inf         -Inf
 
 julia> rm("test.csv")
 ```
@@ -189,12 +214,12 @@ julia> a = hcat([Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"])
  1.0
   "text"
 
-julia> writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
+julia> writedlm2("test.csv", a; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 
 julia> read("test.csv", String)  # to see what have been written in "test.csv" file
 "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
 
-julia> readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
+julia> readdlm2("test.csv"; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 5×1 Array{Any,2}:
   2017-01-01
   2017-01-01T05:59:01.898
@@ -217,7 +242,7 @@ julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
 
 julia> writedlm2("test.csv", a)  # "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
 
-julia> df = DataFrame(readdlm2("test.csv", dfheader=true))
+julia> df = DataFrame(readdlm2("test.csv"; dfheader=true))
 2×2 DataFrame
 │ Row │ date       │ value │
 ������������������������������������������

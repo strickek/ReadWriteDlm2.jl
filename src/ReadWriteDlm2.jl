@@ -5,7 +5,7 @@
 ## ReadWriteDlm2
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and
 `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional
-support for `Date`, `DateTime`, `Time`, `Complex`, `Rational` types
+support for `Date`, `DateTime`, `Time`, `Complex`, `Rational`, `Missing` types
 and special decimal marks.
 
 ### `readcsv2(), writecsv2()`:
@@ -154,18 +154,16 @@ Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type
 
 # Code Example
 ```jldoctest
-julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
+julia> using ReadWriteDlm2
 
-julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];
 
-julia> writecsv2("test.csv", B)                # test.csv(decimal dot): "1,1.5 + 2.7im\\n1.0,1//3\\n"
+julia> writecsv2("test.csv", B)
 
-julia> readcsv2("test.csv")                    # read CSV data: All four types are parsed correctly!
+julia> readcsv2("test.csv")
 2×2 Array{Any,2}:
  1    1.5+2.7im
  1.0    1//3
-
-julia> rm("test.csv")
 ```
 """
 readcsv2(input; opts...) =
@@ -208,28 +206,27 @@ If `dfheader=true` instead of `header=true` is used, the returned tuple
 
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r\"(\\d),(\\d)\", s\"\\1.\\2\")`: Regex (r,s)-tuple, the default change d,d to d.d if `decimal=','`
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing, default is ISO
-* `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing, default is ISO
-* `locale=\"english\"`: Language for parsing dates names, default is english
-* `dfheader=false`: Return header in format for DataFrame if `true`
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing
+* `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing
+* `locale=\"english\"`: Language for parsing dates names
+* `dfheader=false`: Return header in DataFrame format if `true`
+* `missingstring=\"na\"`: How missing values are represented
 
 Find more information about `readdlm()` functionality and (keyword) arguments -
  which are also supported by `readdlm2()` - in `help` for `readdlm()`.
 
 # Code Example
 ```jldoctest
-julia> using ReadWriteDlm2, Dates             # activate ReadWriteDlm2 and Dates
+julia> using ReadWriteDlm2, Dates
 
-julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64, String and Date type
+julia> A = Any[1 1.2; "text" Date(2017)];
 
-julia> writedlm2("test.csv", A)               # test.csv(decimal comma): "1;1,2\\ntext;2017-01-01\\n"
+julia> writedlm2("test.csv", A)
 
-julia> readdlm2("test.csv")                   # read `CSV` data: All four types are parsed correctly!
+julia> readdlm2("test.csv")
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
-
-julia> rm("test.csv")
 ```
 """
 readdlm2(input; opts...) =
@@ -257,6 +254,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
         dfs::AbstractString="yyyy-mm-dd",
         locale::AbstractString="english",
         dfheader::Bool=false,
+        missingstring::AbstractString="na",
         opts...)
 
     if dfheader == true
@@ -272,60 +270,28 @@ function readdlm2auto(input, dlm, T, eol, auto;
         code element or character is needed for parsing dates.
         """)
 
-    # "parsing-matrix" for different T::Types
-    doparsedatetime = false
-    doparsedate = false
+    # "parsing-logic" - defaults
+    doparsedatetime = !isempty(dtfs)
+    doparsedate = !isempty(dfs)
     doparsetime = false
-    doparsecomplex = false
-    doparserational = false
-    convertarray = false
+    doparsecomplex = true
+    doparserational = true
+    doparsemissing = false
+    doparsenothing = false
+    convertarray = true
     T2 = Any
 
-# Test
-    if T == Any
-        doparsedatetime = !isempty(dtfs)
-        doparsedate = !isempty(dfs)
-        doparsetime = doparsedatetime && doparsedate
-        doparsecomplex = true
-        doparserational = true
+    # "parsing-logic" for different T::Types
+    ((typeintersect(DateTime, T)) == Union{}) && (doparsedatetime = false)
+    ((typeintersect(Date, T)) == Union{}) && (doparsedate = false)
+    doparsetime = ((doparsedatetime && doparsedate) || ((Time <: T) && !(Any <:T)))
+    T <: Union{AbstractFloat, AbstractString, Char} && (T2 = T; convertarray = false)
+    ((typeintersect(Complex, T)) == Union{}) && (doparsecomplex = false)    
+    ((typeintersect(Rational, T)) == Union{}) && (doparserational = false)
+    Missing <: T && (doparsemissing = true)
+    Nothing <: T && (doparsenothing = true)    
+    (Any <: T) && (convertarray = false)
 
-    elseif T <: Dates.AbstractDateTime
-        isempty(dtfs) && error(
-        "Error: Parsing for DateTime - format string `dtfs` is empty.")
-        doparsedatetime = true
-        convertarray = true
-    elseif T == Date
-        isempty(dtfs) && error(
-        "Error: Parsing for Date - format string `dfs` is empty.")
-        doparsedate = true
-        convertarray = true
-    elseif T == Time
-        doparsetime = true
-        convertarray = true
-    elseif T <: Dates.AbstractTime
-        doparsedatetime = !isempty(dtfs)
-        doparsedate = !isempty(dfs)
-        doparsetime = true
-        convertarray = true
-
-    elseif T == Complex
-        doparsecomplex = true
-        convertarray = true
-    elseif T <: AbstractFloat
-        T2 = T
-    elseif T <: Real
-        doparserational = true
-        convertarray = true
-    elseif T <: Number
-        doparsecomplex = true
-        doparserational = true
-        convertarray = true
-
-    elseif T == Nothing
-        convertarray = true
-    else
-        T2 = T
-    end
 
     s = read(input, String)
 
@@ -367,7 +333,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     end
 
-    # Using stdlib DelimitedFiles internal functions to read dlm-string
+    # Using stdlib DelimitedFiles internal function to read dlm-string
     z = readdlm_string(s, dlm, T2, eol, auto, val_opts(opts))
 
     if isa(z, Tuple)
@@ -390,7 +356,9 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 try y[i] = DateTime(y[i], dtdf) catch; end
             elseif doparsedate && occursin(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
-            elseif y[i] == "nothing"
+            elseif doparsemissing && y[i] == missingstring
+                try y[i] = missing catch; end
+            elseif doparsenothing && y[i] == "nothing"
                 try y[i] = nothing catch; end
             else # parse Time, Complex and Rational
                 try y[i] = parseothers(y[i], doparsetime, doparsecomplex, doparserational) catch; end
@@ -455,16 +423,14 @@ Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 
 # Code Example
 ```jldoctest
-julia> using ReadWriteDlm2                     # activate readdlm2, readcsv2, writedlm2 and writecsv2
+julia> using ReadWriteDlm2
 
-julia> B = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
+julia> B = Any[1 complex(1.5,2.7);1.0 1//3];
 
-julia> writecsv2("test.csv", B)                # write test.csv(with decimal dot)
+julia> writecsv2("test.csv", B)
 
-julia> read("test.csv", String)                # show written test.csv data
+julia> read("test.csv", String)
 "1,1.5 + 2.7im\\n1.0,1//3\\n"
-
-julia> rm("test.csv")
 ```
 """
 writecsv2(f, a; opts...) =
@@ -492,24 +458,23 @@ and month (`U`, `u`) names are written in the `locale` language. For writing
 
 # Additional Keyword Arguments
 
-* `decimal=','`: Charater for writing decimal marks, default is a comma
-* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string, DateTime write format, default is ISO
-* `dfs=\"yyyy-mm-dd\"`: Format string, Date write format, default is ISO
-* `locale=\"english\"`: Language for DateTime writing, default is english
-* `imsuffix=\"im\"`: Complex - imaginary component suffix `\"im\"`(=default), `\"i\"` or `\"j\"`
+* `decimal=','`: Character for writing decimal marks
+* `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: DateTime write format
+* `dfs=\"yyyy-mm-dd\"`: Date write format
+* `locale=\"english\"`: Language for DateTime writing
+* `imsuffix=\"im\"`: Complex Imag suffix `\"im\"`, `\"i\"` or `\"j\"`
+* `missingstring=\"na\"`: How missing values are written
 
 # Code Example
 ```jldoctest
-julia> using ReadWriteDlm2, Dates             # activate ReadWriteDlm2 and Dates
+julia> using ReadWriteDlm2, Dates
 
-julia> A = Any[1 1.2; "text" Date(2017)];     # create array with: Int, Float64, String and Date type
+julia> A = Any[1 1.2; "text" Date(2017)];
 
-julia> writedlm2("test.csv", A)               # write test.csv(with decimal comma)
+julia> writedlm2("test.csv", A)
 
-julia> read("test.csv", String)               # show written test.csv data
+julia> read("test.csv", String)
 "1;1,2\\ntext;2017-01-01\\n"
-
-julia> rm("test.csv")
 ```
 """
 writedlm2(io::IO, a; opts...) =
@@ -530,6 +495,7 @@ function writedlm2auto(f, a, dlm;
         dfs::AbstractString="yyyy-mm-dd",
         locale::AbstractString="english",
         imsuffix::AbstractString="im",
+        missingstring::AbstractString="na",
         opts...)
 
     ((!isempty(dtfs) && !occursin(Regex("[^YymdHMSs]"), dtfs)) ||
@@ -546,10 +512,10 @@ function writedlm2auto(f, a, dlm;
     ((imsuffix != "im") && (imsuffix != "i") && (imsuffix != "j")) && error(
     "Only `\"im\"`, `\"i\"` or `\"j\"` are valid arguments for keyword `imsuffix=`.")
 
-    if isa(a, Union{Number, TimeType})
+    if isa(a, Union{Nothing, Missing, Number, TimeType})
          a = [a]  # create 1 element Array
-    elseif a == nothing
-        a = ["nothing"]
+    #elseif a == nothing
+    #    a = [nothing]
     end
 
     if isa(a, AbstractArray)
@@ -565,6 +531,8 @@ function writedlm2auto(f, a, dlm;
         for i in eachindex(a)
             b[i] =
             isa(a[i], AbstractFloat) ? floatformat(a[i], decimal) :
+            isa(a[i], Missing) ? missingstring :
+            isa(a[i], Nothing) ? "nothing" :
             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf) :
             isa(a[i], Date) && fd ? Dates.format(a[i], ddf) :
             isa(a[i], Time) && ft ? timeformat(a[i], decimal) :

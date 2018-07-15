@@ -568,6 +568,7 @@ end
 end
 
 @testset "other types" begin
+
     # Test Complex and Rational parsing
     a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
     writedlm2("test.csv", a)
@@ -575,6 +576,7 @@ end
     b = readdlm2("test.csv", Any)
     rm("test.csv")
     @test isequaldlm(a, b, Any)
+
     # Complex and Rational - tolerance with blancs, i/j and different signes
     write("test.csv", "    -1-2j; 1,2 - 2,0i ;1.0E9+3.0E19im;   -1//-3;1//-5;  1//2 ;1//-0;-0//1 \n")
     b = readdlm2("test.csv", Any)
@@ -852,18 +854,16 @@ end
     rm("test.csv")
     @test isempty(b)
 
-    a = nothing
+    a = missing
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "nothing\n"
-    b = readdlm2("test.csv")
-    @test typeof(readdlm2("test.csv", Nothing)) == Array{Nothing, 2}
+    @test read("test.csv", String) == "na\n"
+    b = readcsv2("test.csv")
     rm("test.csv")
     @test typeof(b) == Array{Any,2}
     @test isequal(a, b[1])
     writecsv2("test.csv", a)
-    @test read("test.csv", String) == "nothing\n"
+    @test read("test.csv", String) == "na\n"
     b = readcsv2("test.csv")
-    @test typeof(readcsv2("test.csv", Nothing)) == Array{Nothing, 2}
     rm("test.csv")
     @test typeof(b) == Array{Any,2}
     @test isequal(a, b[1])
@@ -883,19 +883,20 @@ end
     @test typeof(b) == Array{Any,2}
     @test isequal(a, b)
 
-    a = [1.2 NaN "" nothing]
+    a = [1.2 NaN "" nothing missing]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "1,2;NaN;;nothing\n"
+    @test read("test.csv", String) == "1,2;NaN;;nothing;na\n"
     b = readdlm2("test.csv")
     rm("test.csv")
     @test isequal(a, b)
 
-    a = [1.2 NaN "" nothing]
+    a = [1.2 NaN "" nothing missing]
     writecsv2("test.csv", a)
-    @test read("test.csv", String) == "1.2,NaN,,nothing\n"
+    @test read("test.csv", String) == "1.2,NaN,,nothing,na\n"
     b = readcsv2("test.csv")
     rm("test.csv")
     @test isequal(a, b)
+    
 end
 
 @testset "random data" begin
@@ -1032,9 +1033,18 @@ end
 
     # `writedlm2()` And `readdlm2()` With Special `decimal=`
     a = Float64[1.1 1.2;2.1 2.2]
-    writedlm2("test.csv", a, decimal='€')     # '€' is decimal Char in 'test.csv'
-    @test readdlm2("test.csv", Float64, decimal='€') == a     # standard: use keyword argument
-    @test readdlm2("test.csv", Float64, rs=(r"(\d)€(\d)", s"\1.\2")) == a   # alternativ: rs-Regex-Tupel
+    writedlm2("test.csv", a; decimal='€')     # '€' is decimal Char in 'test.csv'
+    @test readdlm2("test.csv", Float64; decimal='€') == a     # standard: use keyword argument
+    @test readdlm2("test.csv", Float64; rs=(r"(\d)€(\d)", s"\1.\2")) == a   # alternativ: rs-Regex-Tupel
+    rm("test.csv")
+
+    # `writedlm2()` And `readdlm2()` With Special Floats And Special Missing
+    a = Union{Missing, Float64}[1.1 NaN;missing 2.2;1/0 -1/0]
+    writedlm2("test.csv", a; missingstring="???")     # use "???" for missing data
+    @test read("test.csv", String) == "1,1;NaN\n???;2,2\nInf;-Inf\n"
+    b = readdlm2("test.csv", Union{Missing, Float64}; missingstring="???")
+    @test typeof(a) == typeof(b)
+    @test isequal(a, b)
     rm("test.csv")
 
     # `Date` And `DateTime` With `locale="french"`
@@ -1048,19 +1058,18 @@ end
         );
 
     a = hcat([Date(2017,1,1), DateTime(2017,1,1,5,59,1,898), 1, 1.0, "text"])
-    writedlm2("test.csv", a, dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
+    writedlm2("test.csv", a; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french")
 
     @test read("test.csv", String) == "dimanche, 1.janvier 2017\ndi, 1.janv 2017 5:59:1,898\n1\n1,0\ntext\n"
 
-    @test readdlm2("test.csv", dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french") == a
+    @test readdlm2("test.csv"; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", locale="french") == a
     rm("test.csv")
 
     # `readdlm2()` With Header for `DataFrames`
     a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
     writedlm2("test.csv", a)   # writes: "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
     @test read("test.csv", String) == "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
-    @test readdlm2("test.csv", dfheader=true) ==
+    @test readdlm2("test.csv"; dfheader=true) ==
         (Any[Date(2017,1,1) 1.4; Date(2017,1,2) 1.8], Symbol[:date, :value])
-
     rm("test.csv")
 end
