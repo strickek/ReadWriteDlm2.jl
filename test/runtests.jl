@@ -1038,7 +1038,7 @@ end
     @test readdlm2("test.csv", Float64; rs=(r"(\d)€(\d)", s"\1.\2")) == a   # alternativ: rs-Regex-Tupel
     rm("test.csv")
 
-    # `writedlm2()` And `readdlm2()` With Special Floats And Special Missing
+    # `writedlm2()` And `readdlm2()` With `Union{Missing, Float64}`
     a = Union{Missing, Float64}[1.1 NaN;missing 2.2;1/0 -1/0]
     writedlm2("test.csv", a; missingstring="???")     # use "???" for missing data
     @test read("test.csv", String) == "1,1;NaN\n???;2,2\nInf;-Inf\n"

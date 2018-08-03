@@ -150,7 +150,7 @@ end
 
 Equivalent to `readdlm2()` with delimiter `','` and `decimal='.'`. Default Type
 `Any` activates parsing of `Bool`, `Int`, `Float64`, `Complex`, `Rational`,
-`DateTime`, `Date` and `Time`.
+`Missing`, `DateTime`, `Date` and `Time`.
 
 # Code Example
 ```jldoctest
@@ -200,7 +200,7 @@ The result will be a (heterogeneous) array of default type `Any`.
 Other (abstract) types for the array elements could be defined.
 If data is empty, a `0×0 Array{T,2}` is returned.
 If `dfheader=true` instead of `header=true` is used, the returned tuple
-(data::Array{T,2}, header::Array{Symbol,1}) fits for DataFrame.
+(data::Array{T,2}, header::Array{Symbol,1}) fits for `DataFrames`.
 
 # Additional Keyword Arguments
 
@@ -209,7 +209,7 @@ If `dfheader=true` instead of `header=true` is used, the returned tuple
 * `dtfs=\"yyyy-mm-ddTHH:MM:SS.s\"`: Format string for DateTime parsing
 * `dfs=\"yyyy-mm-dd\"`: Format string for Date parsing
 * `locale=\"english\"`: Language for parsing dates names
-* `dfheader=false`: Return header in DataFrame format if `true`
+* `dfheader=false`: Return header in DataFrames format if `true`
 * `missingstring=\"na\"`: How missing values are represented
 
 Find more information about `readdlm()` functionality and (keyword) arguments -
@@ -338,7 +338,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
 
     if isa(z, Tuple)
          y, h = z
-         if dfheader == true # format header to DataFrame format
+         if dfheader == true # format header to DataFrames format
              h = Symbol.(reshape(h, :))
              z = (y, h)
          end
@@ -356,9 +356,9 @@ function readdlm2auto(input, dlm, T, eol, auto;
                 try y[i] = DateTime(y[i], dtdf) catch; end
             elseif doparsedate && occursin(rd, y[i]) # parse Date
                 try y[i] = Date(y[i], ddf) catch; end
-            elseif doparsemissing && y[i] == missingstring
+            elseif doparsemissing && y[i] == missingstring # parse Missing
                 try y[i] = missing catch; end
-            elseif doparsenothing && y[i] == "nothing"
+            elseif doparsenothing && y[i] == "nothing" # parse Nothing
                 try y[i] = nothing catch; end
             else # parse Time, Complex and Rational
                 try y[i] = parseothers(y[i], doparsetime, doparsecomplex, doparserational) catch; end
@@ -514,8 +514,6 @@ function writedlm2auto(f, a, dlm;
 
     if isa(a, Union{Nothing, Missing, Number, TimeType})
          a = [a]  # create 1 element Array
-    #elseif a == nothing
-    #    a = [nothing]
     end
 
     if isa(a, AbstractArray)
