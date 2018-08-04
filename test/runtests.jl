@@ -1039,7 +1039,7 @@ end
     rm("test.csv")
 
     # `writedlm2()` And `readdlm2()` With `Union{Missing, Float64}`
-    a = Union{Missing, Float64}[1.1 NaN;missing 2.2;1/0 -1/0]
+    a = Union{Missing, Float64}[1.1 0/0;missing 2.2;1/0 -1/0]
     writedlm2("test.csv", a; missingstring="???")     # use "???" for missing data
     @test read("test.csv", String) == "1,1;NaN\n???;2,2\nInf;-Inf\n"
     b = readdlm2("test.csv", Union{Missing, Float64}; missingstring="???")

@@ -12,20 +12,20 @@
 * This documentation is for Julia 0.7 ([-> Julia 0.6](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md)).
 
 ### Installation
-This package is registered and can be installed within the [`Pkg3` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg3/); type `]`in the REPL and then:
+This package is registered and can be installed within the [`Pkg` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg/): Type `]` in the REPL and then:
 ```
 pkg> add ReadWriteDlm2
 ```
 
 ### Basic Example([-> more](#more-examples)): How To Use `ReadWriteDlm2`
 ```
-julia> using ReadWriteDlm2, Dates              # activate modules ReadWriteDlm2 und Dates
+julia> using ReadWriteDlm2, Dates               # activate modules ReadWriteDlm2 und Dates
 
-julia> a = Any[1 1.2; "text" Date(2017)];      # create array with: Int, Float64, String and Date type
+julia> a = Any[1 1.2; "text" Date(2017,1,1)];   # create array with: Int, Float64, String and Date type
 
-julia> writedlm2("test.csv", a)                # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+julia> writedlm2("test.csv", a)                 # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
 
-julia> readdlm2("test.csv")                    # read `CSV` data: All four types are parsed correctly!
+julia> readdlm2("test.csv")                     # read `CSV` data: All four types are parsed correctly!
 2×2 Array{Any,2}:
  1        1.2
   "text"   2017-01-01
@@ -46,8 +46,8 @@ The columns are separated by `';'`, another `delim` can be defined.
 Pre-processing of `source` with regex substitution changes the decimal marks
 from `d,d` to `d.d`. For default `rs` the keyword argument `decimal=','` sets
 the decimal Char in the `r`-string of `rs`. When a special regex substitution
-tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used. See 
-[-> example](#writedlm2-and-readdlm2-with-special-decimal). Pre-processing
+tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used ( 
+[-> Example](#writedlm2-and-readdlm2-with-special-decimal)). Pre-processing
 can be switched off with: `rs=()`.
 
 In addition to stdlib `readdlm()`, data is also parsed for `Dates` formats (ISO),
@@ -64,7 +64,7 @@ tuple for DataFrames `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
 * `rs=(r"(\d),(\d)", s"\1.\2")`: [Regex](https://docs.julialang.org/en/latest/manual/strings/#Regular-Expressions-1) (r,s)-tuple, the default change d,d to d.d if `decimal=','`
-* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/dates/Dates/#Dates.DateFormat) for DateTime parsing
+* `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/Dates/#Dates.DateFormat) for DateTime parsing
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/Dates/#Dates.DateFormat) for Date parsing
 * `locale="english"`: Language for parsing dates names, default is english
 * `dfheader=false`: Return header in format for DataFrames if `true`
@@ -169,7 +169,7 @@ julia> readdlm2("test.csv", Float64; rs=(r"(\d)€(\d)", s"\1.\2"))    # b) more
 ```
 julia> using ReadWriteDlm2
 
-julia> a = Union{Missing, Float64}[1.1 NaN;missing 2.2;1/0 -1/0]
+julia> a = Union{Missing, Float64}[1.1 0/0;missing 2.2;1/0 -1/0]
 3×2 Array{Union{Missing, Float64},2}:
    1.1        NaN
     missing     2.2

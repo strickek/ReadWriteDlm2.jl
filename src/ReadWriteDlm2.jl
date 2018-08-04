@@ -217,16 +217,16 @@ Find more information about `readdlm()` functionality and (keyword) arguments -
 
 # Code Example
 ```jldoctest
-julia> using ReadWriteDlm2, Dates
+julia> using ReadWriteDlm2
 
-julia> A = Any[1 1.2; "text" Date(2017)];
+julia> A = Any[1 1.2; "text" missing];
 
 julia> writedlm2("test.csv", A)
 
 julia> readdlm2("test.csv")
 2×2 Array{Any,2}:
  1        1.2
-  "text"   2017-01-01
+  "text"   missing
 ```
 """
 readdlm2(input; opts...) =
