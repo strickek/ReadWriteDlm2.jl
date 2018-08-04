@@ -1017,7 +1017,7 @@ end
 
     # README.md - Basic Example
 
-    a = Any[1 1.2; "text" Date(2017)]       # create array with: Int, Float64, String and Date type
+    a = Any[1 1.2; "text" Date(2017,1,1)]   # create array with: Int, Float64, String and Date type
     writedlm2("test.csv", a)                # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
     @test readdlm2("test.csv") == a         # read `CSV` data: All four types are parsed correctly!
     rm("test.csv")
