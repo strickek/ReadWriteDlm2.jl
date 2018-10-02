@@ -224,7 +224,7 @@ julia> readdlm2("test.csv"; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", local
 #### `readdlm2()` And `DataFrames` (With Header)
 See [-> `DataFrames`](https://github.com/JuliaData/DataFrames.jl) for installation and more information.
 ```
-julia> using ReadWriteDlm2, Dates, DataFrames
+julia> using ReadWriteDlm2, Dates, DataFrames, Statistics
 
 julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
 3×2 Array{Any,2}:
@@ -234,10 +234,11 @@ julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
 
 julia> writedlm2("test.csv", a)  # "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
 
-julia> df = DataFrame(readdlm2("test.csv"; dfheader=true))
+julia> df = DataFrame(readdlm2("test.csv"; dfheader=true)...)
 2×2 DataFrame
 │ Row │ date       │ value │
-������������������������������������������
+│     │ Any        │ Any   │
+├─────┼────────────┼───────┤
 │ 1   │ 2017-01-01 │ 1.4   │
 │ 2   │ 2017-01-02 │ 1.8   │
 
