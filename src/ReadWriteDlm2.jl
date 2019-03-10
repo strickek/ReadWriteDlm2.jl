@@ -1,4 +1,4 @@
-# Stricker Klaus 2018 - License is MIT: http://julialang.org/license
+# Stricker Klaus 2019 - License is MIT: http://julialang.org/license
 # ReadWriteDlm2 - https://github.com/strickek/ReadWriteDlm2.jl
 
 """
