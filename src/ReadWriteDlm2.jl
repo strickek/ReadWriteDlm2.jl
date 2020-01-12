@@ -61,7 +61,7 @@ function dfregex(df::AbstractString, locale::AbstractString="english")
         ((i > 1) && (df[(i - 1)] == '\\')) ? string(df[i]) :
         ((df[i] == 'y') && (repeat_count < 5) && !repeat_next) ? "(?<y>\\d{1,4})" :
         ((df[i] == 'y') && (repeat_count > 4) && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
-        ((df[i] == 'Y') && (repeat_count < 5) && !repeat_next) ? "(?<y>\\d{1,4})" :   # new
+        ((df[i] == 'Y') && (repeat_count < 5) && !repeat_next) ? "(?<y>\\d{1,4})" :
         ((df[i] == 'Y') && (repeat_count > 4) && !repeat_next) ? "(?<y>\\d{1,$repeat_count})" :
         ((df[i] == 'm') && (repeat_count == 1) && !repeat_next) ? "(?<m>0?[1-9]|1[012])" :
         ((df[i] == 'm') && (repeat_count == 2) && !repeat_next) ? "(?<m>0[1-9]|1[012])" :
@@ -191,7 +191,7 @@ the decimal Char in the `r`-string of `rs`. When a special regex substitution
 tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used.
 Pre-processing can be switched off with: `rs=()`.
 
-In addition to stdlib readdlm(), data is also parsed for `Dates` formats (ISO),
+In addition to stdlib readdlm(), data is also parsed for `Dates` formats,
 the `Time` format `\"HH:MM[:SS[.s{1,9}]]\"` and for complex and rational numbers.
 To deactivate parsing dates/time set: `dfs=\"\", dtfs=\"\"`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
