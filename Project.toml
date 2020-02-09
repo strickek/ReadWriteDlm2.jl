@@ -1,0 +1,19 @@
+name = "ReadWriteDlm2"
+uuid = "670cb119-9e6b-5dfa-81ab-9d3c314fe86c"
+version = "0.7.2"
+
+[deps]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+
+[compat]
+julia = "≥ 0.7.0"
+
+[extras]
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Dates", "DelimitedFiles", "Test", "Random"]
