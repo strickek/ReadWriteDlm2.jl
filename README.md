@@ -45,7 +45,7 @@ The columns are separated by `';'`, another `delim` can be defined.
 Pre-processing of `source` with regex substitution changes the decimal marks
 from `d,d` to `d.d`. For default `rs` the keyword argument `decimal=','` sets
 the decimal Char in the `r`-string of `rs`. When a special regex substitution
-tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used ( 
+tuple `rs=(r.., s..)` is defined, the argument `decimal` is not used (
 [-> Example](#writedlm2-and-readdlm2-with-special-decimal)). Pre-processing
 can be switched off with: `rs=()`.
 
@@ -103,7 +103,7 @@ In `writedlm2()` the output format for `Date` and `DateTime` data can be
 defined with format strings. Defaults are the ISO formats. Day (`E`, `e`) and
 month (`U`, `u`) names are written in the `locale` language. For writing
 `Complex` numbers the imaginary component suffix can be selected with the
-`imsuffix=` keyword argument. 
+`imsuffix=` keyword argument.
 
 ### Additional Keyword Arguments `writedlm2()`
 * `decimal=','`: Character for writing decimal marks, default is a comma
@@ -136,7 +136,7 @@ julia> using ReadWriteDlm2
 
 julia> a = Any[1 complex(1.5,2.7);1.0 1//3];   # create array with: Int, Complex, Float64 and Rational type
 
-julia> writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+julia> writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5+2.7im\n1.0,1//3\n"
 
 julia> readcsv2("test.csv")                    # read CSV data: All four types are parsed correctly!
 2×2 Array{Any,2}:
