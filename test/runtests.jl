@@ -572,7 +572,7 @@ end
     # Test Complex and Rational parsing
     a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "-1 - 2im;1,2 - 2,0im;1,0e9 + 3,0e19im;1//3;-1//5;1//2;1//0;0//1\n"
+    @test read("test.csv", String) == "-1-2im;1,2-2,0im;1,0e9+3,0e19im;1//3;-1//5;1//2;1//0;0//1\n"
     b = readdlm2("test.csv", Any)
     rm("test.csv")
     @test isequaldlm(a, b, Any)
