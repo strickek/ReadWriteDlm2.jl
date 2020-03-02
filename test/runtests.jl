@@ -586,7 +586,7 @@ end
     # Test Complex and Rational parsing - decimal = '.', delimiter = \t
     a = Any[complex(-1,-2) complex(1.2,-2) complex(1e9,3e19) 1//3 -1//5 -2//-4 1//-0 -0//1]
     writedlm2("test.csv", a, '\t', decimal='.')
-    @test read("test.csv", String) == "-1 - 2im\t1.2 - 2.0im\t1.0e9 + 3.0e19im\t1//3\t-1//5\t1//2\t1//0\t0//1\n"
+    @test read("test.csv", String) == "-1-2im\t1.2-2.0im\t1.0e9+3.0e19im\t1//3\t-1//5\t1//2\t1//0\t0//1\n"
     b = readdlm2("test.csv",'\t', Any, decimal='.')
     rm("test.csv")
     @test isequaldlm(a, b, Any)
@@ -600,7 +600,7 @@ end
     1;2017-01-01
     2;2018-01-01T00:00:00.0
     3;23:54:45,123456078
-    4;1,5e10 + 5,0im
+    4;1,5e10+5,0im
     5;300//1
     6;1,5e10
     """
@@ -618,7 +618,7 @@ end
     1\t2017-01-01
     2\t2018-01-01T00:00:00.0
     3\t23:54:45.123456078
-    4\t1.5e10 + 5.0im
+    4\t1.5e10+5.0im
     5\t300//1
     6\t1.5e10
     """
@@ -630,7 +630,7 @@ end
     # Test Complex Array read and write
     a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
+    @test read("test.csv", String) == "-1-2im;1,2-2,0im;-1,0e9+3,0e-19im\n"
     b = readdlm2("test.csv", Complex)
     rm("test.csv")
     @test a == b
@@ -638,7 +638,7 @@ end
 
     a = Complex[complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
     writedlm2("test.csv", a, imsuffix="i")
-    @test read("test.csv", String) == "-1 - 2i;1,2 - 2,0i;-1,0e9 + 3,0e-19i\n"
+    @test read("test.csv", String) == "-1-2i;1,2-2,0i;-1,0e9+3,0e-19i\n"
     b = readdlm2("test.csv", Complex)
     rm("test.csv")
     @test a == b
@@ -646,7 +646,7 @@ end
 
     a = Any["test" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "test;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+    @test read("test.csv", String) == "test;test2\n-1-2im;1,2-2,0im\n-1,0e9+3,0e-19im;1+115im\n"
     b = readdlm2("test.csv", Any)
     rm("test.csv")
     @test a == b
@@ -654,7 +654,7 @@ end
 
     a = Any["test1" "test2";complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "test1;test2\n-1 - 2im;1,2 - 2,0im\n-1,0e9 + 3,0e-19im;1 + 115im\n"
+    @test read("test.csv", String) == "test1;test2\n-1-2im;1,2-2,0im\n-1,0e9+3,0e-19im;1+115im\n"
     b, h = readdlm2("test.csv", Complex, header=true)
     rm("test.csv")
     @test b == Complex[complex(-1,-2) complex(1.2,-2);complex(-1e9,3e-19) complex(1,115)]
@@ -662,7 +662,7 @@ end
 
     a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
     writedlm2("test.csv", a, imsuffix="i")
-    @test read("test.csv", String) == "-1//3 - 7//5*i;1//1 - 1//3*i;-0,5 + 3,0e-19i\n"
+    @test read("test.csv", String) == "-1//3-7//5*i;1//1-1//3*i;-0,5+3,0e-19i\n"
     b = readdlm2("test.csv", Complex)
     rm("test.csv")
     @test a == b
@@ -670,7 +670,7 @@ end
 
     a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "-1//3 - 7//5*im;1//1 - 1//3*im;-0,5 + 3,0e-19im\n"
+    @test read("test.csv", String) == "-1//3-7//5*im;1//1-1//3*im;-0,5+3,0e-19im\n"
     b = readdlm2("test.csv", Complex)
     rm("test.csv")
     @test a == b
@@ -779,7 +779,7 @@ end
     1,2017-01-01
     2,2018-01-01T00:00:00.0
     3,23:54:45.123456078
-    4,1.5e10 + 5.0im
+    4,1.5e10+5.0im
     5,300//1
     6,1.5e10
     """
@@ -813,7 +813,7 @@ end
     # Test readcsv2/writecsv2 with Complex - Rationals
     a = Complex[complex(-1//3,-7//5) complex(1,-1//3) complex(-1//2,3e-19)]
     writecsv2("test.csv", a)
-    @test read("test.csv", String) == "-1//3 - 7//5*im,1//1 - 1//3*im,-0.5 + 3.0e-19im\n"
+    @test read("test.csv", String) == "-1//3-7//5*im,1//1-1//3*im,-0.5+3.0e-19im\n"
     b = readcsv2("test.csv", Complex)
     rm("test.csv")
     @test a == b
@@ -896,7 +896,7 @@ end
     b = readcsv2("test.csv")
     rm("test.csv")
     @test isequal(a, b)
-    
+
 end
 
 @testset "random data" begin
@@ -933,7 +933,7 @@ end
     # Abstract Number
     a = Number[1 1.1 1//3 complex(-1,-2) complex(1.2,-2) complex(-1e9,3e-19)]
     writedlm2("test.csv", a)
-    @test read("test.csv", String) == "1;1,1;1//3;-1 - 2im;1,2 - 2,0im;-1,0e9 + 3,0e-19im\n"
+    @test read("test.csv", String) == "1;1,1;1//3;-1-2im;1,2-2,0im;-1,0e9+3,0e-19im\n"
     b = readdlm2("test.csv", Number)
     rm("test.csv")
     @test a == b
@@ -1027,7 +1027,7 @@ end
 
     # `writecsv2()` And `readcsv2()`
     a = Any[1 complex(1.5,2.7);1.0 1//3]    # create array with: Int, Complex, Float64 and Rational type
-    writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5 + 2.7im\n1.0,1//3\n"
+    writecsv2("test.csv", a)                # test.csv(decimal dot): "1,1.5+2.7im\n1.0,1//3\n"
     @test readcsv2("test.csv")  == a        # read CSV data: All four types are parsed correctly!
     rm("test.csv")
 

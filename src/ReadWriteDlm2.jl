@@ -286,10 +286,10 @@ function readdlm2auto(input, dlm, T, eol, auto;
     ((typeintersect(Date, T)) == Union{}) && (doparsedate = false)
     doparsetime = ((doparsedatetime && doparsedate) || ((Time <: T) && !(Any <:T)))
     T <: Union{AbstractFloat, AbstractString, Char} && (T2 = T; convertarray = false)
-    ((typeintersect(Complex, T)) == Union{}) && (doparsecomplex = false)    
+    ((typeintersect(Complex, T)) == Union{}) && (doparsecomplex = false)
     ((typeintersect(Rational, T)) == Union{}) && (doparserational = false)
     Missing <: T && (doparsemissing = true)
-    Nothing <: T && (doparsenothing = true)    
+    Nothing <: T && (doparsenothing = true)
     (Any <: T) && (convertarray = false)
 
 
@@ -345,7 +345,7 @@ function readdlm2auto(input, dlm, T, eol, auto;
     else
          y = z
     end
-    
+
     # Formats, Regex for Date/DateTime parsing
     doparsedatetime && (dtdf = DateFormat(dtfs, locale); rdt = dfregex(dtfs, locale))
     doparsedate && (ddf = DateFormat(dfs, locale); rd = dfregex(dfs, locale))
@@ -410,6 +410,7 @@ Convert Complex number to String, optional change of decimal and/or imsuffix.
 """
 function complexformat(a, decimal, imsuffix)
     a = string(a)
+    a = replace(a, " " => "" )  #"1 + 3im" => "1+3im"
     (imsuffix != "im") && (a = string(split(a, "im")[1], imsuffix))
     (decimal != '.') && (a = replace(a, '.' => decimal))
     return a
@@ -430,7 +431,7 @@ julia> B = Any[1 complex(1.5,2.7);1.0 1//3];
 julia> writecsv2("test.csv", B)
 
 julia> read("test.csv", String)
-"1,1.5 + 2.7im\\n1.0,1//3\\n"
+"1,1.5+2.7im\\n1.0,1//3\\n"
 ```
 """
 writecsv2(f, a; opts...) =
@@ -522,7 +523,6 @@ function writedlm2auto(f, a, dlm;
         fd = !isempty(dfs)    # Bool: format Date
         ddf = DateFormat(dfs, locale)
         ft = (decimal != '.')   # Bool: format Time (change decimal)
-        fc = ((imsuffix != "im") || (decimal != '.')) # Bool: format Complex
 
         # create b for manipulation/write - keep a unchanged
         b = similar(a, Any)
@@ -534,7 +534,7 @@ function writedlm2auto(f, a, dlm;
             isa(a[i], DateTime) && fdt ? Dates.format(a[i], dtdf) :
             isa(a[i], Date) && fd ? Dates.format(a[i], ddf) :
             isa(a[i], Time) && ft ? timeformat(a[i], decimal) :
-            isa(a[i], Complex) && fc ? complexformat(a[i], decimal, imsuffix) :
+            isa(a[i], Complex) ? complexformat(a[i], decimal, imsuffix) :
             string(a[i])
         end
         else  # a is not a Number, TimeType or Array -> no preprocessing
