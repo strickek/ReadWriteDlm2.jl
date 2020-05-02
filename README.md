@@ -2,13 +2,13 @@
 ### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex, Missing and Rational
 [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Date`, `DateTime`, `Time`, `Complex`, `Rational`, `Missing` types and special decimal marks.
+`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Dates` formats, `Complex`, `Rational`, `Missing` types and special decimal marks. `ReadWriteDlm2` is also supporting the `Tables.jl` interface.
 
 * For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`.
 
 * The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg?uselang=en#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`.
 
-* This documentation is for Julia v0.7 and v1.* ([-> Julia 0.6](https://github.com/strickek/ReadWriteDlm2.jl/blob/v0.6.2/README.md)).
+* Alternative: Package `CSV` (supports also special decimal marks)
 
 ### Installation
 This package is registered and can be installed within the [`Pkg` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg/): Type `]` in the REPL and then:
@@ -18,16 +18,26 @@ pkg> add ReadWriteDlm2
 
 ### Basic Example([-> more](#more-examples)): How To Use `ReadWriteDlm2`
 ```
-julia> using ReadWriteDlm2, Dates               # activate modules ReadWriteDlm2 und Dates
+julia> using ReadWriteDlm2, Dates           # activate modules ReadWriteDlm2, Dates
 
-julia> a = Any[1 1.2; "text" Date(2017,1,1)];   # create array with: Int, Float64, String and Date type
+julia> a = ["text" 1.2; Date(2017,1,1) 1];  # create array with: String, Date, Float64, and Int eltype
 
-julia> writedlm2("test.csv", a)                 # test.csv(decimal comma): "1;1,2\ntext;2017-01-01\n"
+julia> writedlm2("test.csv", a)             # test.csv(decimal comma): "text;1,2\n2017-01-01;1\n"
 
-julia> readdlm2("test.csv")                     # read `CSV` data: All four types are parsed correctly!
+julia> readdlm2("test.csv")                 # read `CSV` data: All four eltypes are parsed correctly!
 2×2 Array{Any,2}:
- 1        1.2
-  "text"   2017-01-01
+ "text"      1.2
+ 2017-01-01  1
+
+julia> using DataFrames                     # Tables interface: auto Types for DataFrame columns
+
+julia> DataFrame(readdlm2("test.csv", tables=true))
+2×2 DataFrame
+│ Row │ Column1    │ Column2 │
+│     │ Any        │ Real    │
+├─────┼────────────┼─────────┤
+│ 1   │ text       │ 1.2     │
+│ 2   │ 2017-01-01 │ 1       │
 ```
 
 ## Function `readdlm2()`
@@ -54,11 +64,14 @@ the`Time` format `HH:MM[:SS[.s{1,9}]]` and for complex and rational numbers.
 To deactivate parsing dates/time set: `dfs="", dtfs=""`.
 `locale` defines the language of day (`E`, `e`) and month (`U`, `u`) names.
 
-The result will be a (heterogeneous) array of default element type `Any`.
-Other (abstract) types for the array elements could be defined.
-If data is empty, a `0×0 Array{T,2}` is returned. If `dfheader=true` instead of
-`header=true`, the first row of data will be read as header and returned in a
-tuple for DataFrames `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
+The result will be a (heterogeneous) array of default element type `Any`. If
+`header=true` it will be a tuple containing the data array and a vector for
+the columnnames. Other (abstract) types for the data array elements could be
+defined. If data is empty, a `0×0 Array{T,2}` is returned.
+
+With `tables=true`[, `header=true`] option[s] a `Tables` interface compatible
+`MatrixTable` with individual column types is returned, which for example can
+be used as Argument for `DataFrame()`.
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one
@@ -66,7 +79,8 @@ tuple for DataFrames `(data_cells::Array{T,2}, header_cells::Array{Symbol,1})`.
 * `dtfs="yyyy-mm-ddTHH:MM:SS.s"`: [Format string](https://docs.julialang.org/en/latest/stdlib/Dates/#Dates.DateFormat) for DateTime parsing
 * `dfs="yyyy-mm-dd"`: [Format string](https://docs.julialang.org/en/latest/stdlib/Dates/#Dates.DateFormat) for Date parsing
 * `locale="english"`: Language for parsing dates names, default is english
-* `dfheader=false`: Return header in format for DataFrames if `true`
+* `tables=false`: Return `Tables` interface compatible MatrixTable if `true`
+* `dfheader=false`: `dfheader=true` is shortform for `tables=true, header=true`
 * `missingstring="na"`: How missing values are represented, default is `"na"`
 
 ### Function `readcsv2()`
@@ -80,16 +94,18 @@ More information about Base functionality and (keyword) arguments - which are al
 supported by `readdlm2()` and `readcsv2()` - is available in the [documentation for readdlm()](https://docs.julialang.org/en/latest/stdlib/DelimitedFiles/#DelimitedFiles.readdlm-Tuple{Any,AbstractChar,Type,AbstractChar}).
 
 ### Compare Default Functionality `readdlm()` - `readdlm2()` - `readcsv2()`
-| Module         | Function               | Delimiter  | Dec. Mark | Element Type | Extended Parsing  |
-|:-------------- |:-----------------------|:----------:|:---------:|:-------------|:------------------|
-| DelimitedFiles | `readdlm()`            | `' '`      | `'.'`     | Float64/Any  | No (String)       |
-| ReadWriteDlm2  | `readdlm2()`           | `';'`      | `','`     | Any          | Yes               |
-| ReadWriteDlm2  | `readcsv2()`           | `','`      | `'.'`     | Any          | Yes               |
+| Module         | Function                    | Delimiter  | Dec. Mark | Element Type | Ext. Parsing |
+|:-------------- |:----------------------------|:----------:|:---------:|:-------------|:-------------|
+| DelimitedFiles | `readdlm()`                 | `' '`      | `'.'`     | Float64/Any  | No (String)  |
+| ReadWriteDlm2  | `readdlm2()`                | `';'`      | `','`     | Any          | Yes          |
+| ReadWriteDlm2  | `readcsv2()`                | `','`      | `'.'`     | Any          | Yes          |
+| ReadWriteDlm2  | `readdlm2(opt:tables=true)` | `';'`      | `','`     | Column spec. | Yes, + col T |
+| ReadWriteDlm2  | `readcsv2(opt:tables=true)` | `','`      | `'.'`     | Column spec. | Yes, + col T |
 
 ## Function `writedlm2()`
-Write `A` (a vector, matrix, or an iterable collection of iterable rows) as text to `f`
-(either a filename AbstractString or an IO stream). The columns are separated by `';'`,
-another `delim` (Char or String) can be defined.
+Write `A` (a vector, matrix, or an iterable collection of iterable rows, a
+`Tables` source) as text to `f` (either a filename or an IO stream). The columns
+are separated by `';'`, another `delim` (Char or String) can be defined.
 
     writedlm2(f, A; options...)
     writedlm2(f, A, delim; options...)
@@ -125,7 +141,6 @@ Equivalent to `writedlm2()` with fixed delimiter `','` and `decimal='.'`.
 | DelimitedFiles  | `writedlm()`       | `'\t'`    | `'.'`        |
 | ReadWriteDlm2   | `writedlm2()`      | `';'`     | `','`        |
 | ReadWriteDlm2   | `writecsv2()`      | `','`     | `'.'`        |
-
 
 
 ## More Examples
@@ -220,27 +235,70 @@ julia> readdlm2("test.csv"; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", local
   "text"
 ```
 
-#### `readdlm2()` And `DataFrames` (With Header)
+#### `Tables`-Interface Example With `DataFrames`
 See [-> `DataFrames`](https://github.com/JuliaData/DataFrames.jl) for installation and more information.
 ```
 julia> using ReadWriteDlm2, Dates, DataFrames, Statistics
+```
+##### Write CSV: `Tables & DataFrames` compared with `Array`
+```
+julia> a = ["date" "value_1" "value_2";              # Create Array `a`
+            Date(2017,1,1) 1.4 2;
+            Date(2017,1,2) 1.8 3;
+            nothing missing 4]
+4×3 Array{Any,2}:
+ "date"       "value_1"   "value_2"
+ 2017-01-01  1.4         2
+ 2017-01-02  1.8         3
+ nothing      missing    4
 
-julia> a = ["date" "value"; Date(2017,1,1) 1.4; Date(2017,1,2) 1.8]
-3×2 Array{Any,2}:
- "date"       "value"
- 2017-01-01  1.4
- 2017-01-02  1.8
+julia> df = DataFrame(                                # Create DataFrame `df`
+    date = [Date(2017,1,1), Date(2017,1,2), nothing],
+    value_1 = [1.4, 1.8, missing],
+    value_2 = [2, 3, 4]
+    )
+3×3 DataFrame
+│ Row │ date       │ value_1  │ value_2 │
+│     │ Union…     │ Float64⍰ │ Int64   │
+├─────┼────────────┼──────────┼─────────┤
+│ 1   │ 2017-01-01 │ 1.4      │ 2       │
+│ 2   │ 2017-01-02 │ 1.8      │ 3       │
+│ 3   │            │ missing  │ 4       │
 
-julia> writedlm2("test.csv", a)  # "date;value\n2017-01-01;1,4\n2017-01-02;1,8\n"
+julia> writedlm2("testa_com.csv", a)     # decimal comma: write array a
 
-julia> df = DataFrame(readdlm2("test.csv"; dfheader=true)...)
-2×2 DataFrame
-│ Row │ date       │ value │
-│     │ Any        │ Any   │
-├─────┼────────────┼───────┤
-│ 1   │ 2017-01-01 │ 1.4   │
-│ 2   │ 2017-01-02 │ 1.8   │
+julia> writedlm2("testdf_com.csv", df)   # decimal comma: write DataFrame df
 
-julia> mean(df[:value])
+julia> read("testa_com.csv", String) ==  # decimal comma: a.csv == df.csv
+       read("testdf_com.csv", String) ==
+       "date;value_1;value_2\n2017-01-01;1,4;2\n2017-01-02;1,8;3\nnothing;na;4\n"
+true
+
+julia> writecsv2("testa_dot.csv", a)     # decimal dot: write array a
+
+julia> writecsv2("testdf_dot.csv", df)   # decimal dot: write DataFrame df
+
+julia> read("testa_dot.csv", String) ==  # decimal dot: a.csv == df.csv
+       read("testdf_dot.csv", String) ==
+       "date,value_1,value_2\n2017-01-01,1.4,2\n2017-01-02,1.8,3\nnothing,na,4\n"
+true
+
+```
+##### Read CSV: Using `Tables` interface and create a `DataFrame`
+```
+
+julia> df2 = DataFrame(readdlm2("testdf_com.csv", header=true, tables=true))
+3×3 DataFrame
+│ Row │ date       │ value_1  │ value_2 │
+│     │ Union…     │ Float64⍰ │ Int64   │
+├─────┼────────────┼──────────┼─────────┤
+│ 1   │ 2017-01-01 │ 1.4      │ 2       │
+│ 2   │ 2017-01-02 │ 1.8      │ 3       │
+│ 3   │            │ missing  │ 4       │
+
+julia> mean(skipmissing(df2[!, :value_1]))
 1.6
+
+julia> mean(df2[!, :value_2])
+3.0
 ```
