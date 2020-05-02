@@ -50,7 +50,7 @@ With given `elt` T=elt, otherwise T is the union of element types in matrix.
 function mttoarray(m::ReadWriteDlm2.MatrixTable; elt::Type=Union{})
     ma = ReadWriteDlm2.matrix(m)
     nc = length(ma)
-    nr = length(ma[begin])
+    nr = length(ma[1])
     elt == Union{} ? T1 = Any : T1 = elt
     a = Array{T1}(undef, (nr,nc))
     T = elt
@@ -87,7 +87,7 @@ Tables.rows(m::MatrixTable) = m
 # the iteration interface, at a minimum, requires `eltype`, `length`, and `iterate`
 # for `MatrixTable` `eltype`, we're going to provide a custom row type
 Base.eltype(m::MatrixTable) = MatrixRow
-Base.length(m::MatrixTable) = length(matrix(m)[begin])
+Base.length(m::MatrixTable) = length(matrix(m)[1])
 Base.iterate(m::MatrixTable, st=1) = st > length(m) ? nothing : (MatrixRow(st, m), st + 1)
 
 # a custom row type; acts as a "view" into a row of an AbstractMatrix
