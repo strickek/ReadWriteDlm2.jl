@@ -17,7 +17,7 @@ end
 
     timeformat(a, decimal::AbstractChar)
 
-Convert Time to String, optional with change of decimal mark for secounds.
+Convert Time to String, optional with change of decimal mark for seconds.
 """
 function timeformat(a, decimal)
     a = string(a)
