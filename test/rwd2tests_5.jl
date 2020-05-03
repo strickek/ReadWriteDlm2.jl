@@ -59,6 +59,44 @@ end
     @test map(x->x.Column1, tbl2) == [1.0, 2.0, 3.0]
 end
 
+@testset "5_matrix2  Tabl" begin
+    mat = Any[1 4.0 true "a"; 2 5.0 false "b"; 3 6.0 true "c"]
+    # first, create a MatrixTable from our matrix input
+    mattbl = Tables.table(mat)
+    # test that the MatrixTable `istable`
+    @test Tables.istable(typeof(mattbl))
+    # ReadWriteDlm2.matrix2: Matrix{Any}, first row Symbol colnames
+    ma2 = ReadWriteDlm2.matrix2(mattbl)
+    # test that it defines row access
+    @test Tables.rowaccess(typeof(mattbl))
+    @test Tables.rows(mattbl) === mattbl
+    # test that it defines column access
+    @test Tables.columnaccess(typeof(mattbl))
+    @test Tables.columns(mattbl) === mattbl
+    # test that data fit
+    @test mattbl.Column1 == [1, 2, 3]
+    @test mattbl.Column2 == [4.0, 5.0, 6.0]
+    @test mattbl.Column3 == [true, false, true]
+    @test mattbl.Column4 == ["a", "b", "c"]
+    @test ma2[2:end, 1] == [1, 2, 3]
+    @test ma2[2:end, 2] == [4.0, 5.0, 6.0]
+    @test ma2[2:end, 3] == [true, false, true]
+    @test ma2[2:end, 4] == ["a", "b", "c"]
+    @test ma2[1, :] == [:Column1, :Column2, :Column3, :Column4]
+    # test our `Tables.AbstractColumns` interface methods
+    @test Tables.getcolumn(mattbl, :Column1) == [1, 2, 3]
+    @test Tables.getcolumn(mattbl, 1) == [1, 2, 3]
+    @test Tables.columnnames(mattbl) == [:Column1, :Column2, :Column3, :Column4]
+    # now let's iterate our MatrixTable to get our first MatrixRow
+    matrow = first(mattbl)
+    @test eltype(mattbl) == typeof(matrow)
+    # now we can test our `Tables.AbstractRow` interface methods on our MatrixRow
+    @test matrow.Column1 == 1
+    @test Tables.getcolumn(matrow, :Column1) == 1
+    @test Tables.getcolumn(matrow, 1) == 1
+    @test propertynames(mattbl) == propertynames(matrow) == [:Column1, :Column2, :Column3, :Column4]
+end
+
 @testset "5_Speci  Tables" begin
     mat = [1 4.0 "7"; 2 5.0 "8"; 3 6.0 "9"]
     ct = [Int64, Float64, String]
@@ -134,4 +172,5 @@ end
                     tables=true, header=true)
     aro2 = ReadWriteDlm2.mttoarray(rdlm2)
     @test isequal(aro2, mat)
+    rm("test.csv")
 end

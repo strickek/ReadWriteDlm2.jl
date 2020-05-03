@@ -2,6 +2,24 @@
 # ReadWriteDlm2 - rwd2_tables.jl - https://github.com/strickek/ReadWriteDlm2.jl
 
 """
+    ReadWriteDlm2.matrix2(table)
+Materialize any table source input as a `Matrix{Any}`.
+Column names - in Symbol type - are written in first row.
+"""
+function matrix2(table)
+    cols = Tables.columns(table)
+    cnames = Tables.columnnames(table)
+    nr = length(table) + 1
+    nc = length(cnames)
+    matrix = Matrix{Any}(undef, nr, nc)
+    for (i, col) in enumerate(Tables.Columns(cols))
+        matrix[1, i] = cnames[i]
+        matrix[2:end, i] = col
+    end
+    return matrix
+end
+
+"""
     vecofvec(a::Matrix, ct::Vector{Type})
 Take the columns of Matrix `a`, convert each column to `Array{T,1} where T`
 (`ct` provides Type), and return the columns as `Vector{Array{T,1} where T}`.

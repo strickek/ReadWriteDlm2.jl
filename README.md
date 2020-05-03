@@ -1,14 +1,14 @@
 # ReadWriteDlm2
-### CSV IO Supporting Decimal Comma, Date, DateTime, Time, Complex, Missing and Rational
+### CSV IO Supports Decimal Comma, Date, DateTime, Time, Complex, Missing and Rational
 [![Build Status](https://travis-ci.org/strickek/ReadWriteDlm2.jl.svg?branch=master)](https://travis-ci.org/strickek/ReadWriteDlm2.jl)   [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
 
-`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Dates` formats, `Complex`, `Rational`, `Missing` types and special decimal marks. `ReadWriteDlm2` is also supporting the `Tables.jl` interface.
+`ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Dates` formats, `Complex`, `Rational`, `Missing` types and special decimal marks. `ReadWriteDlm2` supports the `Tables.jl` interface.
 
 * For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the respective defaults: Delimiter is `','` (fixed) and `decimal='.'`.
 
 * The basic idea of `readdlm2()` and `writedlm2()` is to support the [decimal comma countries](https://commons.wikimedia.org/wiki/File:DecimalSeparator.svg?uselang=en#file). These functions use `';'` as default delimiter and `','` as default decimal mark. "Decimal dot" users of these functions need to define `decimal='.'`.
 
-* Alternative: Package `CSV` (supports also special decimal marks)
+* Alternative package: `CSV` (supports also special decimal marks)
 
 ### Installation
 This package is registered and can be installed within the [`Pkg` REPL-mode](https://docs.julialang.org/en/latest/stdlib/Pkg/): Type `]` in the REPL and then:
@@ -20,7 +20,7 @@ pkg> add ReadWriteDlm2
 ```
 julia> using ReadWriteDlm2, Dates           # activate modules ReadWriteDlm2, Dates
 
-julia> a = ["text" 1.2; Date(2017,1,1) 1];  # create array with: String, Date, Float64, and Int eltype
+julia> a = ["text" 1.2; Date(2017,1,1) 1];  # create array with: String, Date, Float64 and Int eltype
 
 julia> writedlm2("test.csv", a)             # test.csv(decimal comma): "text;1,2\n2017-01-01;1\n"
 
@@ -71,7 +71,7 @@ defined. If data is empty, a `0×0 Array{T,2}` is returned.
 
 With `tables=true`[, `header=true`] option[s] a `Tables` interface compatible
 `MatrixTable` with individual column types is returned, which for example can
-be used as Argument for `DataFrame()`.
+be used as argument for `DataFrame()`.
 
 ### Additional Keyword Arguments `readdlm2()`
 * `decimal=','`: Decimal mark Char used by default `rs`, irrelevant if `rs`-tuple is not the default one

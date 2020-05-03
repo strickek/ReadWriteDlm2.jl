@@ -116,6 +116,8 @@ end
     "date,value_1,value_2\n2017-01-01,1.4,2\n2017-01-02,1.8,3\nnothing,na,4\n"
     df2input1 = readdlm2("test1.csv", tables=true, header=true)
     df2input2 = readcsv2("test2.csv", tables=true, header=true)
+    rm("test1.csv")
+    rm("test2.csv")
 
     # test result from reading csv
     @test Tables.istable(typeof(df2input1))

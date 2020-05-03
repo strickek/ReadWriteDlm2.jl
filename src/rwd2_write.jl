@@ -80,9 +80,7 @@ function writedlm2auto(f, a, dlm;
     if isa(a, Union{Nothing, Missing, Number, TimeType})
          a = [a]  # create 1 element Array
     elseif Tables.istable(a) == true # Tables interface
-        cnames = reshape(Tables.columnnames(a), 1, :)
-        data = Tables.matrix(a)
-        a = vcat(cnames, data)
+        a = matrix2(a)  # Matrix{Any}, first row columnnames, row 2:end -> data
     end
 
     if isa(a, AbstractArray)
