@@ -9,7 +9,7 @@ Column names - in Symbol type - are written in first row.
 function matrix2(table)
     cols = Tables.columns(table)
     cnames = Tables.columnnames(table)
-    nr = length(table) + 1
+    nr = Tables.rowcount(cols) + 1
     nc = length(cnames)
     matrix = Matrix{Any}(undef, nr, nc)
     for (i, col) in enumerate(Tables.Columns(cols))
