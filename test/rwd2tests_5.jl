@@ -212,3 +212,32 @@ end
     @test string(df2input1) == string(df2input1a)
     @test string(df2input2) == string(df2input2a)
 end
+
+@testset "5_MisNtg Tables" begin
+    cn = [:date, :value_1, :value_2]
+    mat = [Date(2017,1,1) 1.4 missing;
+           Date(2017,1,2) 1.8 nothing]
+    ct = [Date, Float64, Union{Missing, Nothing}]
+    vof = ReadWriteDlm2.vecofvec(mat, ct) # take columns from array -> Vector{Vector{ct}}
+    # first, create a MatrixTable from our Vector{Vector{T}} input
+    mattdf = Tables.table(vof, header=cn)
+    # write CSV
+    cna = reshape(Tables.columnnames(mattdf), 1, :)
+    amt = ReadWriteDlm2.mttoarray(mattdf)
+    a = vcat(cna, amt)
+    writedlm2("test1.csv", a)
+    writecsv2("test2.csv", a)
+    # read CSV / Tables Interface
+    @test read("test1.csv", String) ==
+    "date;value_1;value_2\n2017-01-01;1,4;na\n2017-01-02;1,8;nothing\n"
+    @test read("test2.csv", String) ==
+    "date,value_1,value_2\n2017-01-01,1.4,na\n2017-01-02,1.8,nothing\n"
+    df2input1a = readdlm2("test1.csv", dfheader=true)
+    df2input2a = readcsv2("test2.csv", dfheader=true)
+    @test string(df2input1a) == string(df2input2a)
+    df2input1 = readdlm2("test1.csv", tables=true, header=true)
+    df2input2 = readcsv2("test2.csv", tables=true, header=true)
+    @test string(df2input1) == string(df2input2)
+    @test string(df2input1) == string(df2input1a)
+    @test string(df2input2) == string(df2input2a)
+end

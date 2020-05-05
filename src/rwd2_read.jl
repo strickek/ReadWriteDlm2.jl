@@ -246,10 +246,8 @@ function readdlm2auto(input, dlm, T, eol, auto;
             coltypes[c] = Union{Missing, coltype}
         elseif colcontainnothing
             coltypes[c] = Union{Nothing, coltype}
-        elseif coltype != Union{}
-            coltypes[c] = coltype
         else
-            coltypes[c] = T
+            coltypes[c] = coltype
         end
 
         if convertarray && (coltypes[c] <: T)

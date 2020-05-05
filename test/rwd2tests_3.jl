@@ -151,6 +151,8 @@
     writedlm2("test.csv", a)
     @test read("test.csv", String) == "2017-01-01T00:00:00.0;2016-01-01T00:00:00.0\n2015-01-01T00:00:00.0;2014-01-01T00:00:00.0\n"
     b = readdlm2("test.csv", DateTime)
+    c = readdlm2("test.csv", DateTime, tables=true) # test tables interface
+    @test ReadWriteDlm2.mttoarray(c) == a
     rm("test.csv")
     @test b == a
     @test typeof(b) == Array{DateTime,2}
