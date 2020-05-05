@@ -24,7 +24,7 @@ julia> readcsv2("test.csv")
 ```
 """
 readcsv2(input; opts...) =
-    readdlm2auto(input, ',', Any, '\n', false; decimal='.', opts...)
+    readdlm2auto(input, ',', Nothing, '\n', false; decimal='.', opts...)
 
 readcsv2(input, T::Type; opts...) =
     readdlm2auto(input, ',', T, '\n', false; decimal='.', opts...)

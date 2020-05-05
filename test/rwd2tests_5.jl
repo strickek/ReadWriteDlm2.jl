@@ -78,6 +78,7 @@ end
     @test mattbl.Column2 == [4.0, 5.0, 6.0]
     @test mattbl.Column3 == [true, false, true]
     @test mattbl.Column4 == ["a", "b", "c"]
+    @test length(mattbl) === 3
     @test ma2[2:end, 1] == [1, 2, 3]
     @test ma2[2:end, 2] == [4.0, 5.0, 6.0]
     @test ma2[2:end, 3] == [true, false, true]
@@ -116,7 +117,14 @@ end
     # test our `Tables.AbstractColumns` interface methods
     @test Tables.getcolumn(mattbl, :Column1) == [1,2,3]
     @test Tables.getcolumn(mattbl, 1) == [1,2,3]
+    @test Tables.getcolumn(mattbl, ReadWriteDlm2.MatrixTable, 1, :Column1) == [1,2,3]
     @test Tables.columnnames(mattbl) == [:Column1, :Column2, :Column3]
+    @test length(mattbl) === 3
+    @test iterate(mattbl)[1] == first(mattbl)
+    @test iterate(mattbl)[2] == 2
+    @test iterate(mattbl, 4) == nothing
+    @test Tables.schema(mattbl) ==
+        Tables.Schema([:Column1, :Column2, :Column3], [Int64, Float64, String])
     # now let's iterate our MatrixTable to get our first MatrixRow
     matrow = first(mattbl)
     @test eltype(mattbl) == typeof(matrow)
@@ -125,6 +133,7 @@ end
     @test matrow.Column2 == 4.0
     @test Tables.getcolumn(matrow, :Column1) == 1
     @test Tables.getcolumn(matrow, 1) == 1
+    @test Tables.getcolumn(matrow, ReadWriteDlm2.MatrixRow, 1, :Column1) == 1
     @test propertynames(mattbl) == propertynames(matrow) == [:Column1, :Column2, :Column3]
 end
 
@@ -173,4 +182,33 @@ end
     aro2 = ReadWriteDlm2.mttoarray(rdlm2)
     @test isequal(aro2, mat)
     rm("test.csv")
+end
+
+@testset "5_csvdlm Tables" begin
+    cn = [:date, :value_1, :value_2]
+    mat = [Date(2017,1,1) 1.4 2;
+           Date(2017,1,2) 1.8 3]
+    ct = [Union{Nothing, Date}, Union{Missing, Float64}, Int64]
+    vof = ReadWriteDlm2.vecofvec(mat, ct) # take columns from array -> Vector{Vector{ct}}
+    # first, create a MatrixTable from our Vector{Vector{T}} input
+    mattdf = Tables.table(vof, header=cn)
+    # write CSV
+    cna = reshape(Tables.columnnames(mattdf), 1, :)
+    amt = ReadWriteDlm2.mttoarray(mattdf)
+    a = vcat(cna, amt)
+    writedlm2("test1.csv", a)
+    writecsv2("test2.csv", a)
+    # read CSV / Tables Interface
+    @test read("test1.csv", String) ==
+    "date;value_1;value_2\n2017-01-01;1,4;2\n2017-01-02;1,8;3\n"
+    @test read("test2.csv", String) ==
+    "date,value_1,value_2\n2017-01-01,1.4,2\n2017-01-02,1.8,3\n"
+    df2input1a = readdlm2("test1.csv", dfheader=true)
+    df2input2a = readcsv2("test2.csv", dfheader=true)
+    @test string(df2input1a) == string(df2input2a)
+    df2input1 = readdlm2("test1.csv", tables=true, header=true)
+    df2input2 = readcsv2("test2.csv", tables=true, header=true)
+    @test string(df2input1) == string(df2input2)
+    @test string(df2input1) == string(df2input1a)
+    @test string(df2input2) == string(df2input2a)
 end
