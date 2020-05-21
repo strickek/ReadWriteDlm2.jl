@@ -6,7 +6,7 @@
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and
 `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional
 support for `Date`, `DateTime`, `Time`, `Complex`, `Rational`, `Missing` types
-and special decimal marks.
+and special decimal marks. `ReadWriteDlm2` supports the `Tables` interface.
 
 ### `readcsv2(), writecsv2()`:
 For "decimal dot" users the functions `readcsv2()` and `writecsv2()` have the
