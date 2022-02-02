@@ -14,7 +14,6 @@
     @test Tables.istable(typeof(mattbl))
     # test that it defines row access
     @test Tables.rowaccess(typeof(mattbl))
-    @test Tables.rows(mattbl) === mattbl
     # test that it defines column access
     @test Tables.columnaccess(typeof(mattbl))
     @test Tables.columns(mattbl) === mattbl
@@ -25,8 +24,9 @@
     @test Tables.getcolumn(mattbl, 1) == [1,2,3]
     @test Tables.columnnames(mattbl) == [:Column1, :Column2, :Column3]
     # now let's iterate our MatrixTable to get our first MatrixRow
-    matrow = first(mattbl)
-    @test eltype(mattbl) == typeof(matrow)
+    matrowtbl = Tables.rows(mattbl)
+    matrow = first(matrowtbl)
+    @test eltype(matrowtbl) == typeof(matrow)
     # now we can test our `Tables.AbstractRow` interface methods on our MatrixRow
     @test matrow.Column1 == 1
     @test Tables.getcolumn(matrow, :Column1) == 1
