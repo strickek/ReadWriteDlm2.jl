@@ -69,7 +69,6 @@ end
     ma2 = ReadWriteDlm2.matrix2(mattbl)
     # test that it defines row access
     @test Tables.rowaccess(typeof(mattbl))
-    @test Tables.rows(mattbl) === mattbl
     # test that it defines column access
     @test Tables.columnaccess(typeof(mattbl))
     @test Tables.columns(mattbl) === mattbl
@@ -78,7 +77,8 @@ end
     @test mattbl.Column2 == [4.0, 5.0, 6.0]
     @test mattbl.Column3 == [true, false, true]
     @test mattbl.Column4 == ["a", "b", "c"]
-    @test length(mattbl) === 3
+    matrowtbl = Tables.rows(mattbl)
+    @test length(matrowtbl) === 3
     @test ma2[2:end, 1] == [1, 2, 3]
     @test ma2[2:end, 2] == [4.0, 5.0, 6.0]
     @test ma2[2:end, 3] == [true, false, true]
@@ -89,8 +89,8 @@ end
     @test Tables.getcolumn(mattbl, 1) == [1, 2, 3]
     @test Tables.columnnames(mattbl) == [:Column1, :Column2, :Column3, :Column4]
     # now let's iterate our MatrixTable to get our first MatrixRow
-    matrow = first(mattbl)
-    @test eltype(mattbl) == typeof(matrow)
+    matrow = first(matrowtbl)
+    @test eltype(matrowtbl) == typeof(matrow)
     # now we can test our `Tables.AbstractRow` interface methods on our MatrixRow
     @test matrow.Column1 == 1
     @test Tables.getcolumn(matrow, :Column1) == 1
