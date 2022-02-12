@@ -1,6 +1,6 @@
 # ReadWriteDlm2
 ### CSV IO Supports Decimal Comma, Date, DateTime, Time, Complex, Missing and Rational
-[![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/master?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/master)  [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=master)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=master)
+[![Build status](https://github.com//strickek/ReadWriteDlm2.jl/workflows/CI/badge.svg)](https://github.com//strickek/ReadWriteDlm2.jl/actions) [![Build status](https://ci.appveyor.com/api/projects/status/ojv8nnuw63kh9yba/branch/main?svg=true)](https://ci.appveyor.com/project/strickek/readwritedlm2-jl/branch/main) [![codecov.io](http://codecov.io/github/strickek/ReadWriteDlm2.jl/coverage.svg?branch=main)](http://codecov.io/github/strickek/ReadWriteDlm2.jl?branch=main)
 
 `ReadWriteDlm2` functions `readdlm2()`, `writedlm2()`, `readcsv2()` and `writecsv2()` are similar to those of stdlib.DelimitedFiles, but with additional support for `Dates` formats, `Complex`, `Rational`, `Missing` types and special decimal marks. `ReadWriteDlm2` supports the `Tables.jl` interface.
 
