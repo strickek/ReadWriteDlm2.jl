@@ -16,7 +16,7 @@ matrix:
 
 branches:
   only:
-    - master
+    - main
     - /release-.*/
 
 notifications:
