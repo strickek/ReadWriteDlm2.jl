@@ -235,23 +235,13 @@ julia> readdlm2("test.csv"; dfs="E, d.U yyyy", dtfs="e, d.u yyyy H:M:S,s", local
   "text"
 ```
 
-#### `Tables`-Interface Example With `DataFrames`
+#### `Tables`-Interface Examples With `DataFrames`
 See [-> `DataFrames`](https://github.com/JuliaData/DataFrames.jl) for installation and more information.
 ```
 julia> using ReadWriteDlm2, Dates, DataFrames, Statistics
 ```
-##### Write CSV: `Tables & DataFrames` compared with `Array`
+##### Write CSV: Using `Tables` interface and create from `DataFrame`
 ```
-julia> a = ["date" "value_1" "value_2";              # Create Array `a`
-            Date(2017,1,1) 1.4 2;
-            Date(2017,1,2) 1.8 3;
-            nothing missing 4]
-4×3 Array{Any,2}:
- "date"       "value_1"   "value_2"
- 2017-01-01  1.4         2
- 2017-01-02  1.8         3
- nothing      missing    4
-
 julia> df = DataFrame(                                # Create DataFrame `df`
     date = [Date(2017,1,1), Date(2017,1,2), nothing],
     value_1 = [1.4, 1.8, missing],
@@ -265,28 +255,13 @@ julia> df = DataFrame(                                # Create DataFrame `df`
 │ 2   │ 2017-01-02 │ 1.8      │ 3       │
 │ 3   │            │ missing  │ 4       │
 
-julia> writedlm2("testa_com.csv", a)     # decimal comma: write array a
-
 julia> writedlm2("testdf_com.csv", df)   # decimal comma: write DataFrame df
 
-julia> read("testa_com.csv", String) ==  # decimal comma: a.csv == df.csv
-       read("testdf_com.csv", String) ==
-       "date;value_1;value_2\n2017-01-01;1,4;2\n2017-01-02;1,8;3\nnothing;na;4\n"
-true
-
-julia> writecsv2("testa_dot.csv", a)     # decimal dot: write array a
-
-julia> writecsv2("testdf_dot.csv", df)   # decimal dot: write DataFrame df
-
-julia> read("testa_dot.csv", String) ==  # decimal dot: a.csv == df.csv
-       read("testdf_dot.csv", String) ==
-       "date,value_1,value_2\n2017-01-01,1.4,2\n2017-01-02,1.8,3\nnothing,na,4\n"
-true
-
+julia> read("testdf_com.csv", String)    # check csv data
+"date;value_1;value_2\n2017-01-01;1,4;2\n2017-01-02;1,8;3\nnothing;na;4\n"
 ```
 ##### Read CSV: Using `Tables` interface and create a `DataFrame`
 ```
-
 julia> df2 = DataFrame(readdlm2("testdf_com.csv", header=true, tables=true))
 3×3 DataFrame
 │ Row │ date       │ value_1  │ value_2 │
